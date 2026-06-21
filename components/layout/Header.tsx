@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { motion } from "framer-motion";
 import {
   ShoppingBag,
   User,
@@ -32,7 +31,7 @@ export default function Header() {
       <div className="glass border-b border-white/50">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 lg:px-8">
           <Link href="/" className="group flex items-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl gradient-primary shadow-lg shadow-pink-200/50 transition-transform group-hover:scale-110">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl gradient-primary shadow-lg shadow-pink-200/50">
               <Sparkles className="h-5 w-5 text-white" />
             </div>
             <div>
@@ -47,20 +46,13 @@ export default function Header() {
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  "relative rounded-xl px-4 py-2 text-sm font-medium transition-colors",
+                  "relative rounded-xl px-4 py-2 text-sm font-medium",
                   pathname === link.href
-                    ? "text-pink-600"
+                    ? "bg-pink-50 text-pink-600"
                     : "text-gray-600 hover:text-pink-500"
                 )}
               >
                 {link.label}
-                {pathname === link.href && (
-                  <motion.div
-                    layoutId="nav-indicator"
-                    className="absolute inset-0 -z-10 rounded-xl bg-pink-50"
-                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                  />
-                )}
               </Link>
             ))}
           </nav>
@@ -68,30 +60,26 @@ export default function Header() {
           <div className="flex items-center gap-2">
             <Link
               href="/login"
-              className="hidden rounded-xl p-2.5 text-gray-600 transition-colors hover:bg-pink-50 hover:text-pink-600 sm:flex"
+              className="hidden rounded-xl p-2.5 text-gray-600 hover:bg-pink-50 hover:text-pink-600 sm:flex"
               aria-label="ورود"
             >
               <User className="h-5 w-5" />
             </Link>
             <Link
               href="/cart"
-              className="relative rounded-xl p-2.5 text-gray-600 transition-colors hover:bg-pink-50 hover:text-pink-600"
+              className="relative rounded-xl p-2.5 text-gray-600 hover:bg-pink-50 hover:text-pink-600"
               aria-label="سبد خرید"
             >
               <ShoppingBag className="h-5 w-5" />
               {totalItems > 0 && (
-                <motion.span
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  className="absolute -top-1 -left-1 flex h-5 w-5 items-center justify-center rounded-full gradient-primary text-[10px] font-bold text-white"
-                >
+                <span className="absolute -top-1 -left-1 flex h-5 w-5 items-center justify-center rounded-full gradient-primary text-[10px] font-bold text-white">
                   {totalItems}
-                </motion.span>
+                </span>
               )}
             </Link>
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
-              className="rounded-xl p-2.5 text-gray-600 transition-colors hover:bg-pink-50 md:hidden"
+              className="rounded-xl p-2.5 text-gray-600 hover:bg-pink-50 md:hidden"
               aria-label="منو"
             >
               {mobileOpen ? (
@@ -105,12 +93,7 @@ export default function Header() {
       </div>
 
       {mobileOpen && (
-        <motion.div
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: "auto" }}
-          exit={{ opacity: 0, height: 0 }}
-          className="glass border-b border-white/50 md:hidden"
-        >
+        <div className="glass border-b border-white/50 md:hidden">
           <nav className="flex flex-col gap-1 px-4 py-4">
             {navLinks.map((link) => (
               <Link
@@ -118,7 +101,7 @@ export default function Header() {
                 href={link.href}
                 onClick={() => setMobileOpen(false)}
                 className={cn(
-                  "rounded-xl px-4 py-3 text-sm font-medium transition-colors",
+                  "rounded-xl px-4 py-3 text-sm font-medium",
                   pathname === link.href
                     ? "bg-pink-50 text-pink-600"
                     : "text-gray-600 hover:bg-pink-50"
@@ -136,7 +119,7 @@ export default function Header() {
               ورود / ثبت‌نام
             </Link>
           </nav>
-        </motion.div>
+        </div>
       )}
     </header>
   );

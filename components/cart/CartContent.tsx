@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
 import { Minus, Plus, Trash2, ShoppingBag, ArrowLeft } from "lucide-react";
 import ProductImage from "@/components/ui/ProductImage";
 import Button from "@/components/ui/Button";
@@ -15,11 +14,7 @@ export default function CartContent() {
   if (items.length === 0) {
     return (
       <div className="mx-auto flex max-w-7xl flex-col items-center justify-center px-4 py-24 lg:px-8">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="text-center"
-        >
+        <div className="text-center">
           <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-pink-50">
             <ShoppingBag className="h-12 w-12 text-pink-300" />
           </div>
@@ -30,29 +25,20 @@ export default function CartContent() {
           <Button href="/shop" className="mt-8">
             رفتن به فروشگاه
           </Button>
-        </motion.div>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 lg:px-8">
-      <motion.h1
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="mb-8 text-3xl font-bold gradient-text"
-      >
-        سبد خرید
-      </motion.h1>
+      <h1 className="mb-8 text-3xl font-bold gradient-text">سبد خرید</h1>
 
       <div className="grid gap-8 lg:grid-cols-3">
         <div className="space-y-4 lg:col-span-2">
-          {items.map((item, i) => (
-            <motion.div
+          {items.map((item) => (
+            <div
               key={`${item.productId}-${item.color}-${item.size}`}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.05 }}
               className="flex gap-4 rounded-3xl border border-white/80 bg-white/80 p-4 shadow-sm sm:gap-6 sm:p-6"
             >
               <Link
@@ -113,7 +99,7 @@ export default function CartContent() {
                       onClick={() =>
                         removeItem(item.productId, item.color, item.size)
                       }
-                      className="rounded-xl p-2 text-red-400 transition-colors hover:bg-red-50 hover:text-red-600"
+                      className="rounded-xl p-2 text-red-400 hover:bg-red-50 hover:text-red-600"
                       aria-label="حذف"
                     >
                       <Trash2 className="h-4 w-4" />
@@ -121,15 +107,11 @@ export default function CartContent() {
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
 
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="gradient-card glow-pink h-fit rounded-3xl border border-white/80 p-6"
-        >
+        <div className="gradient-card glow-pink h-fit rounded-3xl border border-white/80 p-6">
           <h2 className="mb-6 text-lg font-bold text-gray-800">خلاصه سفارش</h2>
           <div className="space-y-3 text-sm">
             <div className="flex justify-between text-gray-600">
@@ -163,7 +145,7 @@ export default function CartContent() {
             <ArrowLeft className="h-4 w-4" />
             ادامه خرید
           </Link>
-        </motion.div>
+        </div>
       </div>
     </div>
   );

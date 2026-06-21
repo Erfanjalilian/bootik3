@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
 import {
   ShoppingBag,
   Minus,
@@ -63,11 +62,7 @@ export default function ProductDetailsClient({
       </Link>
 
       <div className="grid gap-10 lg:grid-cols-2">
-        <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="space-y-4"
-        >
+        <div className="space-y-4">
           <div className="relative aspect-square overflow-hidden rounded-3xl bg-white shadow-xl shadow-pink-100/50">
             <ProductImage
               src={product.images[selectedImage]}
@@ -86,7 +81,7 @@ export default function ProductDetailsClient({
                 <button
                   key={i}
                   onClick={() => setSelectedImage(i)}
-                  className={`relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl border-2 transition-all ${
+                  className={`relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl border-2 ${
                     i === selectedImage
                       ? "border-pink-400 shadow-lg shadow-pink-200/50"
                       : "border-transparent opacity-70 hover:opacity-100"
@@ -97,14 +92,9 @@ export default function ProductDetailsClient({
               ))}
             </div>
           )}
-        </motion.div>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.1 }}
-          className="space-y-6"
-        >
+        <div className="space-y-6">
           <div>
             <div className="mb-2 flex flex-wrap items-center gap-2 text-sm text-gray-500">
               {category && <span>{category.name}</span>}
@@ -158,10 +148,10 @@ export default function ProductDetailsClient({
                   <button
                     key={color.name}
                     onClick={() => setSelectedColor(color.name)}
-                    className={`h-10 w-10 rounded-full border-2 transition-all ${
+                    className={`h-10 w-10 rounded-full border-2 ${
                       selectedColor === color.name
-                        ? "border-pink-500 scale-110 shadow-lg"
-                        : "border-gray-200 hover:scale-105"
+                        ? "border-pink-500 shadow-lg"
+                        : "border-gray-200"
                     }`}
                     style={{ backgroundColor: color.hex }}
                     title={color.name}
@@ -182,7 +172,7 @@ export default function ProductDetailsClient({
                   <button
                     key={size}
                     onClick={() => setSelectedSize(size)}
-                    className={`min-w-[48px] rounded-xl px-4 py-2 text-sm font-medium transition-all ${
+                    className={`min-w-[48px] rounded-xl px-4 py-2 text-sm font-medium ${
                       selectedSize === size
                         ? "gradient-primary text-white shadow-lg"
                         : "border border-pink-100 bg-white text-gray-600 hover:border-pink-300"
@@ -262,7 +252,7 @@ export default function ProductDetailsClient({
               ))}
             </dl>
           </div>
-        </motion.div>
+        </div>
       </div>
 
       {relatedProducts.length > 0 && (
@@ -271,8 +261,8 @@ export default function ProductDetailsClient({
             محصولات مشابه
           </h2>
           <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-            {relatedProducts.map((p, i) => (
-              <ProductCard key={p.id} product={p} index={i} />
+            {relatedProducts.map((p) => (
+              <ProductCard key={p.id} product={p} />
             ))}
           </div>
         </section>

@@ -49,9 +49,9 @@ export default function Home() {
           {features.map((feature) => (
             <div
               key={feature.title}
-              className="gradient-card group rounded-3xl border border-white/80 p-5 text-center transition-all hover:-translate-y-1 hover:shadow-lg hover:shadow-pink-100/50"
+              className="gradient-card rounded-3xl border border-white/80 p-5 text-center"
             >
-              <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-pink-100 to-blue-100 transition-transform group-hover:scale-110">
+              <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-pink-100 to-blue-100">
                 <feature.icon className="h-6 w-6 text-pink-500" />
               </div>
               <h3 className="text-sm font-semibold text-gray-800">

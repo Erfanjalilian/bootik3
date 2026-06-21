@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
 import { Star, ShoppingBag } from "lucide-react";
 import ProductImage from "@/components/ui/ProductImage";
 import { formatPrice } from "@/lib/utils";
@@ -9,26 +8,18 @@ import type { Product } from "@/lib/types";
 
 interface ProductCardProps {
   product: Product;
-  index?: number;
 }
 
-export default function ProductCard({ product, index = 0 }: ProductCardProps) {
+export default function ProductCard({ product }: ProductCardProps) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ delay: index * 0.08, duration: 0.5 }}
-    >
+    <div>
       <Link href={`/products/${product.id}`} className="group block">
-        <article className="gradient-card glow-pink overflow-hidden rounded-3xl border border-white/80 transition-all duration-500 hover:-translate-y-2 hover:shadow-xl hover:shadow-pink-200/40">
+        <article className="gradient-card glow-pink overflow-hidden rounded-3xl border border-white/80">
           <div className="relative aspect-[3/4] overflow-hidden">
             <ProductImage
               src={product.images[0]}
               alt={product.name}
-              className="transition-transform duration-700 group-hover:scale-110"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-pink-900/20 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
 
             {product.isOnSale && product.discount && (
               <span className="absolute top-3 right-3 rounded-full bg-gradient-to-r from-pink-500 to-rose-400 px-3 py-1 text-xs font-bold text-white shadow-lg">
@@ -41,7 +32,7 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
               </span>
             )}
 
-            <div className="absolute bottom-3 left-3 right-3 translate-y-4 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+            <div className="absolute bottom-3 left-3 right-3 hidden opacity-0 group-hover:opacity-100 sm:block">
               <span className="flex items-center justify-center gap-2 rounded-2xl bg-white/90 py-2.5 text-sm font-medium text-pink-600 backdrop-blur-sm">
                 <ShoppingBag className="h-4 w-4" />
                 مشاهده محصول
@@ -50,7 +41,7 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
           </div>
 
           <div className="p-4">
-            <h3 className="mb-2 line-clamp-1 text-base font-semibold text-gray-800 transition-colors group-hover:text-pink-600">
+            <h3 className="mb-2 line-clamp-1 text-base font-semibold text-gray-800 group-hover:text-pink-600">
               {product.name}
             </h3>
             <div className="mb-2 flex items-center gap-1">
@@ -70,6 +61,6 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
           </div>
         </article>
       </Link>
-    </motion.div>
+    </div>
   );
 }

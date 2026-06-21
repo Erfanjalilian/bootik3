@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { motion } from "framer-motion";
 import { Search, SlidersHorizontal, LayoutGrid, List } from "lucide-react";
 import ProductCard from "@/components/ui/ProductCard";
 import ProductImage from "@/components/ui/ProductImage";
@@ -64,16 +63,12 @@ export default function ShopContent({
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 lg:px-8">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="mb-8"
-      >
+      <div className="mb-8">
         <h1 className="text-3xl font-bold gradient-text">فروشگاه</h1>
         <p className="mt-2 text-gray-500">
           {filtered.length} محصول یافت شد
         </p>
-      </motion.div>
+      </div>
 
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center">
         <div className="relative flex-1">
@@ -83,7 +78,7 @@ export default function ShopContent({
             placeholder="جستجوی محصول..."
             value={filters.search}
             onChange={(e) => setFilters({ ...filters, search: e.target.value })}
-            className="w-full rounded-2xl border border-pink-100 bg-white py-3 pr-12 pl-4 text-sm outline-none transition-all focus:border-pink-300 focus:ring-4 focus:ring-pink-50"
+            className="w-full rounded-2xl border border-pink-100 bg-white py-3 pr-12 pl-4 text-sm outline-none focus:border-pink-300 focus:ring-4 focus:ring-pink-50"
           />
         </div>
 
@@ -99,7 +94,7 @@ export default function ShopContent({
           <div className="hidden items-center gap-1 rounded-2xl border border-pink-100 bg-white p-1 sm:flex">
             <button
               onClick={() => setFilters({ ...filters, viewMode: "grid" })}
-              className={`rounded-xl p-2 transition-colors ${
+              className={`rounded-xl p-2 ${
                 filters.viewMode === "grid"
                   ? "bg-pink-100 text-pink-600"
                   : "text-gray-400 hover:text-pink-500"
@@ -110,7 +105,7 @@ export default function ShopContent({
             </button>
             <button
               onClick={() => setFilters({ ...filters, viewMode: "list" })}
-              className={`rounded-xl p-2 transition-colors ${
+              className={`rounded-xl p-2 ${
                 filters.viewMode === "list"
                   ? "bg-pink-100 text-pink-600"
                   : "text-gray-400 hover:text-pink-500"
@@ -155,22 +150,17 @@ export default function ShopContent({
             </div>
           ) : filters.viewMode === "grid" ? (
             <div className="grid grid-cols-2 gap-4 md:grid-cols-2 xl:grid-cols-3">
-              {filtered.map((product, i) => (
-                <ProductCard key={product.id} product={product} index={i} />
+              {filtered.map((product) => (
+                <ProductCard key={product.id} product={product} />
               ))}
             </div>
           ) : (
             <div className="space-y-4">
-              {filtered.map((product, i) => (
-                <motion.div
-                  key={product.id}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.05 }}
-                >
+              {filtered.map((product) => (
+                <div key={product.id}>
                   <Link
                     href={`/products/${product.id}`}
-                    className="group flex gap-4 rounded-3xl border border-white/80 bg-white/80 p-4 transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-pink-100/50 sm:gap-6"
+                    className="group flex gap-4 rounded-3xl border border-white/80 bg-white/80 p-4 sm:gap-6"
                   >
                     <div className="relative h-32 w-28 shrink-0 overflow-hidden rounded-2xl sm:h-40 sm:w-36">
                       <ProductImage src={product.images[0]} alt={product.name} />
@@ -200,7 +190,7 @@ export default function ShopContent({
                       </div>
                     </div>
                   </Link>
-                </motion.div>
+                </div>
               ))}
             </div>
           )}

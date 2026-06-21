@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
 import { Phone, Sparkles } from "lucide-react";
 import Button from "@/components/ui/Button";
 
@@ -17,12 +16,7 @@ export default function LoginForm() {
       <div className="light-orb -top-20 right-1/4 h-72 w-72 bg-pink-300/20" />
       <div className="light-orb -bottom-20 left-1/4 h-72 w-72 bg-blue-300/20" />
 
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="relative w-full max-w-md"
-      >
+      <div className="relative w-full max-w-md">
         <div className="gradient-card glow-pink overflow-hidden rounded-3xl border border-white/80 p-8 shadow-xl">
           <div className="mb-8 text-center">
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl gradient-primary shadow-lg">
@@ -50,7 +44,7 @@ export default function LoginForm() {
                   placeholder="۰۹۱۲۱۲۳۴۵۶۷"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  className="w-full rounded-2xl border border-pink-100 bg-white py-3.5 pr-12 pl-4 text-left outline-none transition-all focus:border-pink-300 focus:ring-4 focus:ring-pink-50"
+                  className="w-full rounded-2xl border border-pink-100 bg-white py-3.5 pr-12 pl-4 text-left outline-none focus:border-pink-300 focus:ring-4 focus:ring-pink-50"
                   dir="ltr"
                   required
                 />
@@ -66,7 +60,7 @@ export default function LoginForm() {
             با ورود، شرایط و قوانین استفاده از سایت را می‌پذیرید
           </p>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 }

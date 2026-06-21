@@ -21,7 +21,14 @@
 }
 
 html {
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
+}
+
+*,
+*::before,
+*::after {
+  animation: none !important;
+  transition: none !important;
 }
 
 body {
@@ -75,38 +82,13 @@ body {
     0 0 60px rgba(147, 197, 253, 0.1);
 }
 
-@keyframes float {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-8px);
-  }
-}
-
-@keyframes shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
-}
-
-.animate-float {
-  animation: float 4s ease-in-out infinite;
-}
-
 .shimmer {
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(255, 255, 255, 0.4) 50%,
+    rgba(255, 255, 255, 0.2) 50%,
     transparent 100%
   );
-  background-size: 200% 100%;
-  animation: shimmer 2s infinite;
 }
 
 .light-orb {

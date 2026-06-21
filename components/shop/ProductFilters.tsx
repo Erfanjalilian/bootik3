@@ -1,6 +1,5 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 import type { Brand, Category } from "@/lib/types";
 
@@ -69,7 +68,7 @@ export default function ProductFilters({
         <select
           value={filters.categoryId}
           onChange={(e) => update({ categoryId: e.target.value })}
-          className="w-full rounded-xl border border-pink-100 bg-white px-4 py-2.5 text-sm outline-none transition-colors focus:border-pink-300 focus:ring-2 focus:ring-pink-100"
+          className="w-full rounded-xl border border-pink-100 bg-white px-4 py-2.5 text-sm outline-none focus:border-pink-300 focus:ring-2 focus:ring-pink-100"
         >
           <option value="">همه دسته‌ها</option>
           {categories.map((cat) => (
@@ -87,7 +86,7 @@ export default function ProductFilters({
         <select
           value={filters.brandId}
           onChange={(e) => update({ brandId: e.target.value })}
-          className="w-full rounded-xl border border-pink-100 bg-white px-4 py-2.5 text-sm outline-none transition-colors focus:border-pink-300 focus:ring-2 focus:ring-pink-100"
+          className="w-full rounded-xl border border-pink-100 bg-white px-4 py-2.5 text-sm outline-none focus:border-pink-300 focus:ring-2 focus:ring-pink-100"
         >
           <option value="">همه برندها</option>
           {brands.map((brand) => (
@@ -122,7 +121,7 @@ export default function ProductFilters({
 
       <button
         onClick={reset}
-        className="w-full rounded-xl border-2 border-pink-200 py-2.5 text-sm font-medium text-pink-600 transition-colors hover:bg-pink-50"
+        className="w-full rounded-xl border-2 border-pink-200 py-2.5 text-sm font-medium text-pink-600 hover:bg-pink-50"
       >
         پاک کردن فیلترها
       </button>
@@ -130,29 +129,18 @@ export default function ProductFilters({
   );
 
   if (isMobile) {
+    if (!isOpen) return null;
+
     return (
-      <AnimatePresence>
-        {isOpen && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={onClose}
-              className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm lg:hidden"
-            />
-            <motion.aside
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed top-0 right-0 z-50 h-full w-[85%] max-w-sm overflow-y-auto bg-white p-6 shadow-2xl lg:hidden"
-            >
-              {content}
-            </motion.aside>
-          </>
-        )}
-      </AnimatePresence>
+      <>
+        <div
+          onClick={onClose}
+          className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm lg:hidden"
+        />
+        <aside className="fixed top-0 right-0 z-50 h-full w-[85%] max-w-sm overflow-y-auto bg-white p-6 shadow-2xl lg:hidden">
+          {content}
+        </aside>
+      </>
     );
   }
 

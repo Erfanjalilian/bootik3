@@ -26,22 +26,22 @@ export default function Footer() {
             <h4 className="mb-4 font-semibold text-gray-800">دسترسی سریع</h4>
             <ul className="space-y-2 text-sm text-gray-500">
               <li>
-                <Link href="/shop" className="hover:text-pink-500 transition-colors">
+                <Link href="/shop" className="hover:text-pink-500">
                   فروشگاه
                 </Link>
               </li>
               <li>
-                <Link href="/about" className="hover:text-pink-500 transition-colors">
+                <Link href="/about" className="hover:text-pink-500">
                   درباره ما
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="hover:text-pink-500 transition-colors">
+                <Link href="/contact" className="hover:text-pink-500">
                   تماس با ما
                 </Link>
               </li>
               <li>
-                <Link href="/login" className="hover:text-pink-500 transition-colors">
+                <Link href="/login" className="hover:text-pink-500">
                   ورود / ثبت‌نام
                 </Link>
               </li>
@@ -73,7 +73,7 @@ export default function Footer() {
                 href={settings.social.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-pink-400 to-purple-500 text-white shadow-lg transition-transform hover:scale-110"
+                className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-pink-400 to-purple-500 text-white shadow-lg"
                 aria-label="اینستاگرام"
               >
                 <Camera className="h-5 w-5" />
@@ -82,7 +82,7 @@ export default function Footer() {
                 href={settings.social.telegram}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-400 to-blue-500 text-white shadow-lg transition-transform hover:scale-110"
+                className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-400 to-blue-500 text-white shadow-lg"
                 aria-label="تلگرام"
               >
                 <Send className="h-5 w-5" />
@@ -91,7 +91,7 @@ export default function Footer() {
                 href={settings.social.whatsapp}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-green-400 to-green-500 text-white shadow-lg transition-transform hover:scale-110"
+                className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-green-400 to-green-500 text-white shadow-lg"
                 aria-label="واتساپ"
               >
                 <MessageCircle className="h-5 w-5" />

@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import ProductImage from "@/components/ui/ProductImage";
 import type { Banner } from "@/lib/types";
@@ -27,81 +26,60 @@ export default function BannerSlider({ banners }: BannerSliderProps) {
     return () => clearInterval(timer);
   }, [next]);
 
+  const banner = banners[current];
+
   return (
-    <section className="relative mx-auto max-w-7xl overflow-hidden px-4 pt-6 lg:px-8">
-      <div className="relative aspect-[21/9] min-h-[280px] overflow-hidden rounded-3xl shadow-2xl shadow-pink-200/30 md:min-h-[400px]">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={current}
-            initial={{ opacity: 0, scale: 1.05 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ duration: 0.7 }}
-            className="absolute inset-0"
-          >
-            <ProductImage
-              src={banners[current].image}
-              alt={banners[current].title}
-              priority={current === 0}
-              className="object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-l from-pink-900/70 via-pink-900/30 to-transparent" />
-            <div className="absolute inset-0 flex flex-col justify-center px-8 md:px-16">
-              <motion.h2
-                initial={{ opacity: 0, x: 30 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.2 }}
-                className="mb-3 max-w-lg text-2xl font-bold text-white md:text-4xl lg:text-5xl"
+    <section className="relative mx-auto max-w-7xl px-3 pt-4 sm:px-4 sm:pt-6 lg:px-8">
+      <div className="relative h-[min(72vh,520px)] min-h-[360px] overflow-hidden rounded-2xl shadow-2xl shadow-pink-200/30 sm:h-auto sm:min-h-[300px] sm:aspect-[16/9] sm:rounded-3xl md:min-h-[360px] lg:aspect-[21/9] lg:min-h-[400px]">
+        <div className="absolute inset-0">
+          <ProductImage
+            src={banner.image}
+            alt={banner.title}
+            priority={current === 0}
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-pink-900/80 via-pink-900/40 to-pink-900/10 sm:bg-gradient-to-l sm:from-pink-900/70 sm:via-pink-900/30 sm:to-transparent" />
+          <div className="absolute inset-0 flex flex-col justify-end px-4 pb-14 pt-8 sm:justify-center sm:px-8 sm:pb-0 sm:pt-0 md:px-16">
+            <h2 className="mb-2 line-clamp-2 max-w-lg text-xl font-bold text-white sm:mb-3 sm:line-clamp-none sm:text-2xl md:text-4xl lg:text-5xl">
+              {banner.title}
+            </h2>
+            <p className="mb-4 line-clamp-2 max-w-md text-xs text-pink-100 sm:mb-6 sm:line-clamp-3 sm:text-sm md:text-lg">
+              {banner.subtitle}
+            </p>
+            <div>
+              <Link
+                href={banner.link}
+                className="inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2.5 text-xs font-semibold text-pink-600 shadow-xl sm:rounded-2xl sm:px-6 sm:py-3 sm:text-sm md:text-base"
               >
-                {banners[current].title}
-              </motion.h2>
-              <motion.p
-                initial={{ opacity: 0, x: 30 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.35 }}
-                className="mb-6 max-w-md text-sm text-pink-100 md:text-lg"
-              >
-                {banners[current].subtitle}
-              </motion.p>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5 }}
-              >
-                <Link
-                  href={banners[current].link}
-                  className="inline-flex items-center gap-2 rounded-2xl bg-white px-6 py-3 text-sm font-semibold text-pink-600 shadow-xl transition-all hover:scale-105 hover:shadow-2xl md:text-base"
-                >
-                  مشاهده محصولات
-                  <ChevronLeft className="h-4 w-4" />
-                </Link>
-              </motion.div>
+                مشاهده محصولات
+                <ChevronLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+              </Link>
             </div>
-          </motion.div>
-        </AnimatePresence>
+          </div>
+        </div>
 
         <button
           onClick={prev}
-          className="absolute right-4 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/20 p-2 text-white backdrop-blur-sm transition-all hover:bg-white/40"
+          className="absolute right-2 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/20 p-1.5 text-white backdrop-blur-sm sm:right-4 sm:p-2"
           aria-label="اسلاید قبلی"
         >
-          <ChevronRight className="h-6 w-6" />
+          <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" />
         </button>
         <button
           onClick={next}
-          className="absolute left-4 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/20 p-2 text-white backdrop-blur-sm transition-all hover:bg-white/40"
+          className="absolute left-2 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/20 p-1.5 text-white backdrop-blur-sm sm:left-4 sm:p-2"
           aria-label="اسلاید بعدی"
         >
-          <ChevronLeft className="h-6 w-6" />
+          <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6" />
         </button>
 
-        <div className="absolute bottom-4 left-1/2 z-10 flex -translate-x-1/2 gap-2">
+        <div className="absolute bottom-3 left-1/2 z-10 flex -translate-x-1/2 gap-1.5 sm:bottom-4 sm:gap-2">
           {banners.map((_, i) => (
             <button
               key={i}
               onClick={() => setCurrent(i)}
-              className={`h-2 rounded-full transition-all duration-300 ${
-                i === current ? "w-8 bg-white" : "w-2 bg-white/50"
+              className={`h-1.5 rounded-full sm:h-2 ${
+                i === current ? "w-6 bg-white sm:w-8" : "w-1.5 bg-white/50 sm:w-2"
               }`}
               aria-label={`اسلاید ${i + 1}`}
             />

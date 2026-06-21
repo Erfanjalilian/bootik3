@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { Phone, MapPin, Mail, Clock } from "lucide-react";
 import type { SiteSettings } from "@/lib/types";
 
@@ -9,7 +8,6 @@ interface ContactContentProps {
 }
 
 export default function ContactContent({ settings }: ContactContentProps) {
-
   const contactItems = [
     {
       icon: Phone,
@@ -49,11 +47,7 @@ export default function ContactContent({ settings }: ContactContentProps) {
       <div className="light-orb top-1/2 -left-32 h-80 w-80 bg-blue-300/20" />
 
       <div className="mx-auto max-w-7xl px-4 py-16 lg:px-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-14 text-center"
-        >
+        <div className="mb-14 text-center">
           <h1 className="text-3xl font-bold gradient-text md:text-4xl">
             تماس با ما
           </h1>
@@ -61,19 +55,16 @@ export default function ContactContent({ settings }: ContactContentProps) {
             ما همیشه آماده پاسخگویی به سوالات شما هستیم. از راه‌های زیر با ما
             در ارتباط باشید.
           </p>
-        </motion.div>
+        </div>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {contactItems.map((item, i) => (
-            <motion.div
+          {contactItems.map((item) => (
+            <div
               key={item.title}
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1 }}
-              className="gradient-card group rounded-3xl border border-white/80 p-8 transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-pink-100/40"
+              className="gradient-card rounded-3xl border border-white/80 p-8"
             >
               <div
-                className={`mb-5 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${item.color} text-white shadow-lg transition-transform group-hover:scale-110`}
+                className={`mb-5 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${item.color} text-white shadow-lg`}
               >
                 <item.icon className="h-6 w-6" />
               </div>
@@ -81,16 +72,11 @@ export default function ContactContent({ settings }: ContactContentProps) {
                 {item.title}
               </h3>
               <p className="leading-relaxed text-gray-600">{item.value}</p>
-            </motion.div>
+            </div>
           ))}
         </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="mt-14 overflow-hidden rounded-3xl shadow-2xl shadow-pink-200/30"
-        >
+        <div className="mt-14 overflow-hidden rounded-3xl shadow-2xl shadow-pink-200/30">
           <div className="gradient-primary relative flex h-64 items-center justify-center md:h-80">
             <div className="absolute inset-0 shimmer opacity-20" />
             <div className="relative text-center text-white">
@@ -99,7 +85,7 @@ export default function ContactContent({ settings }: ContactContentProps) {
               <p className="mt-2 text-pink-100">به زودی نقشه اینجا قرار می‌گیرد</p>
             </div>
           </div>
-        </motion.div>
+        </div>
       </div>
     </div>
   );
