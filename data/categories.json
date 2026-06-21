@@ -1,0 +1,32 @@
+[
+  {
+    "id": "cat-1",
+    "name": "لباس زنانه",
+    "slug": "women",
+    "icon": "👗"
+  },
+  {
+    "id": "cat-2",
+    "name": "لباس مردانه",
+    "slug": "men",
+    "icon": "👔"
+  },
+  {
+    "id": "cat-3",
+    "name": "کفش",
+    "slug": "shoes",
+    "icon": "👟"
+  },
+  {
+    "id": "cat-4",
+    "name": "اکسسوری",
+    "slug": "accessories",
+    "icon": "👜"
+  },
+  {
+    "id": "cat-5",
+    "name": "لباس بچگانه",
+    "slug": "kids",
+    "icon": "🧸"
+  }
+]

@@ -1,0 +1,325 @@
+[
+  {
+    "id": "1",
+    "name": "پیراهن مجلسی گلدار",
+    "description": "پیراهن مجلسی با طرح گل‌های ظریف، پارچه ابریشمی درجه یک و دوخت دست‌دوز. مناسب مهمانی‌ها و مراسم‌های رسمی.",
+    "price": 890000,
+    "originalPrice": 1200000,
+    "discount": 26,
+    "brandId": "brand-1",
+    "categoryId": "cat-1",
+    "images": ["/images/products/1.jpg", "/images/products/1-2.jpg", "/images/products/1-3.jpg"],
+    "colors": [
+      { "name": "صورتی", "hex": "#F472B6" },
+      { "name": "سفید", "hex": "#FFFFFF" },
+      { "name": "آبی پاستلی", "hex": "#93C5FD" }
+    ],
+    "sizes": ["S", "M", "L", "XL"],
+    "specifications": {
+      "جنس": "ابریشم ترکیبی",
+      "طول": "میدی",
+      "یقه": "گرد",
+      "آستین": "کوتاه",
+      "نحوه شستشو": "شستشوی دستی"
+    },
+    "isBestSeller": true,
+    "isNew": false,
+    "isOnSale": true,
+    "stock": 15,
+    "rating": 4.8
+  },
+  {
+    "id": "2",
+    "name": "کت جین زنانه",
+    "description": "کت جین کلاسیک با برش مدرن، مناسب استایل کژوال و رسمی. پارچه جین با کیفیت و مقاوم.",
+    "price": 650000,
+    "brandId": "brand-2",
+    "categoryId": "cat-1",
+    "images": ["/images/products/2.jpg", "/images/products/2-2.jpg"],
+    "colors": [
+      { "name": "آبی", "hex": "#3B82F6" },
+      { "name": "مشکی", "hex": "#1F2937" }
+    ],
+    "sizes": ["S", "M", "L", "XL", "XXL"],
+    "specifications": {
+      "جنس": "جین ۱۰۰٪ پنبه",
+      "طول": "کوتاه",
+      "یقه": "برگردان",
+      "آستین": "بلند",
+      "نحوه شستشو": "ماشین لباسشویی"
+    },
+    "isBestSeller": true,
+    "isNew": true,
+    "isOnSale": false,
+    "stock": 22,
+    "rating": 4.6
+  },
+  {
+    "id": "3",
+    "name": "تی‌شرت مردانه ساده",
+    "description": "تی‌شرت پنبه‌ای نرم و راحت با برش استاندارد. انتخاب ایده‌آل برای استفاده روزمره.",
+    "price": 280000,
+    "originalPrice": 350000,
+    "discount": 20,
+    "brandId": "brand-3",
+    "categoryId": "cat-2",
+    "images": ["/images/products/3.jpg"],
+    "colors": [
+      { "name": "سفید", "hex": "#FFFFFF" },
+      { "name": "مشکی", "hex": "#1F2937" },
+      { "name": "خاکستری", "hex": "#9CA3AF" }
+    ],
+    "sizes": ["M", "L", "XL", "XXL"],
+    "specifications": {
+      "جنس": "پنبه ۱۰۰٪",
+      "یقه": "گرد",
+      "آستین": "کوتاه",
+      "نحوه شستشو": "ماشین لباسشویی"
+    },
+    "isBestSeller": true,
+    "isNew": false,
+    "isOnSale": true,
+    "stock": 50,
+    "rating": 4.5
+  },
+  {
+    "id": "4",
+    "name": "کفش اسپرت زنانه",
+    "description": "کفش اسپرت سبک و راحت با کفی نرم. طراحی مدرن و مناسب پیاده‌روی و ورزش.",
+    "price": 1200000,
+    "brandId": "brand-4",
+    "categoryId": "cat-3",
+    "images": ["/images/products/4.jpg", "/images/products/4-2.jpg"],
+    "colors": [
+      { "name": "صورتی", "hex": "#EC4899" },
+      { "name": "سفید", "hex": "#FFFFFF" }
+    ],
+    "sizes": ["۳۷", "۳۸", "۳۹", "۴۰", "۴۱"],
+    "specifications": {
+      "جنس رویه": "مش و چرم مصنوعی",
+      "جنس کف": "لاستیک مقاوم",
+      "نوع بند": "بندی",
+      "کاربرد": "ورزشی و روزمره"
+    },
+    "isBestSeller": true,
+    "isNew": true,
+    "isOnSale": false,
+    "stock": 18,
+    "rating": 4.9
+  },
+  {
+    "id": "5",
+    "name": "کیف دستی چرمی",
+    "description": "کیف دستی چرم طبیعی با طراحی مینیمال. جادار و مناسب استفاده روزانه.",
+    "price": 950000,
+    "originalPrice": 1100000,
+    "discount": 14,
+    "brandId": "brand-1",
+    "categoryId": "cat-4",
+    "images": ["/images/products/5.jpg", "/images/products/5-2.jpg"],
+    "colors": [
+      { "name": "قهوه‌ای", "hex": "#92400E" },
+      { "name": "مشکی", "hex": "#1F2937" },
+      { "name": "صورتی", "hex": "#F472B6" }
+    ],
+    "sizes": ["یک سایز"],
+    "specifications": {
+      "جنس": "چرم طبیعی",
+      "ابعاد": "۳۰ × ۲۵ × ۱۰ سانتی‌متر",
+      "بند": "قابل تنظیم",
+      "جیب داخلی": "۲ عدد"
+    },
+    "isBestSeller": false,
+    "isNew": true,
+    "isOnSale": true,
+    "stock": 12,
+    "rating": 4.7
+  },
+  {
+    "id": "6",
+    "name": "شلوار جین مردانه",
+    "description": "شلوار جین اسلیم فیت با پارچه کشسان. راحتی و استایل در یک محصول.",
+    "price": 520000,
+    "brandId": "brand-5",
+    "categoryId": "cat-2",
+    "images": ["/images/products/6.jpg"],
+    "colors": [
+      { "name": "آبی تیره", "hex": "#1E3A8A" },
+      { "name": "مشکی", "hex": "#1F2937" }
+    ],
+    "sizes": ["۳۰", "۳۲", "۳۴", "۳۶", "۳۸"],
+    "specifications": {
+      "جنس": "جین با ۲٪ الاستین",
+      "فیت": "اسلیم",
+      "طول": "تمام",
+      "نحوه شستشو": "ماشین لباسشویی"
+    },
+    "isBestSeller": true,
+    "isNew": false,
+    "isOnSale": false,
+    "stock": 30,
+    "rating": 4.4
+  },
+  {
+    "id": "7",
+    "name": "لباس مجلسی بچگانه",
+    "description": "لباس مجلسی دخترانه با تور و گل‌های دست‌دوز. مناسب جشن تولد و مهمانی.",
+    "price": 420000,
+    "originalPrice": 550000,
+    "discount": 24,
+    "brandId": "brand-4",
+    "categoryId": "cat-5",
+    "images": ["/images/products/7.jpg", "/images/products/7-2.jpg"],
+    "colors": [
+      { "name": "صورتی", "hex": "#F9A8D4" },
+      { "name": "آبی پاستلی", "hex": "#BFDBFE" },
+      { "name": "سفید", "hex": "#FFFFFF" }
+    ],
+    "sizes": ["۴ سال", "۶ سال", "۸ سال", "۱۰ سال"],
+    "specifications": {
+      "جنس": "پلی‌استر و تور",
+      "طول": "کوتاه",
+      "بسته‌بندی": "جعبه هدیه",
+      "نحوه شستشو": "شستشوی دستی"
+    },
+    "isBestSeller": false,
+    "isNew": true,
+    "isOnSale": true,
+    "stock": 20,
+    "rating": 4.8
+  },
+  {
+    "id": "8",
+    "name": "مانتو زنانه",
+    "description": "مانتو بلند با پارچه کرپ و برش A-line. شیک و مناسب محیط کار و مهمانی.",
+    "price": 780000,
+    "brandId": "brand-2",
+    "categoryId": "cat-1",
+    "images": ["/images/products/8.jpg", "/images/products/8-2.jpg", "/images/products/8-3.jpg"],
+    "colors": [
+      { "name": "سرمه‌ای", "hex": "#1E3A5F" },
+      { "name": "بژ", "hex": "#D4C4A8" },
+      { "name": "مشکی", "hex": "#1F2937" }
+    ],
+    "sizes": ["S", "M", "L", "XL"],
+    "specifications": {
+      "جنس": "کرپ",
+      "طول": "بلند",
+      "یقه": "ایستاده",
+      "آستین": "بلند",
+      "نحوه شستشو": "خشک‌شویی"
+    },
+    "isBestSeller": true,
+    "isNew": false,
+    "isOnSale": false,
+    "stock": 14,
+    "rating": 4.6
+  },
+  {
+    "id": "9",
+    "name": "کفش رسمی مردانه",
+    "description": "کفش چرم طبیعی با طراحی کلاسیک. مناسب محیط کار و مراسم رسمی.",
+    "price": 1450000,
+    "originalPrice": 1800000,
+    "discount": 19,
+    "brandId": "brand-3",
+    "categoryId": "cat-3",
+    "images": ["/images/products/9.jpg"],
+    "colors": [
+      { "name": "مشکی", "hex": "#1F2937" },
+      { "name": "قهوه‌ای", "hex": "#78350F" }
+    ],
+    "sizes": ["۴۰", "۴۱", "۴۲", "۴۳", "۴۴"],
+    "specifications": {
+      "جنس": "چرم طبیعی",
+      "نوع": "رسمی",
+      "کف": "لاستیک",
+      "بند": "بندی"
+    },
+    "isBestSeller": false,
+    "isNew": false,
+    "isOnSale": true,
+    "stock": 10,
+    "rating": 4.7
+  },
+  {
+    "id": "10",
+    "name": "ست ساعت و دستبند",
+    "description": "ست اکسسوری شامل ساعت مچی و دستبند هماهنگ. هدیه‌ای ایده‌آل.",
+    "price": 680000,
+    "brandId": "brand-5",
+    "categoryId": "cat-4",
+    "images": ["/images/products/10.jpg", "/images/products/10-2.jpg"],
+    "colors": [
+      { "name": "نقره‌ای", "hex": "#C0C0C0" },
+      { "name": "رزگلد", "hex": "#B76E79" }
+    ],
+    "sizes": ["یک سایز"],
+    "specifications": {
+      "جنس": "استیل ضد زنگ",
+      "ضد آب": "۳ ATM",
+      "گارانتی": "۱۲ ماه",
+      "بسته‌بندی": "جعبه هدیه"
+    },
+    "isBestSeller": false,
+    "isNew": true,
+    "isOnSale": false,
+    "stock": 25,
+    "rating": 4.5
+  },
+  {
+    "id": "11",
+    "name": "بلوز یقه گرد زنانه",
+    "description": "بلوز نخی سبک با یقه گرد و آستین سه‌ربازو. راحت و شیک برای فصل گرم.",
+    "price": 320000,
+    "originalPrice": 400000,
+    "discount": 20,
+    "brandId": "brand-1",
+    "categoryId": "cat-1",
+    "images": ["/images/products/11.jpg"],
+    "colors": [
+      { "name": "صورتی", "hex": "#F472B6" },
+      { "name": "آبی پاستلی", "hex": "#93C5FD" },
+      { "name": "سفید", "hex": "#FFFFFF" }
+    ],
+    "sizes": ["S", "M", "L", "XL"],
+    "specifications": {
+      "جنس": "نخ ۱۰۰٪",
+      "یقه": "گرد",
+      "آستین": "سه‌ربازو",
+      "نحوه شستشو": "ماشین لباسشویی"
+    },
+    "isBestSeller": false,
+    "isNew": true,
+    "isOnSale": true,
+    "stock": 35,
+    "rating": 4.3
+  },
+  {
+    "id": "12",
+    "name": "پالتو مردانه",
+    "description": "پالتو پشمی گرم و شیک برای فصل سرد. برش کلاسیک و دوخت درجه یک.",
+    "price": 2100000,
+    "brandId": "brand-5",
+    "categoryId": "cat-2",
+    "images": ["/images/products/12.jpg", "/images/products/12-2.jpg"],
+    "colors": [
+      { "name": "مشکی", "hex": "#1F2937" },
+      { "name": "خاکستری", "hex": "#6B7280" },
+      { "name": "سرمه‌ای", "hex": "#1E3A5F" }
+    ],
+    "sizes": ["M", "L", "XL", "XXL"],
+    "specifications": {
+      "جنس": "پشم و پلی‌استر",
+      "طول": "زانو",
+      "یقه": "ایستاده",
+      "آستین": "بلند",
+      "نحوه شستشو": "خشک‌شویی"
+    },
+    "isBestSeller": true,
+    "isNew": true,
+    "isOnSale": false,
+    "stock": 8,
+    "rating": 4.9
+  }
+]

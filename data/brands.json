@@ -1,0 +1,32 @@
+[
+  {
+    "id": "brand-1",
+    "name": "رز گلد",
+    "slug": "rose-gold",
+    "logo": "/images/brands/rose-gold.svg"
+  },
+  {
+    "id": "brand-2",
+    "name": "آبی پاستلی",
+    "slug": "pastel-blue",
+    "logo": "/images/brands/pastel-blue.svg"
+  },
+  {
+    "id": "brand-3",
+    "name": "نیلا",
+    "slug": "nila",
+    "logo": "/images/brands/nila.svg"
+  },
+  {
+    "id": "brand-4",
+    "name": "گلستان",
+    "slug": "golstan",
+    "logo": "/images/brands/golstan.svg"
+  },
+  {
+    "id": "brand-5",
+    "name": "مهرنو",
+    "slug": "mehrno",
+    "logo": "/images/brands/mehrno.svg"
+  }
+]

@@ -1,65 +1,113 @@
-import Image from "next/image";
+import { getProducts, getBanners } from "@/lib/data";
+import BannerSlider from "@/components/home/BannerSlider";
+import AdBanners from "@/components/home/AdBanners";
+import ProductSection from "@/components/home/ProductSection";
+import Button from "@/components/ui/Button";
+import { Sparkles, Truck, Shield, Headphones } from "lucide-react";
 
 export default function Home() {
+  const products = getProducts();
+  const banners = getBanners();
+  const heroBanners = banners.filter((b) => b.type === "hero");
+  const adBanners = banners.filter((b) => b.type === "ad");
+
+  const bestSellers = products.filter((p) => p.isBestSeller).slice(0, 4);
+  const newest = products.filter((p) => p.isNew).slice(0, 4);
+  const onSale = products.filter((p) => p.isOnSale).slice(0, 4);
+
+  const features = [
+    {
+      icon: Truck,
+      title: "ارسال سریع",
+      desc: "ارسال رایگان برای سفارش‌های بالای ۵۰۰ هزار تومان",
+    },
+    {
+      icon: Shield,
+      title: "ضمانت اصالت",
+      desc: "تمامی محصولات با گارانتی اصالت کالا",
+    },
+    {
+      icon: Headphones,
+      title: "پشتیبانی ۲۴/۷",
+      desc: "پاسخگویی در تمام ساعات شبانه‌روز",
+    },
+    {
+      icon: Sparkles,
+      title: "کیفیت برتر",
+      desc: "انتخاب بهترین برندها و مواد اولیه",
+    },
+  ];
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+    <>
+      <BannerSlider banners={heroBanners} />
+
+      <AdBanners banners={adBanners} />
+
+      <section className="mx-auto max-w-7xl px-4 py-10 lg:px-8">
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+          {features.map((feature) => (
+            <div
+              key={feature.title}
+              className="gradient-card group rounded-3xl border border-white/80 p-5 text-center transition-all hover:-translate-y-1 hover:shadow-lg hover:shadow-pink-100/50"
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+              <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-pink-100 to-blue-100 transition-transform group-hover:scale-110">
+                <feature.icon className="h-6 w-6 text-pink-500" />
+              </div>
+              <h3 className="text-sm font-semibold text-gray-800">
+                {feature.title}
+              </h3>
+              <p className="mt-1 text-xs text-gray-500">{feature.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <ProductSection
+        title="پرفروش‌ترین‌ها"
+        subtitle="محبوب‌ترین محصولات میان مشتریان ما"
+        products={bestSellers}
+        viewAllHref="/shop?bestSeller=true"
+        accent="pink"
+      />
+
+      <div className="relative overflow-hidden py-4">
+        <div className="light-orb top-0 left-1/4 h-40 w-40 bg-pink-200/30" />
+        <div className="mx-auto max-w-7xl px-4 text-center lg:px-8">
+          <div className="gradient-primary relative overflow-hidden rounded-3xl px-8 py-12 shadow-2xl shadow-pink-200/40">
+            <div className="absolute inset-0 shimmer opacity-30" />
+            <h2 className="relative text-2xl font-bold text-white md:text-3xl">
+              تخفیف ویژه آخر هفته
+            </h2>
+            <p className="relative mt-2 text-pink-100">
+              تا ۴۰٪ تخفیف روی محصولات منتخب — فقط تا پایان هفته
+            </p>
+            <Button
+              href="/shop?onSale=true"
+              variant="secondary"
+              className="relative mt-6 bg-white text-pink-600 hover:bg-pink-50"
             >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+              مشاهده تخفیف‌ها
+            </Button>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+      </div>
+
+      <ProductSection
+        title="جدیدترین محصولات"
+        subtitle="تازه‌ترین استایل‌ها و مدل‌های فصل"
+        products={newest}
+        viewAllHref="/shop?isNew=true"
+        accent="blue"
+      />
+
+      <ProductSection
+        title="تخفیف‌های ویژه"
+        subtitle="فرصت‌های طلایی برای خرید با قیمت استثنایی"
+        products={onSale}
+        viewAllHref="/shop?onSale=true"
+        accent="pink"
+      />
+    </>
   );
 }
