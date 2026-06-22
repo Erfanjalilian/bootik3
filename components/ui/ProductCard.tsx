@@ -14,7 +14,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   return (
     <div>
       <Link href={`/products/${product.id}`} className="group block">
-        <article className="gradient-card glow-pink overflow-hidden rounded-3xl border border-white/80">
+        <article className="gradient-card glow-pink overflow-hidden rounded-3xl border border-pink-200/70">
           <div className="relative aspect-[3/4] overflow-hidden">
             <ProductImage
               src={product.images[0]}
@@ -33,7 +33,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             )}
 
             <div className="absolute bottom-3 left-3 right-3 hidden opacity-0 group-hover:opacity-100 sm:block">
-              <span className="flex items-center justify-center gap-2 rounded-2xl bg-white/90 py-2.5 text-sm font-medium text-pink-600 backdrop-blur-sm">
+              <span className="flex items-center justify-center gap-2 rounded-2xl bg-pink-50/95 py-2.5 text-sm font-medium text-pink-600 backdrop-blur-sm">
                 <ShoppingBag className="h-4 w-4" />
                 مشاهده محصول
               </span>

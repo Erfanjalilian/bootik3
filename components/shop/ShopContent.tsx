@@ -78,7 +78,7 @@ export default function ShopContent({
             placeholder="جستجوی محصول..."
             value={filters.search}
             onChange={(e) => setFilters({ ...filters, search: e.target.value })}
-            className="w-full rounded-2xl border border-pink-100 bg-white py-3 pr-12 pl-4 text-sm outline-none focus:border-pink-300 focus:ring-4 focus:ring-pink-50"
+            className="w-full rounded-2xl border border-pink-100 bg-pink-50 py-3 pr-12 pl-4 text-sm outline-none focus:border-pink-300 focus:ring-4 focus:ring-pink-100"
           />
         </div>
 
@@ -91,7 +91,7 @@ export default function ShopContent({
             فیلتر محصولات
           </button>
 
-          <div className="hidden items-center gap-1 rounded-2xl border border-pink-100 bg-white p-1 sm:flex">
+          <div className="hidden items-center gap-1 rounded-2xl border border-pink-100 bg-pink-50 p-1 sm:flex">
             <button
               onClick={() => setFilters({ ...filters, viewMode: "grid" })}
               className={`rounded-xl p-2 ${
@@ -160,7 +160,7 @@ export default function ShopContent({
                 <div key={product.id}>
                   <Link
                     href={`/products/${product.id}`}
-                    className="group flex gap-4 rounded-3xl border border-white/80 bg-white/80 p-4 sm:gap-6"
+                    className="group flex gap-4 rounded-3xl border border-pink-200/70 bg-pink-50/90 p-4 sm:gap-6"
                   >
                     <div className="relative h-32 w-28 shrink-0 overflow-hidden rounded-2xl sm:h-40 sm:w-36">
                       <ProductImage src={product.images[0]} alt={product.name} />

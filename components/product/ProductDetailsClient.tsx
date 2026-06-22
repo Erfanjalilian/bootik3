@@ -63,7 +63,7 @@ export default function ProductDetailsClient({
 
       <div className="grid gap-10 lg:grid-cols-2">
         <div className="space-y-4">
-          <div className="relative aspect-square overflow-hidden rounded-3xl bg-white shadow-xl shadow-pink-100/50">
+          <div className="relative aspect-square overflow-hidden rounded-3xl bg-pink-50 shadow-xl shadow-pink-100/50">
             <ProductImage
               src={product.images[selectedImage]}
               alt={product.name}
@@ -175,7 +175,7 @@ export default function ProductDetailsClient({
                     className={`min-w-[48px] rounded-xl px-4 py-2 text-sm font-medium ${
                       selectedSize === size
                         ? "gradient-primary text-white shadow-lg"
-                        : "border border-pink-100 bg-white text-gray-600 hover:border-pink-300"
+                        : "border border-pink-100 bg-pink-50 text-gray-600 hover:border-pink-300"
                     }`}
                   >
                     {size}
@@ -189,7 +189,7 @@ export default function ProductDetailsClient({
             <label className="mb-3 block text-sm font-medium text-gray-700">
               تعداد
             </label>
-            <div className="inline-flex items-center gap-4 rounded-2xl border border-pink-100 bg-white px-4 py-2">
+            <div className="inline-flex items-center gap-4 rounded-2xl border border-pink-100 bg-pink-50 px-4 py-2">
               <button
                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
                 className="rounded-lg p-1 text-gray-500 hover:bg-pink-50 hover:text-pink-600"
@@ -238,7 +238,7 @@ export default function ProductDetailsClient({
             </Button>
           </div>
 
-          <div className="gradient-card rounded-3xl border border-white/80 p-6">
+          <div className="gradient-card rounded-3xl border border-pink-200/70 p-6">
             <h3 className="mb-4 font-semibold text-gray-800">مشخصات محصول</h3>
             <dl className="space-y-3">
               {Object.entries(product.specifications).map(([key, value]) => (

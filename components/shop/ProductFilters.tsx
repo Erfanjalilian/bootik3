@@ -68,7 +68,7 @@ export default function ProductFilters({
         <select
           value={filters.categoryId}
           onChange={(e) => update({ categoryId: e.target.value })}
-          className="w-full rounded-xl border border-pink-100 bg-white px-4 py-2.5 text-sm outline-none focus:border-pink-300 focus:ring-2 focus:ring-pink-100"
+          className="w-full rounded-xl border border-pink-100 bg-pink-50 px-4 py-2.5 text-sm outline-none focus:border-pink-300 focus:ring-2 focus:ring-pink-100"
         >
           <option value="">همه دسته‌ها</option>
           {categories.map((cat) => (
@@ -86,7 +86,7 @@ export default function ProductFilters({
         <select
           value={filters.brandId}
           onChange={(e) => update({ brandId: e.target.value })}
-          className="w-full rounded-xl border border-pink-100 bg-white px-4 py-2.5 text-sm outline-none focus:border-pink-300 focus:ring-2 focus:ring-pink-100"
+          className="w-full rounded-xl border border-pink-100 bg-pink-50 px-4 py-2.5 text-sm outline-none focus:border-pink-300 focus:ring-2 focus:ring-pink-100"
         >
           <option value="">همه برندها</option>
           {brands.map((brand) => (
@@ -107,14 +107,14 @@ export default function ProductFilters({
             placeholder="حداقل"
             value={filters.minPrice}
             onChange={(e) => update({ minPrice: e.target.value })}
-            className="w-full rounded-xl border border-pink-100 bg-white px-4 py-2.5 text-sm outline-none focus:border-pink-300 focus:ring-2 focus:ring-pink-100"
+            className="w-full rounded-xl border border-pink-100 bg-pink-50 px-4 py-2.5 text-sm outline-none focus:border-pink-300 focus:ring-2 focus:ring-pink-100"
           />
           <input
             type="number"
             placeholder="حداکثر"
             value={filters.maxPrice}
             onChange={(e) => update({ maxPrice: e.target.value })}
-            className="w-full rounded-xl border border-pink-100 bg-white px-4 py-2.5 text-sm outline-none focus:border-pink-300 focus:ring-2 focus:ring-pink-100"
+            className="w-full rounded-xl border border-pink-100 bg-pink-50 px-4 py-2.5 text-sm outline-none focus:border-pink-300 focus:ring-2 focus:ring-pink-100"
           />
         </div>
       </div>
@@ -137,7 +137,7 @@ export default function ProductFilters({
           onClick={onClose}
           className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm lg:hidden"
         />
-        <aside className="fixed top-0 right-0 z-50 h-full w-[85%] max-w-sm overflow-y-auto bg-white p-6 shadow-2xl lg:hidden">
+        <aside className="fixed top-0 right-0 z-50 h-full w-[85%] max-w-sm overflow-y-auto bg-pink-50 p-6 shadow-2xl lg:hidden">
           {content}
         </aside>
       </>
@@ -145,7 +145,7 @@ export default function ProductFilters({
   }
 
   return (
-    <aside className="gradient-card glow-blue hidden rounded-3xl border border-white/80 p-6 lg:block">
+    <aside className="gradient-card glow-blue hidden rounded-3xl border border-pink-200/70 p-6 lg:block">
       {content}
     </aside>
   );

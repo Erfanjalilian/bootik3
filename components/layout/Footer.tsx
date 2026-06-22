@@ -10,7 +10,7 @@ export default function Footer() {
       <div className="light-orb -top-20 right-0 h-60 w-60 bg-pink-300/30" />
       <div className="light-orb -bottom-20 left-0 h-60 w-60 bg-blue-300/30" />
 
-      <div className="relative border-t border-white/60 bg-gradient-to-b from-white/80 to-pink-50/80 backdrop-blur-sm">
+      <div className="relative border-t border-pink-200/60 bg-gradient-to-b from-pink-100/90 to-pink-200/70 backdrop-blur-sm">
         <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 md:grid-cols-2 lg:grid-cols-4 lg:px-8">
           <div>
             <h3 className="mb-4 text-lg font-bold gradient-text">
@@ -100,7 +100,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-white/60 py-6 text-center text-sm text-gray-400">
+        <div className="border-t border-pink-200/60 py-6 text-center text-sm text-gray-400">
           © {new Date().getFullYear()} {settings.siteName}. تمامی حقوق محفوظ است.
         </div>
       </div>

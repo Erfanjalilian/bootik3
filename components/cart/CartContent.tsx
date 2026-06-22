@@ -39,7 +39,7 @@ export default function CartContent() {
           {items.map((item) => (
             <div
               key={`${item.productId}-${item.color}-${item.size}`}
-              className="flex gap-4 rounded-3xl border border-white/80 bg-white/80 p-4 shadow-sm sm:gap-6 sm:p-6"
+              className="flex gap-4 rounded-3xl border border-pink-200/70 bg-pink-50/90 p-4 shadow-sm sm:gap-6 sm:p-6"
             >
               <Link
                 href={`/products/${item.productId}`}
@@ -111,7 +111,7 @@ export default function CartContent() {
           ))}
         </div>
 
-        <div className="gradient-card glow-pink h-fit rounded-3xl border border-white/80 p-6">
+        <div className="gradient-card glow-pink h-fit rounded-3xl border border-pink-200/70 p-6">
           <h2 className="mb-6 text-lg font-bold text-gray-800">خلاصه سفارش</h2>
           <div className="space-y-3 text-sm">
             <div className="flex justify-between text-gray-600">

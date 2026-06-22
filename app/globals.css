@@ -8,8 +8,8 @@
   --color-secondary-light: #bfdbfe;
   --color-secondary-dark: #60a5fa;
   --color-accent: #ffffff;
-  --color-surface: #fdf2f8;
-  --color-surface-alt: #eff6ff;
+  --color-surface: #fce7f3;
+  --color-surface-alt: #fbcfe8;
   --color-text: #1f2937;
   --color-text-muted: #6b7280;
   --font-vazir: var(--font-vazirmatn);
@@ -33,7 +33,8 @@ html {
 
 body {
   font-family: var(--font-vazirmatn), system-ui, sans-serif;
-  background: linear-gradient(135deg, #fdf2f8 0%, #ffffff 40%, #eff6ff 100%);
+  background: linear-gradient(135deg, #fce7f3 0%, #fdf2f8 50%, #fbcfe8 100%);
+  background-color: #fdf2f8;
   color: var(--color-text);
   min-height: 100vh;
 }
@@ -57,17 +58,17 @@ body {
 .gradient-card {
   background: linear-gradient(
     145deg,
-    rgba(255, 255, 255, 0.95) 0%,
-    rgba(253, 242, 248, 0.9) 50%,
-    rgba(239, 246, 255, 0.85) 100%
+    rgba(252, 231, 243, 0.95) 0%,
+    rgba(253, 242, 248, 0.92) 50%,
+    rgba(251, 207, 232, 0.88) 100%
   );
 }
 
 .glass {
-  background: rgba(255, 255, 255, 0.75);
+  background: rgba(253, 242, 248, 0.9);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(249, 168, 212, 0.35);
 }
 
 .glow-pink {

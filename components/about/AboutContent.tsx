@@ -34,7 +34,7 @@ export default function AboutContent({ settings }: AboutContentProps) {
           {about.stats.map((stat) => (
             <div
               key={stat.label}
-              className="gradient-card rounded-3xl border border-white/80 p-8 text-center"
+              className="gradient-card rounded-3xl border border-pink-200/70 p-8 text-center"
             >
               <p className="text-4xl font-bold gradient-text">{stat.value}</p>
               <p className="mt-2 text-sm text-gray-500">{stat.label}</p>
@@ -46,7 +46,7 @@ export default function AboutContent({ settings }: AboutContentProps) {
       <section className="relative py-20">
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-pink-50/50 to-blue-50/50" />
         <div className="relative mx-auto grid max-w-7xl gap-8 px-4 md:grid-cols-2 lg:px-8">
-          <div className="gradient-card glow-pink rounded-3xl border border-white/80 p-10">
+          <div className="gradient-card glow-pink rounded-3xl border border-pink-200/70 p-10">
             <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-pink-400 to-rose-400 text-white">
               <Target className="h-7 w-7" />
             </div>
@@ -54,7 +54,7 @@ export default function AboutContent({ settings }: AboutContentProps) {
             <p className="leading-relaxed text-gray-600">{about.mission}</p>
           </div>
 
-          <div className="gradient-card glow-blue rounded-3xl border border-white/80 p-10">
+          <div className="gradient-card glow-blue rounded-3xl border border-pink-200/70 p-10">
             <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-400 to-blue-500 text-white">
               <Eye className="h-7 w-7" />
             </div>
@@ -72,7 +72,7 @@ export default function AboutContent({ settings }: AboutContentProps) {
           {about.values.map((value) => (
             <div
               key={value.title}
-              className="rounded-3xl border border-white/80 bg-white/70 p-8 text-center backdrop-blur-sm"
+              className="rounded-3xl border border-pink-200/70 bg-pink-50/80 p-8 text-center backdrop-blur-sm"
             >
               <span className="text-4xl">{value.icon}</span>
               <h3 className="mt-4 text-lg font-semibold text-gray-800">

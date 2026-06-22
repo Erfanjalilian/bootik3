@@ -61,7 +61,7 @@ export default function ContactContent({ settings }: ContactContentProps) {
           {contactItems.map((item) => (
             <div
               key={item.title}
-              className="gradient-card rounded-3xl border border-white/80 p-8"
+              className="gradient-card rounded-3xl border border-pink-200/70 p-8"
             >
               <div
                 className={`mb-5 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${item.color} text-white shadow-lg`}

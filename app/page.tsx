@@ -49,9 +49,9 @@ export default function Home() {
           {features.map((feature) => (
             <div
               key={feature.title}
-              className="gradient-card rounded-3xl border border-white/80 p-5 text-center"
+              className="gradient-card rounded-3xl border border-pink-200/70 p-5 text-center"
             >
-              <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-pink-100 to-blue-100">
+              <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-pink-100 to-pink-200">
                 <feature.icon className="h-6 w-6 text-pink-500" />
               </div>
               <h3 className="text-sm font-semibold text-gray-800">
@@ -85,7 +85,7 @@ export default function Home() {
             <Button
               href="/shop?onSale=true"
               variant="secondary"
-              className="relative mt-6 bg-white text-pink-600 hover:bg-pink-50"
+              className="relative mt-6 bg-pink-50 text-pink-600 hover:bg-pink-100"
             >
               مشاهده تخفیف‌ها
             </Button>

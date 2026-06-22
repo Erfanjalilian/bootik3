@@ -28,7 +28,7 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50">
-      <div className="glass border-b border-white/50">
+      <div className="glass border-b border-pink-200/50">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 lg:px-8">
           <Link href="/" className="group flex items-center gap-2">
             <div className="flex h-10 w-10 items-center justify-center rounded-2xl gradient-primary shadow-lg shadow-pink-200/50">
@@ -93,7 +93,7 @@ export default function Header() {
       </div>
 
       {mobileOpen && (
-        <div className="glass border-b border-white/50 md:hidden">
+        <div className="glass border-b border-pink-200/50 md:hidden">
           <nav className="flex flex-col gap-1 px-4 py-4">
             {navLinks.map((link) => (
               <Link
