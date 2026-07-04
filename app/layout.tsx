@@ -18,6 +18,9 @@ export const metadata: Metadata = {
     template: `%s | ${settings.siteName}`,
   },
   description: settings.tagline,
+  other: {
+    enamad: "69798633",
+  },
 };
 
 export default function RootLayout({
