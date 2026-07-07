@@ -1,14 +1,41 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Phone, Sparkles } from "lucide-react";
 import Button from "@/components/ui/Button";
 
 export default function LoginForm() {
+  const router = useRouter();
   const [phone, setPhone] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
+    setError(null);
+    setMessage(null);
+
+    try {
+      const response = await fetch("/api/auth/request-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone }),
+      });
+      const payload = await response.json();
+      if (!response.ok || !payload.ok) {
+        setError(payload.message || "درخواست کد تأیید با خطا مواجه شد.");
+        return;
+      }
+      setMessage(payload.message || "کد تأیید ارسال شد.");
+      router.push(`/verify?phone=${encodeURIComponent(phone)}`);
+    } catch {
+      setError("درخواست به سرور با خطا مواجه شد.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -51,8 +78,20 @@ export default function LoginForm() {
               </div>
             </div>
 
-            <Button type="submit" size="lg" className="w-full">
-              دریافت کد تأیید
+            {error ? (
+              <p className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+                {error}
+              </p>
+            ) : null}
+
+            {message ? (
+              <p className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+                {message}
+              </p>
+            ) : null}
+
+            <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>
+              {isSubmitting ? "در حال ارسال..." : "دریافت کد تأیید"}
             </Button>
           </form>
 

@@ -1,0 +1,29 @@
+{
+  "989029656301": {
+    "phone": "989029656301",
+    "otpHash": "5687ec6d6dcde6445c4db05b8c23d5ca2269b6b73bf798231456c2344fcc532e",
+    "otpSalt": "7cc908c9aed42c3e6c9724aeecff99c8",
+    "expiresAt": 1783424447703,
+    "used": false,
+    "attempts": 0,
+    "lastAttemptAt": 1783424327703
+  },
+  "989121234567": {
+    "phone": "989121234567",
+    "otpHash": "9430c7fea0a12c53b5aad7330de9fe9f6f5d853d1ece7c37b68f935fd8210d47",
+    "otpSalt": "2fd24c814a71606f692101dde4332b9e",
+    "expiresAt": 1783425178603,
+    "used": false,
+    "attempts": 0,
+    "lastAttemptAt": 1783425058603
+  },
+  "989213570389": {
+    "phone": "989213570389",
+    "otpHash": "fe697a09793ad0ea602b5a39a5f4b24f9c0eceb60d1a612793091a52ef59bf4e",
+    "otpSalt": "baaeecccbf160ef4fea52dde34d5e854",
+    "expiresAt": 1783425705573,
+    "used": false,
+    "attempts": 0,
+    "lastAttemptAt": 1783425585573
+  }
+}
