@@ -1,6 +1,5 @@
 import { getProducts, getBanners } from "@/lib/data";
-import BannerSlider from "@/components/home/BannerSlider";
-import AdBanners from "@/components/home/AdBanners";
+import { BannerSection } from "@/components/home/BannerSection";
 import ProductSection from "@/components/home/ProductSection";
 import Button from "@/components/ui/Button";
 import { Sparkles, Truck, Shield, Headphones } from "lucide-react";
@@ -40,9 +39,7 @@ export default function Home() {
 
   return (
     <>
-      <BannerSlider banners={heroBanners} />
-
-      <AdBanners banners={adBanners} />
+      <BannerSection initialHeroBanners={heroBanners} initialAdBanners={adBanners} />
 
       <section className="mx-auto max-w-7xl px-4 py-10 lg:px-8">
         <div className="grid grid-cols-2 gap-4 md:grid-cols-4">

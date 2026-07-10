@@ -1,13 +1,5 @@
 [
   {
-    "id": "banner-1",
-    "title": "کلکسیون بهاره ۱۴۰۵",
-    "subtitle": "تا ۴۰٪ تخفیف روی محصولات منتخب",
-    "image": "/images/banners/hero-1.jpg",
-    "link": "/shop",
-    "type": "hero"
-  },
-  {
     "id": "banner-2",
     "title": "استایل مینیمال",
     "subtitle": "لباس‌های شیک و راحت برای هر روز",
@@ -22,14 +14,6 @@
     "image": "/images/banners/hero-3.jpg",
     "link": "/shop?category=cat-3",
     "type": "hero"
-  },
-  {
-    "id": "ad-1",
-    "title": "ارسال رایگان",
-    "subtitle": "برای سفارش‌های بالای ۵۰۰ هزار تومان",
-    "image": "/images/banners/ad-1.jpg",
-    "link": "/shop",
-    "type": "ad"
   },
   {
     "id": "ad-2",
