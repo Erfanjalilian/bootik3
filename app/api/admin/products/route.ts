@@ -159,11 +159,23 @@ export async function PUT(request: Request) {
     const brandId = await getOrCreateBrandId(body);
 
     const updatedProduct: Product = {
-      ...products[index],
-      ...body,
+      id: products[index].id,
+      name: body.name || products[index].name,
+      description: body.description || products[index].description,
+      price: typeof body.price === "number" ? body.price : products[index].price,
+      originalPrice: body.originalPrice || products[index].originalPrice,
+      discount: body.discount || products[index].discount,
       brandId,
+      categoryId: body.categoryId || products[index].categoryId,
+      images: Array.isArray(body.images) ? body.images : products[index].images || [],
+      colors: Array.isArray(body.colors) ? body.colors : products[index].colors || [],
+      sizes: Array.isArray(body.sizes) ? body.sizes : products[index].sizes || [],
       specifications: normalizeSpecifications(body.specifications || products[index].specifications),
-      id: products[index].id, // Keep original ID
+      isBestSeller: typeof body.isBestSeller === "boolean" ? body.isBestSeller : products[index].isBestSeller,
+      isNew: typeof body.isNew === "boolean" ? body.isNew : products[index].isNew,
+      isOnSale: typeof body.isOnSale === "boolean" ? body.isOnSale : products[index].isOnSale,
+      stock: typeof body.stock === "number" ? body.stock : products[index].stock,
+      rating: typeof body.rating === "number" ? body.rating : products[index].rating,
     };
 
     products[index] = updatedProduct;

@@ -154,18 +154,30 @@ export default function ProductsManagement() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      const imageArray = formData.images
+        .split('\n')
+        .map((img) => img.trim())
+        .filter((img) => img.length > 0);
+
       const payload = {
-        ...formData,
+        id: editingId || undefined,
+        name: formData.name.trim(),
+        description: formData.description.trim(),
         price: Number(formData.price),
         originalPrice: formData.originalPrice ? Number(formData.originalPrice) : undefined,
         discount: formData.discount ? Number(formData.discount) : undefined,
         stock: Number(formData.stock),
         rating: Number(formData.rating),
-        images: formData.images.split('\n').filter(Boolean),
-        sizes: formData.sizes,
-        colors: formData.colors,
-        specifications: parseSpecifications(formData.specifications),
+        brandId: formData.brandId,
         brandName: formData.brandName.trim() || undefined,
+        categoryId: formData.categoryId,
+        images: imageArray,
+        sizes: Array.isArray(formData.sizes) ? formData.sizes : [],
+        colors: Array.isArray(formData.colors) ? formData.colors : [],
+        specifications: parseSpecifications(formData.specifications),
+        isBestSeller: Boolean(formData.isBestSeller),
+        isNew: Boolean(formData.isNew),
+        isOnSale: Boolean(formData.isOnSale),
       };
 
       const method = editingId ? 'PUT' : 'POST';
@@ -175,7 +187,10 @@ export default function ProductsManagement() {
         body: JSON.stringify(payload),
       });
 
-      if (!response.ok) throw new Error('Failed to save product');
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to save product');
+      }
 
       setMessage({ type: 'success', text: editingId ? 'محصول با موفقیت ویرایش شد' : 'محصول با موفقیت اضافه شد' });
       setShowForm(false);
@@ -183,6 +198,7 @@ export default function ProductsManagement() {
       setFormData(createEmptyFormData());
       await fetchData();
     } catch (error) {
+      console.error('Error saving product:', error);
       setMessage({ type: 'error', text: 'خطا در ذخیره محصول' });
     }
   };

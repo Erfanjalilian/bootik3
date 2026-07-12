@@ -1,32 +1,38 @@
 [
   {
     "id": "cat-1",
-    "name": "لباس زنانه",
-    "slug": "women",
-    "icon": "👗"
+    "name": "همه ی محصولات",
+    "slug": "all",
+    "icon": "📦"
   },
   {
     "id": "cat-2",
-    "name": "لباس مردانه",
-    "slug": "men",
-    "icon": "👔"
+    "name": "پیژامه",
+    "slug": "pajamas",
+    "icon": "🛌"
   },
   {
     "id": "cat-3",
-    "name": "کفش",
-    "slug": "shoes",
-    "icon": "👟"
+    "name": "تیشرت",
+    "slug": "tshirt",
+    "icon": "👕"
   },
   {
     "id": "cat-4",
-    "name": "اکسسوری",
-    "slug": "accessories",
-    "icon": "👜"
+    "name": "کراپ",
+    "slug": "crop",
+    "icon": "👚"
   },
   {
     "id": "cat-5",
-    "name": "لباس بچگانه",
-    "slug": "kids",
-    "icon": "🧸"
+    "name": "ست کاپلی",
+    "slug": "set-kapli",
+    "icon": "🎀"
+  },
+  {
+    "id": "cat-6",
+    "name": "اکسسروی",
+    "slug": "accessories",
+    "icon": "✨"
   }
 ]
