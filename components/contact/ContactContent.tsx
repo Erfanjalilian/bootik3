@@ -1,6 +1,7 @@
+
 "use client";
 
-import { Phone, MapPin, Mail, Clock } from "lucide-react";
+import { Phone, Mail, Clock } from "lucide-react";
 import type { SiteSettings } from "@/lib/types";
 
 interface ContactContentProps {
@@ -20,12 +21,6 @@ export default function ContactContent({ settings }: ContactContentProps) {
       title: "تلفن ثابت",
       value: settings.landline,
       color: "from-blue-400 to-blue-500",
-    },
-    {
-      icon: MapPin,
-      title: "آدرس دفتر",
-      value: settings.address,
-      color: "from-purple-400 to-pink-400",
     },
     {
       icon: Mail,
@@ -51,6 +46,7 @@ export default function ContactContent({ settings }: ContactContentProps) {
           <h1 className="text-3xl font-bold gradient-text md:text-4xl">
             تماس با ما
           </h1>
+
           <p className="mx-auto mt-4 max-w-lg text-gray-500">
             ما همیشه آماده پاسخگویی به سوالات شما هستیم. از راه‌های زیر با ما
             در ارتباط باشید.
@@ -68,25 +64,19 @@ export default function ContactContent({ settings }: ContactContentProps) {
               >
                 <item.icon className="h-6 w-6" />
               </div>
+
               <h3 className="mb-2 text-lg font-semibold text-gray-800">
                 {item.title}
               </h3>
-              <p className="leading-relaxed text-gray-600">{item.value}</p>
+
+              <p className="leading-relaxed text-gray-600">
+                {item.value}
+              </p>
             </div>
           ))}
-        </div>
-
-        <div className="mt-14 overflow-hidden rounded-3xl shadow-2xl shadow-pink-200/30">
-          <div className="gradient-primary relative flex h-64 items-center justify-center md:h-80">
-            <div className="absolute inset-0 shimmer opacity-20" />
-            <div className="relative text-center text-white">
-              <MapPin className="mx-auto mb-4 h-12 w-12 opacity-80" />
-              <p className="text-lg font-semibold md:text-xl">{settings.address}</p>
-              <p className="mt-2 text-pink-100">به زودی نقشه اینجا قرار می‌گیرد</p>
-            </div>
-          </div>
         </div>
       </div>
     </div>
   );
 }
+
