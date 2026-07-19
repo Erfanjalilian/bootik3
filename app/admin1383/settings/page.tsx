@@ -19,8 +19,6 @@ export default function SettingsManagement() {
     aboutTitle: '',
     aboutSubtitle: '',
     aboutStory: '',
-    mission: '',
-    vision: '',
     instagramUrl: '',
     telegramUrl: '',
     whatsappUrl: '',
@@ -46,8 +44,6 @@ export default function SettingsManagement() {
         aboutTitle: data.about.title,
         aboutSubtitle: data.about.subtitle,
         aboutStory: data.about.story,
-        mission: data.about.mission,
-        vision: data.about.vision,
         instagramUrl: data.social.instagram,
         telegramUrl: data.social.telegram,
         whatsappUrl: data.social.whatsapp,
@@ -74,8 +70,6 @@ export default function SettingsManagement() {
           title: formData.aboutTitle,
           subtitle: formData.aboutSubtitle,
           story: formData.aboutStory,
-          mission: formData.mission,
-          vision: formData.vision,
           values: settings?.about.values || [],
           stats: settings?.about.stats || [],
         },
@@ -207,24 +201,6 @@ export default function SettingsManagement() {
                   onChange={(e) => setFormData({ ...formData, aboutStory: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 h-32"
                 />
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-gray-700 font-semibold mb-2">ماموریت</label>
-                  <textarea
-                    value={formData.mission}
-                    onChange={(e) => setFormData({ ...formData, mission: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 h-24"
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-700 font-semibold mb-2">چشم‌انداز</label>
-                  <textarea
-                    value={formData.vision}
-                    onChange={(e) => setFormData({ ...formData, vision: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 h-24"
-                  />
-                </div>
               </div>
             </div>
           </div>

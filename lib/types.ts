@@ -57,8 +57,6 @@ export interface SiteSettings {
     title: string;
     subtitle: string;
     story: string;
-    mission: string;
-    vision: string;
     values: { title: string; description: string; icon: string }[];
     stats: { label: string; value: string }[];
   };
