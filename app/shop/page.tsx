@@ -1,4 +1,5 @@
-import ShopContent from "@/components/shop/ShopContent";
+ export const dynamic = "force-dynamic";
+ import ShopContent from "@/components/shop/ShopContent";
 import { getProducts, getBrands, getCategories } from "@/lib/data";
 
 export const metadata = {
