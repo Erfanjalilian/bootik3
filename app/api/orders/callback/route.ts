@@ -74,20 +74,18 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     console.log("Status:", transaction.status);
     console.log("==================================================");
 
-    // TODO: Update order status in database/data store
-    // The orderId should be retrieved from stored order data using trackId
-    // Then update the order status to "completed" and save payment info
-    //
-    // Example:
-    // const order = getOrderByTrackId(trackId);
-    // if (order) {
-    //   updateOrderStatus(order.id, "completed", {
-    //     trackId: transaction.trackId,
-    //     refNumber: transaction.refNumber,
-    //     cardNumber: transaction.cardNumber,
-    //     amount: transaction.amount,
-    //   });
-    // }
+    // Update order status in database
+    const { getOrderByTrackId, updateOrderStatus } = await import("@/lib/orders/store");
+    const order = await getOrderByTrackId(trackId);
+    if (order) {
+      await updateOrderStatus(order.id, "paid", {
+        trackId: transaction.trackId,
+        refNumber: transaction.refNumber,
+      });
+      console.log(`Order ${order.id} updated to paid status`);
+    } else {
+      console.warn(`No order found for trackId ${trackId}`);
+    }
 
     // Redirect to success page with transaction details
     const successUrl = new URL(SUCCESS_PATH, process.env.APP_URL!);
