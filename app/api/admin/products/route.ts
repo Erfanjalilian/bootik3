@@ -3,6 +3,7 @@ import { promises as fs } from "fs";
 import path from "path";
 import type { Brand, Product } from "@/lib/types";
 import { getProducts } from "@/lib/data";
+import { revalidatePath } from "next/cache";
 
 const dataDir = path.join(process.cwd(), "data");
 const productsFile = path.join(dataDir, "products.json");
@@ -124,6 +125,11 @@ export async function POST(request: Request) {
     products.push(newProduct);
     await writeProducts(products);
 
+    revalidatePath("/shop");
+    revalidatePath("/");
+    revalidatePath("/products");
+    revalidatePath("/api/admin/products");
+
     return NextResponse.json(newProduct, { status: 201 });
   } catch (error) {
     console.error("Error creating product:", error);
@@ -160,17 +166,17 @@ export async function PUT(request: Request) {
 
     const updatedProduct: Product = {
       id: products[index].id,
-      name: body.name || products[index].name,
-      description: body.description || products[index].description,
+      name: body.name !== undefined ? body.name : products[index].name,
+      description: body.description !== undefined ? body.description : products[index].description,
       price: typeof body.price === "number" ? body.price : products[index].price,
-      originalPrice: body.originalPrice || products[index].originalPrice,
-      discount: body.discount || products[index].discount,
+      originalPrice: body.originalPrice !== undefined ? body.originalPrice : products[index].originalPrice,
+      discount: body.discount !== undefined ? body.discount : products[index].discount,
       brandId,
-      categoryId: body.categoryId || products[index].categoryId,
+      categoryId: body.categoryId !== undefined ? body.categoryId : products[index].categoryId,
       images: Array.isArray(body.images) ? body.images : products[index].images || [],
       colors: Array.isArray(body.colors) ? body.colors : products[index].colors || [],
       sizes: Array.isArray(body.sizes) ? body.sizes : products[index].sizes || [],
-      specifications: normalizeSpecifications(body.specifications || products[index].specifications),
+      specifications: normalizeSpecifications(body.specifications !== undefined ? body.specifications : products[index].specifications),
       isBestSeller: typeof body.isBestSeller === "boolean" ? body.isBestSeller : products[index].isBestSeller,
       isNew: typeof body.isNew === "boolean" ? body.isNew : products[index].isNew,
       isOnSale: typeof body.isOnSale === "boolean" ? body.isOnSale : products[index].isOnSale,
@@ -180,6 +186,11 @@ export async function PUT(request: Request) {
 
     products[index] = updatedProduct;
     await writeProducts(products);
+
+    revalidatePath("/shop");
+    revalidatePath("/");
+    revalidatePath("/products");
+    revalidatePath("/api/admin/products");
 
     return NextResponse.json(updatedProduct);
   } catch (error) {
@@ -214,6 +225,12 @@ export async function DELETE(request: Request) {
     }
 
     await writeProducts(filteredProducts);
+
+    revalidatePath("/shop");
+    revalidatePath("/");
+    revalidatePath("/products");
+    revalidatePath("/api/admin/products");
+
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Error deleting product:", error);
