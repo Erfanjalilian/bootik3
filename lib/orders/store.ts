@@ -26,6 +26,11 @@ const writeOrders = async (orders: Order[]) => {
   await fs.writeFile(ORDERS_FILE, JSON.stringify(orders, null, 2), "utf8");
 };
 
+export const getAllOrders = async (): Promise<Order[]> => {
+  const orders = await readOrders();
+  return orders.sort((a, b) => b.createdAt - a.createdAt);
+};
+
 export const createOrder = async (order: Omit<Order, "id" | "createdAt" | "status">): Promise<Order> => {
   const orders = await readOrders();
   const newOrder: Order = {
