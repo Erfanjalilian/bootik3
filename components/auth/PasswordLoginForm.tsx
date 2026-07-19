@@ -4,11 +4,13 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { User, Lock, LogIn } from "lucide-react";
 import Button from "@/components/ui/Button";
+import { useAuth } from "@/lib/auth/auth-context";
 
 export default function PasswordLoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get("redirectTo") || "/dashboard";
+  const { setUser } = useAuth();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -30,6 +32,7 @@ export default function PasswordLoginForm() {
         setError(payload.message || "ورود با خطا مواجه شد.");
         return;
       }
+      setUser(payload.user);
       router.replace(redirectTo);
     } catch {
       setError("درخواست به سرور با خطا مواجه شد.");

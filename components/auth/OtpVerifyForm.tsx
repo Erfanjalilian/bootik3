@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Sparkles, TimerReset } from "lucide-react";
 import Button from "@/components/ui/Button";
+import { useAuth } from "@/lib/auth/auth-context";
 
 const RESEND_SECONDS = 60;
 
@@ -12,6 +13,7 @@ export default function OtpVerifyForm() {
   const searchParams = useSearchParams();
   const phone = searchParams.get("phone") || "";
   const redirectTo = searchParams.get("redirectTo") || "/dashboard";
+  const { setUser } = useAuth();
   const [otp, setOtp] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isResending, setIsResending] = useState(false);
@@ -49,6 +51,7 @@ export default function OtpVerifyForm() {
         setError(payload.message || "تأیید کد با خطا مواجه شد.");
         return;
       }
+      setUser(payload.user);
       setMessage(payload.message || "ورود با موفقیت انجام شد.");
       router.replace(redirectTo);
     } catch {

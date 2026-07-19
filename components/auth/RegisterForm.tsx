@@ -4,11 +4,13 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { User, Lock, UserPlus } from "lucide-react";
 import Button from "@/components/ui/Button";
+import { useAuth } from "@/lib/auth/auth-context";
 
 export default function RegisterForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get("redirectTo") || "/dashboard";
+  const { setUser } = useAuth();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -39,6 +41,7 @@ export default function RegisterForm() {
         setError(payload.message || "ثبت‌نام با خطا مواجه شد.");
         return;
       }
+      setUser(payload.user);
       setMessage(payload.message || "ثبت‌نام با موفقیت انجام شد.");
       router.replace(redirectTo);
     } catch {

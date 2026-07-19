@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   ShoppingBag,
   User,
@@ -9,9 +9,11 @@ import {
   X,
   Sparkles,
   Phone,
+  LogOut,
 } from "lucide-react";
 import { useState } from "react";
 import { useCartStore } from "@/lib/store/cart-store";
+import { useAuth } from "@/lib/auth/auth-context";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
@@ -23,8 +25,15 @@ const navLinks = [
 
 export default function Header() {
   const pathname = usePathname();
+  const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
   const totalItems = useCartStore((s) => s.totalItems());
+  const { user, logout } = useAuth();
+
+  const handleLogout = async () => {
+    await logout();
+    router.push("/");
+  };
 
   return (
     <header className="sticky top-0 z-50">
@@ -58,13 +67,33 @@ export default function Header() {
           </nav>
 
           <div className="flex items-center gap-2">
-            <Link
-              href="/login"
-              className="hidden rounded-xl p-2.5 text-gray-600 hover:bg-pink-50 hover:text-pink-600 sm:flex"
-              aria-label="ورود"
-            >
-              <User className="h-5 w-5" />
-            </Link>
+            {user ? (
+              <div className="hidden items-center gap-1 sm:flex">
+                <Link
+                  href="/dashboard"
+                  className="rounded-xl px-3 py-2 text-sm font-medium text-pink-600 hover:bg-pink-50"
+                >
+                  {user.firstName && user.lastName
+                    ? `${user.firstName} ${user.lastName}`
+                    : user.phone || user.username}
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="rounded-xl p-2.5 text-gray-500 hover:bg-red-50 hover:text-red-500"
+                  aria-label="خروج"
+                >
+                  <LogOut className="h-4 w-4" />
+                </button>
+              </div>
+            ) : (
+              <Link
+                href="/login"
+                className="hidden rounded-xl p-2.5 text-gray-600 hover:bg-pink-50 hover:text-pink-600 sm:flex"
+                aria-label="ورود"
+              >
+                <User className="h-5 w-5" />
+              </Link>
+            )}
             <Link
               href="/cart"
               className="relative rounded-xl p-2.5 text-gray-600 hover:bg-pink-50 hover:text-pink-600"
