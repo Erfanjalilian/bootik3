@@ -3,6 +3,8 @@ export interface AuthUser {
   phone: string;
   username?: string;
   passwordHash?: string;
+  firstName?: string;
+  lastName?: string;
   createdAt: number;
   lastSeenAt: number;
 }
