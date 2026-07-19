@@ -1,18 +1,27 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
-import { Phone, Sparkles } from "lucide-react";
+import { Phone, Sparkles, User, Lock, UserPlus, LogIn } from "lucide-react";
 import Button from "@/components/ui/Button";
+import PasswordLoginForm from "@/components/auth/PasswordLoginForm";
+import RegisterForm from "@/components/auth/RegisterForm";
+
+type AuthTab = "otp" | "password" | "register";
 
 export default function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get("redirectTo") || "/dashboard";
+  const [activeTab, setActiveTab] = useState<AuthTab>("otp");
+
+  // OTP state
   const [phone, setPhone] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleOtpSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     setError(null);
@@ -30,13 +39,19 @@ export default function LoginForm() {
         return;
       }
       setMessage(payload.message || "کد تأیید ارسال شد.");
-      router.push(`/verify?phone=${encodeURIComponent(phone)}`);
+      router.push(`/verify?phone=${encodeURIComponent(phone)}&redirectTo=${encodeURIComponent(redirectTo)}`);
     } catch {
       setError("درخواست به سرور با خطا مواجه شد.");
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  const tabs: { key: AuthTab; label: string; icon: React.ReactNode }[] = [
+    { key: "otp", label: "پیامک", icon: <Phone className="h-4 w-4" /> },
+    { key: "password", label: "ورود", icon: <LogIn className="h-4 w-4" /> },
+    { key: "register", label: "ثبت‌نام", icon: <UserPlus className="h-4 w-4" /> },
+  ];
 
   return (
     <div className="relative flex min-h-[70vh] items-center justify-center px-4 py-16">
@@ -51,49 +66,76 @@ export default function LoginForm() {
             </div>
             <h1 className="text-2xl font-bold gradient-text">ورود / ثبت‌نام</h1>
             <p className="mt-2 text-sm text-gray-500">
-              برای ادامه، شماره موبایل خود را وارد کنید
+              {activeTab === "otp" && "برای ادامه، شماره موبایل خود را وارد کنید"}
+              {activeTab === "password" && "با نام کاربری و رمز عبور وارد شوید"}
+              {activeTab === "register" && "یک حساب کاربری جدید بسازید"}
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label
-                htmlFor="phone"
-                className="mb-2 block text-sm font-medium text-gray-700"
+          {/* Tab Switcher */}
+          <div className="mb-6 flex rounded-2xl bg-pink-50 p-1">
+            {tabs.map((tab) => (
+              <button
+                key={tab.key}
+                type="button"
+                onClick={() => setActiveTab(tab.key)}
+                className={`flex flex-1 items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-medium transition-all ${
+                  activeTab === tab.key
+                    ? "bg-white text-pink-700 shadow-sm"
+                    : "text-gray-500 hover:text-pink-600"
+                }`}
               >
-                شماره موبایل
-              </label>
-              <div className="relative">
-                <Phone className="absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-pink-400" />
-                <input
-                  id="phone"
-                  type="tel"
-                  placeholder="۰۹۱۲۱۲۳۴۵۶۷"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  className="w-full rounded-2xl border border-pink-100 bg-pink-50 py-3.5 pr-12 pl-4 text-left outline-none focus:border-pink-300 focus:ring-4 focus:ring-pink-100"
-                  dir="ltr"
-                  required
-                />
+                {tab.icon}
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          {/* OTP Login */}
+          {activeTab === "otp" && (
+            <form onSubmit={handleOtpSubmit} className="space-y-6">
+              <div>
+                <label htmlFor="phone" className="mb-2 block text-sm font-medium text-gray-700">
+                  شماره موبایل
+                </label>
+                <div className="relative">
+                  <Phone className="absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-pink-400" />
+                  <input
+                    id="phone"
+                    type="tel"
+                    placeholder="۰۹۱۲۱۲۳۴۵۶۷"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    className="w-full rounded-2xl border border-pink-100 bg-pink-50 py-3.5 pr-12 pl-4 text-left outline-none focus:border-pink-300 focus:ring-4 focus:ring-pink-100"
+                    dir="ltr"
+                    required
+                  />
+                </div>
               </div>
-            </div>
 
-            {error ? (
-              <p className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
-                {error}
-              </p>
-            ) : null}
+              {error ? (
+                <p className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+                  {error}
+                </p>
+              ) : null}
 
-            {message ? (
-              <p className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
-                {message}
-              </p>
-            ) : null}
+              {message ? (
+                <p className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+                  {message}
+                </p>
+              ) : null}
 
-            <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>
-              {isSubmitting ? "در حال ارسال..." : "دریافت کد تأیید"}
-            </Button>
-          </form>
+              <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>
+                {isSubmitting ? "در حال ارسال..." : "دریافت کد تأیید"}
+              </Button>
+            </form>
+          )}
+
+          {/* Password Login */}
+          {activeTab === "password" && <PasswordLoginForm />}
+
+          {/* Register */}
+          {activeTab === "register" && <RegisterForm />}
 
           <p className="mt-6 text-center text-xs text-gray-400">
             با ورود، شرایط و قوانین استفاده از سایت را می‌پذیرید

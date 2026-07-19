@@ -7,12 +7,16 @@ import {
   deleteOtpRecord,
   getOtpRecord,
   getRateLimitState,
+  getUserByUsername,
+  hashPassword,
   incrementOtpAttempts,
   isValidPhone,
   normalizePhone,
+  registerWithUsernamePassword,
   saveOtpRecord,
   saveRateLimitState,
   verifyOtpRecord,
+  verifyPassword,
 } from "@/lib/auth/store";
 import { sendOtpSms } from "@/lib/auth/sms";
 
@@ -132,6 +136,67 @@ export async function verifyOtp(phoneInput: string, otpInput: string) {
 export async function logoutSession() {
   await clearSession();
   return { ok: true } as const;
+}
+
+export async function loginWithPassword(username: string, password: string) {
+  console.info("[auth] loginWithPassword start", { username });
+
+  if (!username || username.length < 3) {
+    return { ok: false, message: "نام کاربری باید حداقل ۳ حرف باشد." } as const;
+  }
+
+  if (!password || password.length < 4) {
+    return { ok: false, message: "رمز عبور باید حداقل ۴ حرف باشد." } as const;
+  }
+
+  const user = await getUserByUsername(username);
+  if (!user) {
+    return { ok: false, message: "نام کاربری یا رمز عبور اشتباه است." } as const;
+  }
+
+  if (!user.passwordHash) {
+    return { ok: false, message: "نام کاربری یا رمز عبور اشتباه است." } as const;
+  }
+
+  const parsed = JSON.parse(user.passwordHash) as { hash: string; salt: string };
+  if (!verifyPassword(password, parsed.hash, parsed.salt)) {
+    return { ok: false, message: "نام کاربری یا رمز عبور اشتباه است." } as const;
+  }
+
+  const token = await createSession(user);
+  console.info("[auth] password login success", { username, userId: user.id });
+  return { ok: true, user, token } as const;
+}
+
+export async function registerWithPassword(username: string, password: string) {
+  console.info("[auth] registerWithPassword start", { username });
+
+  if (!username || username.length < 3) {
+    return { ok: false, message: "نام کاربری باید حداقل ۳ حرف باشد." } as const;
+  }
+
+  if (!/^[a-zA-Z0-9_]{3,30}$/.test(username)) {
+    return { ok: false, message: "نام کاربری فقط می‌تواند شامل حروف انگلیسی، اعداد و زیرخط باشد." } as const;
+  }
+
+  if (!password || password.length < 4) {
+    return { ok: false, message: "رمز عبور باید حداقل ۴ حرف باشد." } as const;
+  }
+
+  const existing = await getUserByUsername(username);
+  if (existing) {
+    return { ok: false, message: "این نام کاربری قبلاً ثبت شده است." } as const;
+  }
+
+  try {
+    const user = await registerWithUsernamePassword(username, password);
+    const token = await createSession(user);
+    console.info("[auth] register success", { username, userId: user.id });
+    return { ok: true, user, token } as const;
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "ثبت‌نام با خطا مواجه شد.";
+    return { ok: false, message } as const;
+  }
 }
 
 export async function getAuthenticatedUser() {

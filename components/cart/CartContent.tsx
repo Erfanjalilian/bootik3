@@ -1,15 +1,37 @@
 "use client";
 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Minus, Plus, Trash2, ShoppingBag, ArrowLeft } from "lucide-react";
+import { Minus, Plus, Trash2, ShoppingBag, ArrowLeft, Loader2 } from "lucide-react";
 import ProductImage from "@/components/ui/ProductImage";
 import Button from "@/components/ui/Button";
 import { formatPrice } from "@/lib/utils";
 import { useCartStore } from "@/lib/store/cart-store";
 
 export default function CartContent() {
+  const router = useRouter();
   const { items, updateQuantity, removeItem, totalPrice, clearCart } =
     useCartStore();
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
+
+  const handleCheckout = async () => {
+    setIsCheckingOut(true);
+    try {
+      const res = await fetch("/api/auth/me");
+      if (!res.ok) {
+        // Not logged in – redirect to login with return URL
+        router.push("/login?redirectTo=/checkout");
+        return;
+      }
+      // Logged in – go to checkout
+      router.push("/checkout");
+    } catch {
+      router.push("/login?redirectTo=/checkout");
+    } finally {
+      setIsCheckingOut(false);
+    }
+  };
 
   if (items.length === 0) {
     return (
@@ -129,8 +151,20 @@ export default function CartContent() {
               </div>
             </div>
           </div>
-          <Button size="lg" className="mt-6 w-full">
-            تکمیل خرید
+          <Button
+            size="lg"
+            className="mt-6 w-full"
+            onClick={handleCheckout}
+            disabled={isCheckingOut}
+          >
+            {isCheckingOut ? (
+              <>
+                <Loader2 className="h-5 w-5 animate-spin" />
+                در حال بررسی...
+              </>
+            ) : (
+              "تکمیل خرید"
+            )}
           </Button>
           <button
             onClick={clearCart}

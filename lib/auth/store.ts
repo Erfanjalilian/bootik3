@@ -92,13 +92,51 @@ export const getUserById = async (id: string): Promise<AuthUser | null> => {
   return users.find((user) => user.id === id) ?? null;
 };
 
-export const createUser = async (phone: string): Promise<AuthUser> => {
+export const hashPassword = (password: string, salt?: string): { hash: string; salt: string } => {
+  const s = salt || crypto.randomBytes(16).toString("hex");
+  const hash = crypto.pbkdf2Sync(password, s, 1000, 64, "sha512").toString("hex");
+  return { hash, salt: s };
+};
+
+export const verifyPassword = (password: string, hash: string, salt: string): boolean => {
+  const computed = hashPassword(password, salt);
+  return computed.hash === hash;
+};
+
+export const createUser = async (phone: string, username?: string, password?: string): Promise<AuthUser> => {
   const users = await getUsers();
   const existing = users.find((user) => user.phone === phone);
   if (existing) return existing;
+
   const user: AuthUser = {
     id: crypto.randomUUID(),
     phone,
+    username: username || undefined,
+    passwordHash: password ? JSON.stringify(hashPassword(password)) : undefined,
+    createdAt: Date.now(),
+    lastSeenAt: Date.now(),
+  };
+  users.push(user);
+  await writeJson(USERS_FILE, users);
+  return user;
+};
+
+export const getUserByUsername = async (username: string): Promise<AuthUser | null> => {
+  const users = await getUsers();
+  return users.find((user) => user.username === username) ?? null;
+};
+
+export const registerWithUsernamePassword = async (username: string, password: string): Promise<AuthUser> => {
+  const users = await getUsers();
+  const existing = users.find((user) => user.username === username);
+  if (existing) throw new Error("نام کاربری قبلاً ثبت شده است.");
+
+  const { hash, salt } = hashPassword(password);
+  const user: AuthUser = {
+    id: crypto.randomUUID(),
+    phone: "",
+    username,
+    passwordHash: JSON.stringify({ hash, salt }),
     createdAt: Date.now(),
     lastSeenAt: Date.now(),
   };
