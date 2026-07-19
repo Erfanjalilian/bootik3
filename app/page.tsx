@@ -1,7 +1,6 @@
 import { getProducts, getBanners } from "@/lib/data";
 import { BannerSection } from "@/components/home/BannerSection";
 import ProductSection from "@/components/home/ProductSection";
-import Button from "@/components/ui/Button";
 import { Sparkles, Truck, Shield, Headphones } from "lucide-react";
 
 export default function Home() {
@@ -67,28 +66,6 @@ export default function Home() {
         viewAllHref="/shop?bestSeller=true"
         accent="pink"
       />
-
-      <div className="relative overflow-hidden py-4">
-        <div className="light-orb top-0 left-1/4 h-40 w-40 bg-pink-200/30" />
-        <div className="mx-auto max-w-7xl px-4 text-center lg:px-8">
-          <div className="gradient-primary relative overflow-hidden rounded-3xl px-8 py-12 shadow-2xl shadow-pink-200/40">
-            <div className="absolute inset-0 shimmer opacity-30" />
-            <h2 className="relative text-2xl font-bold text-white md:text-3xl">
-              تخفیف ویژه آخر هفته
-            </h2>
-            <p className="relative mt-2 text-pink-100">
-              تا ۴۰٪ تخفیف روی محصولات منتخب — فقط تا پایان هفته
-            </p>
-            <Button
-              href="/shop?onSale=true"
-              variant="secondary"
-              className="relative mt-6 bg-pink-50 text-pink-600 hover:bg-pink-100"
-            >
-              مشاهده تخفیف‌ها
-            </Button>
-          </div>
-        </div>
-      </div>
 
       <ProductSection
         title="جدیدترین محصولات"

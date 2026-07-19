@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import BannerSlider from '@/components/home/BannerSlider';
+import SimpleBanner from '@/components/home/SimpleBanner';
 import AdBanners from '@/components/home/AdBanners';
 import type { Banner } from '@/lib/types';
 
@@ -34,7 +34,7 @@ export function BannerSection({ initialHeroBanners, initialAdBanners }: BannerSe
 
   return (
     <>
-      <BannerSlider banners={heroBanners} />
+      {heroBanners.length > 0 && <SimpleBanner banner={heroBanners[0]} />}
       <AdBanners banners={adBanners} />
     </>
   );
