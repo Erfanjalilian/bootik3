@@ -25,6 +25,10 @@ interface ProductForm {
   isNew: boolean;
   isOnSale: boolean;
   rating: number;
+  weight?: number;
+  length?: number;
+  width?: number;
+  height?: number;
 }
 
 const createEmptyFormData = (): ProductForm => ({
@@ -45,6 +49,10 @@ const createEmptyFormData = (): ProductForm => ({
   isNew: false,
   isOnSale: false,
   rating: 0,
+  weight: undefined,
+  length: undefined,
+  width: undefined,
+  height: undefined,
 });
 
 function formatSpecifications(specifications?: Record<string, string>) {
@@ -146,6 +154,10 @@ export default function ProductsManagement() {
       isNew: product.isNew,
       isOnSale: product.isOnSale,
       rating: product.rating,
+      weight: product.weight,
+      length: product.length,
+      width: product.width,
+      height: product.height,
     });
     setEditingId(product.id);
     setShowForm(true);
@@ -178,6 +190,10 @@ export default function ProductsManagement() {
         isBestSeller: Boolean(formData.isBestSeller),
         isNew: Boolean(formData.isNew),
         isOnSale: Boolean(formData.isOnSale),
+        weight: formData.weight ? Number(formData.weight) : undefined,
+        length: formData.length ? Number(formData.length) : undefined,
+        width: formData.width ? Number(formData.width) : undefined,
+        height: formData.height ? Number(formData.height) : undefined,
       };
 
       const method = editingId ? 'PUT' : 'POST';
@@ -376,6 +392,52 @@ export default function ProductsManagement() {
                   placeholder='جنس: پنبه&#10;رنگ: مشکی'
                 />
                 <p className="mt-1 text-sm text-gray-500">هر سطر یک مشخصه است؛ مثال: جنس: پنبه</p>
+              </div>
+
+              <div className="border-t pt-6">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">ابعاد و وزن بسته</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div>
+                    <label className="block text-gray-700 font-semibold mb-2">وزن (گرم)</label>
+                    <input
+                      type="number"
+                      value={formData.weight ?? ''}
+                      onChange={(e) => setFormData({ ...formData, weight: e.target.value ? Number(e.target.value) : undefined })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="مثلاً 500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-700 font-semibold mb-2">طول (سانتی‌متر)</label>
+                    <input
+                      type="number"
+                      value={formData.length ?? ''}
+                      onChange={(e) => setFormData({ ...formData, length: e.target.value ? Number(e.target.value) : undefined })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="مثلاً 30"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-700 font-semibold mb-2">عرض (سانتی‌متر)</label>
+                    <input
+                      type="number"
+                      value={formData.width ?? ''}
+                      onChange={(e) => setFormData({ ...formData, width: e.target.value ? Number(e.target.value) : undefined })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="مثلاً 20"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-700 font-semibold mb-2">ارتفاع (سانتی‌متر)</label>
+                    <input
+                      type="number"
+                      value={formData.height ?? ''}
+                      onChange={(e) => setFormData({ ...formData, height: e.target.value ? Number(e.target.value) : undefined })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="مثلاً 10"
+                    />
+                  </div>
+                </div>
               </div>
 
               <div className="flex gap-2 flex-wrap">

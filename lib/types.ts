@@ -35,6 +35,10 @@ export interface Product {
   isOnSale: boolean;
   stock: number;
   rating: number;
+  weight?: number; // وزن به گرم
+  length?: number; // طول به سانتی‌متر
+  width?: number;  // عرض به سانتی‌متر
+  height?: number; // ارتفاع به سانتی‌متر
 }
 
 export interface Banner {

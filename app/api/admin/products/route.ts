@@ -120,6 +120,10 @@ export async function POST(request: Request) {
       isOnSale: body.isOnSale || false,
       stock: body.stock || 0,
       rating: body.rating || 0,
+      weight: body.weight || undefined,
+      length: body.length || undefined,
+      width: body.width || undefined,
+      height: body.height || undefined,
     };
 
     products.push(newProduct);
@@ -182,6 +186,10 @@ export async function PUT(request: Request) {
       isOnSale: typeof body.isOnSale === "boolean" ? body.isOnSale : products[index].isOnSale,
       stock: typeof body.stock === "number" ? body.stock : products[index].stock,
       rating: typeof body.rating === "number" ? body.rating : products[index].rating,
+      weight: body.weight !== undefined ? body.weight : products[index].weight,
+      length: body.length !== undefined ? body.length : products[index].length,
+      width: body.width !== undefined ? body.width : products[index].width,
+      height: body.height !== undefined ? body.height : products[index].height,
     };
 
     products[index] = updatedProduct;
