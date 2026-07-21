@@ -8,7 +8,18 @@ import ProductImage from "@/components/ui/ProductImage";
 import { formatPrice } from "@/lib/utils";
 import { useCartStore } from "@/lib/store/cart-store";
 import type { ShippingAddress, OrderShippingInfo } from "@/lib/orders/types";
-import type { ShippingItem } from "@/lib/services/tapin";
+
+/**
+ * Product data sent for shipping calculation
+ */
+interface ShippingProduct {
+  productId: string;
+  name: string;
+  price: number;
+  quantity: number;
+  weight: number;
+  discount: number;
+}
 
 /**
  * Shipping calculation result from the API
@@ -91,9 +102,9 @@ export default function CheckoutContent() {
   }, [router]);
 
   /**
-   * Fetch product dimensions for shipping calculation
+   * Build products array for shipping calculation
    */
-  const getShippingItems = useCallback(async (): Promise<ShippingItem[] | null> => {
+  const getShippingProducts = useCallback(async (): Promise<ShippingProduct[] | null> => {
     try {
       // Get unique product IDs and their quantities from cart
       const productQuantityMap = getProductIdsMap(items);
@@ -101,7 +112,7 @@ export default function CheckoutContent() {
 
       if (productIds.length === 0) return null;
 
-      // Fetch product data to get weight and dimensions
+      // Fetch product data to get weight
       const response = await fetch("/api/products/list", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -113,22 +124,23 @@ export default function CheckoutContent() {
       const data = await response.json();
       if (!data.ok || !data.products) return null;
 
-      // Map products to shipping items
-      const shippingItems: ShippingItem[] = [];
+      // Map products to shipping product format
+      const shippingProducts: ShippingProduct[] = [];
       for (const product of data.products) {
         const quantity = productQuantityMap[product.id];
         if (!quantity) continue;
 
-        shippingItems.push({
-          weight: product.weight || 200,    // default 200g if not specified
-          length: product.length || 20,      // default 20cm if not specified
-          width: product.width || 15,        // default 15cm if not specified
-          height: product.height || 5,       // default 5cm if not specified
+        shippingProducts.push({
+          productId: product.id,
+          name: product.name || "محصول",
+          price: product.price || 0,
           quantity,
+          weight: product.weight || 200, // default 200g if not specified
+          discount: product.discount || 0,
         });
       }
 
-      return shippingItems;
+      return shippingProducts;
     } catch {
       return null;
     }
@@ -150,9 +162,9 @@ export default function CheckoutContent() {
     setShippingInfo(null);
 
     try {
-      const shippingItems = await getShippingItems();
+      const shippingProducts = await getShippingProducts();
 
-      if (!shippingItems) {
+      if (!shippingProducts) {
         setShippingError("خطا در دریافت اطلاعات محصولات");
         setCanCheckout(false);
         return;
@@ -164,7 +176,7 @@ export default function CheckoutContent() {
         body: JSON.stringify({
           city,
           province,
-          items: shippingItems,
+          products: shippingProducts,
         }),
       });
 
@@ -191,7 +203,7 @@ export default function CheckoutContent() {
     } finally {
       setIsCalculatingShipping(false);
     }
-  }, [items, getShippingItems]);
+  }, [items, getShippingProducts]);
 
   /**
    * Handle address field changes

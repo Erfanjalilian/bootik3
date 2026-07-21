@@ -1,16 +1,26 @@
 // ============================================================================
 // Shipping Cost Calculation API Route
-// Calculates shipping cost based on destination city
+// Calculates shipping cost based on destination city using Tapin API
 // ============================================================================
 
 import { NextRequest, NextResponse } from "next/server";
 import {
-  calculateShippingCost,
-  isDestinationSari,
-  SARI_COURIER_FIXED_PRICE,
   TapinApiError,
+  calculateShippingCost,
+  getTapinShopId,
 } from "@/lib/services/tapin";
-import type { ShippingItem, ShippingLocation } from "@/lib/services/tapin";
+import {
+  getProvinces,
+  getCities,
+} from "@/lib/services/tapin.service";
+import {
+  setCachedProvinceMap,
+  setCachedCityMap,
+  lookupProvinceCode,
+  lookupCityCode,
+} from "@/lib/utils/tapin.mapper";
+import { mapProductsToTapin, mapCheckPriceRequest } from "@/lib/utils/tapin.mapper";
+import type { ProvinceMapping, CityMapping, TapinProvince } from "@/lib/types/tapin.types";
 
 /**
  * Request body for shipping calculation
@@ -18,14 +28,96 @@ import type { ShippingItem, ShippingLocation } from "@/lib/services/tapin";
 interface CalculateShippingRequest {
   city: string;
   province: string;
-  items: ShippingItem[];
+  /** Array of products from the cart */
+  products: {
+    productId: string;
+    name: string;
+    price: number;
+    quantity: number;
+    weight: number;
+    discount?: number;
+  }[];
+  address?: string;
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
+  postalCode?: string;
 }
 
 /**
- * Validate that a value is a positive number
+ * Ensure province/city codes are cached by fetching from Tapin if needed
  */
-function isPositiveNumber(value: unknown): value is number {
-  return typeof value === "number" && value > 0 && isFinite(value);
+async function ensureCodesCached(provinceName: string, cityName: string): Promise<{
+  provinceCode: string;
+  cityCode: string;
+}> {
+  // Try to look up codes from cache first
+  let provinceCode = lookupProvinceCode(provinceName);
+  
+  if (!provinceCode) {
+    // Not cached, fetch provinces from Tapin
+    console.log("Province cache empty, fetching from Tapin API...");
+    const provinces = await getProvinces();
+
+    // Build province mapping and cache it
+    const provinceMap: ProvinceMapping = {};
+    for (const province of provinces) {
+      provinceMap[province.state_name] = province.state_code;
+    }
+    setCachedProvinceMap(provinceMap);
+
+    // Also cache cities for each province
+    for (const province of provinces) {
+      const cityMap: CityMapping = {};
+      for (const city of province.cities) {
+        cityMap[city.city_name] = city.city_code;
+      }
+      setCachedCityMap(province.state_code, cityMap);
+    }
+
+    // Try lookup again
+    provinceCode = lookupProvinceCode(provinceName);
+  }
+
+  if (!provinceCode) {
+    throw new TapinApiError(
+      `استان "${provinceName}" در سرویس تاپین یافت نشد`,
+      404,
+      null,
+      `Province not found: ${provinceName}`,
+      null
+    );
+  }
+
+  // Look up city code
+  let cityCode = lookupCityCode(provinceCode, cityName);
+
+  if (!cityCode) {
+    // Cities not cached for this province, fetch them
+    console.log(`City cache empty for province ${provinceCode}, fetching from Tapin...`);
+    const cities = await getCities(provinceCode);
+
+    const cityMap: CityMapping = {};
+    for (const city of cities) {
+      cityMap[city.city_name] = city.city_code;
+    }
+    setCachedCityMap(provinceCode, cityMap);
+
+    // Try lookup again
+    cityCode = lookupCityCode(provinceCode, cityName);
+  }
+
+  if (!cityCode) {
+    throw new TapinApiError(
+      `شهر "${cityName}" در سرویس تاپین یافت نشد`,
+      404,
+      null,
+      `City not found: ${cityName} in province ${provinceCode}`,
+      null
+    );
+  }
+
+  return { provinceCode, cityCode };
 }
 
 /**
@@ -33,20 +125,24 @@ function isPositiveNumber(value: unknown): value is number {
  *
  * Expects:
  * {
- *   city: string,
- *   province: string,
- *   items: Array<{ weight, length, width, height, quantity }>
+ *   city: string (Persian name),
+ *   province: string (Persian name),
+ *   products: Array<{ productId, name, price, quantity, weight, discount? }>,
+ *   address?: string,
+ *   firstName?: string,
+ *   lastName?: string,
+ *   phone?: string,
+ *   postalCode?: string
  * }
  *
  * Returns:
- * - For Sari: { method: "courier", title: "...", shippingCost: fixed_price }
- * - For other cities: { method: "post", title: "...", shippingCost: amount }
+ * - Success: { ok: true, method: "post", title: "...", shippingCost: number }
  * - On error: { ok: false, message: string, canCheckout: boolean }
  */
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
     const body: CalculateShippingRequest = await request.json();
-    const { city, province, items } = body;
+    const { city, province, products } = body;
 
     // Validate required fields
     if (!city || !city.trim()) {
@@ -71,7 +167,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       );
     }
 
-    if (!items || items.length === 0) {
+    if (!products || products.length === 0) {
       return NextResponse.json(
         {
           ok: false,
@@ -82,60 +178,95 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       );
     }
 
-    // Validate that items have proper dimensions
-    for (let i = 0; i < items.length; i++) {
-      const item = items[i];
-      if (!isPositiveNumber(item.weight)) {
-        console.warn(`Item ${i} has invalid or missing weight:`, item.weight);
-      }
-      if (!isPositiveNumber(item.length)) {
-        console.warn(`Item ${i} has invalid or missing length:`, item.length);
-      }
-      if (!isPositiveNumber(item.width)) {
-        console.warn(`Item ${i} has invalid or missing width:`, item.width);
-      }
-      if (!isPositiveNumber(item.height)) {
-        console.warn(`Item ${i} has invalid or missing height:`, item.height);
-      }
-      if (!isPositiveNumber(item.quantity) || item.quantity < 1) {
+    // Resolve Persian province/city names to Tapin codes
+    let provinceCode: string;
+    let cityCode: string;
+
+    try {
+      const codes = await ensureCodesCached(province, city);
+      provinceCode = codes.provinceCode;
+      cityCode = codes.cityCode;
+    } catch (error) {
+      if (error instanceof TapinApiError) {
         return NextResponse.json(
           {
             ok: false,
-            message: "تعداد محصول نامعتبر است",
+            message: error.getPersianMessage(),
             canCheckout: false,
           },
-          { status: 400 }
+          { status: 404 }
         );
       }
+      throw error;
     }
 
-    // Check if destination is Sari
-    if (isDestinationSari(city)) {
-      // Sari: courier delivery with fixed price
-      return NextResponse.json({
-        ok: true,
-        method: "courier" as const,
-        title: "ارسال با پیک",
-        shippingCost: SARI_COURIER_FIXED_PRICE,
-      });
-    }
+    console.log("Resolved codes:", {
+      province: `${province} -> ${provinceCode}`,
+      city: `${city} -> ${cityCode}`,
+    });
 
-    // Non-Sari: use Tapin API to calculate express post cost
-    const destination: ShippingLocation = { province, city };
-    const shippingCost = await calculateShippingCost(destination, items);
+    // Get shop ID
+    const shopId = getTapinShopId();
+
+    // Calculate total package weight
+    const packageWeight = products.reduce(
+      (sum, p) => sum + (p.weight || 200) * p.quantity,
+      0
+    );
+
+    // Map products to Tapin format
+    const tapinProducts = mapProductsToTapin(
+      products.map((p) => ({
+        count: p.quantity,
+        discount: p.discount ?? 0,
+        price: p.price,
+        title: p.name,
+        weight: p.weight || 200,
+        productId: p.productId,
+      }))
+    );
+
+    // Build the check-price payload
+    const payload = mapCheckPriceRequest({
+      shopId,
+      address: body.address || "---",
+      cityCode,
+      provinceCode,
+      firstName: body.firstName || "---",
+      lastName: body.lastName || "---",
+      mobile: body.phone || "09123456789",
+      postalCode: body.postalCode || "0000000000",
+      payType: "1",
+      orderType: "1",
+      packageWeight,
+      boxId: "1",
+      packetType: "0",
+      hasInsurance: false,
+      products: tapinProducts,
+    });
+
+    // Calculate shipping cost via Tapin
+    const result = await calculateShippingCost(payload);
+
+    // Use totalPrice as the shipping cost (total includes both send price and any additional fees)
+    const shippingCost = result.totalPrice > 0 ? result.totalPrice : result.sendPrice;
 
     return NextResponse.json({
       ok: true,
       method: "post" as const,
       title: "پست پیشتاز",
       shippingCost,
+      totalPrice: result.totalPrice,
+      sendPrice: result.sendPrice,
     });
   } catch (error) {
     // Handle Tapin-specific errors
     if (error instanceof TapinApiError) {
       console.error("[shipping/calculate] Tapin error:", {
         message: error.message,
-        statusCode: error.statusCode,
+        httpStatus: error.httpStatus,
+        tapinStatus: error.tapinStatus,
+        tapinMessage: error.tapinMessage,
         persianMessage: error.getPersianMessage(),
       });
 
@@ -145,7 +276,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           message: error.getPersianMessage(),
           canCheckout: false,
         },
-        { status: error.statusCode }
+        { status: error.httpStatus === 503 ? 503 : 400 }
       );
     }
 

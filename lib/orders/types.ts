@@ -36,4 +36,12 @@ export interface Order {
   refNumber?: number;
   createdAt: number;
   paidAt?: number;
+  /** Tapin shipment ID returned after creation */
+  tapinShipmentId?: string;
+  /** Tapin barcode for tracking */
+  tapinBarcode?: string;
+  /** Tapin order ID */
+  tapinOrderId?: string;
+  /** Tapin shipping cost */
+  tapinSendPrice?: number;
 }

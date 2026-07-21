@@ -83,6 +83,33 @@ export const updateOrderTrackId = async (id: string, trackId: number): Promise<O
   return orders[index];
 };
 
+/**
+ * Save Tapin shipment data to an order
+ */
+export const updateOrderTapinShipment = async (
+  id: string,
+  tapinData: {
+    tapinShipmentId: string;
+    tapinBarcode: string;
+    tapinOrderId: string;
+    tapinSendPrice: number;
+  }
+): Promise<Order | null> => {
+  const orders = await readOrders();
+  const index = orders.findIndex((o) => o.id === id);
+  if (index === -1) return null;
+
+  orders[index] = {
+    ...orders[index],
+    tapinShipmentId: tapinData.tapinShipmentId,
+    tapinBarcode: tapinData.tapinBarcode,
+    tapinOrderId: tapinData.tapinOrderId,
+    tapinSendPrice: tapinData.tapinSendPrice,
+  };
+  await writeOrders(orders);
+  return orders[index];
+};
+
 export const getUserOrders = async (userId: string): Promise<Order[]> => {
   const orders = await readOrders();
   return orders.filter((o) => o.userId === userId).sort((a, b) => b.createdAt - a.createdAt);
