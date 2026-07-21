@@ -1,13 +1,26 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { ShoppingBag, ArrowRight, Loader2, CreditCard, User, MapPin, Phone, Mail } from "lucide-react";
+import { ShoppingBag, ArrowRight, Loader2, CreditCard, User, MapPin, Phone } from "lucide-react";
 import Button from "@/components/ui/Button";
 import ProductImage from "@/components/ui/ProductImage";
 import { formatPrice } from "@/lib/utils";
 import { useCartStore } from "@/lib/store/cart-store";
-import type { ShippingAddress } from "@/lib/orders/types";
+import type { ShippingAddress, OrderShippingInfo } from "@/lib/orders/types";
+import type { ShippingItem } from "@/lib/services/tapin";
+
+/**
+ * Shipping calculation result from the API
+ */
+interface ShippingApiResult {
+  ok: boolean;
+  method?: "courier" | "post";
+  title?: string;
+  shippingCost?: number;
+  message?: string;
+  canCheckout?: boolean;
+}
 
 const PROVINCES = [
   "آذربایجان شرقی", "آذربایجان غربی", "اردبیل", "اصفهان", "البرز",
@@ -28,6 +41,18 @@ const initialAddress: ShippingAddress = {
   postalCode: "",
 };
 
+/**
+ * Get product IDs from cart items to look up their dimensions
+ */
+function getProductIdsMap(items: { productId: string; quantity: number }[]): Record<string, number> {
+  const map: Record<string, number> = {};
+  for (const item of items) {
+    const key = item.productId;
+    map[key] = (map[key] || 0) + item.quantity;
+  }
+  return map;
+}
+
 export default function CheckoutContent() {
   const router = useRouter();
   const { items, totalPrice, clearCart } = useCartStore();
@@ -36,6 +61,12 @@ export default function CheckoutContent() {
   const [isLoadingUser, setIsLoadingUser] = useState(true);
   const [shippingAddress, setShippingAddress] = useState<ShippingAddress>(initialAddress);
   const [errors, setErrors] = useState<Partial<Record<keyof ShippingAddress, string>>>({});
+
+  // Shipping state
+  const [shippingInfo, setShippingInfo] = useState<OrderShippingInfo | null>(null);
+  const [isCalculatingShipping, setIsCalculatingShipping] = useState(false);
+  const [shippingError, setShippingError] = useState<string | null>(null);
+  const [canCheckout, setCanCheckout] = useState(true);
 
   useEffect(() => {
     fetch("/api/auth/me")
@@ -59,6 +90,134 @@ export default function CheckoutContent() {
       .finally(() => setIsLoadingUser(false));
   }, [router]);
 
+  /**
+   * Fetch product dimensions for shipping calculation
+   */
+  const getShippingItems = useCallback(async (): Promise<ShippingItem[] | null> => {
+    try {
+      // Get unique product IDs and their quantities from cart
+      const productQuantityMap = getProductIdsMap(items);
+      const productIds = Object.keys(productQuantityMap);
+
+      if (productIds.length === 0) return null;
+
+      // Fetch product data to get weight and dimensions
+      const response = await fetch("/api/products/list", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids: productIds }),
+      });
+
+      if (!response.ok) return null;
+
+      const data = await response.json();
+      if (!data.ok || !data.products) return null;
+
+      // Map products to shipping items
+      const shippingItems: ShippingItem[] = [];
+      for (const product of data.products) {
+        const quantity = productQuantityMap[product.id];
+        if (!quantity) continue;
+
+        shippingItems.push({
+          weight: product.weight || 200,    // default 200g if not specified
+          length: product.length || 20,      // default 20cm if not specified
+          width: product.width || 15,        // default 15cm if not specified
+          height: product.height || 5,       // default 5cm if not specified
+          quantity,
+        });
+      }
+
+      return shippingItems;
+    } catch {
+      return null;
+    }
+  }, [items]);
+
+  /**
+   * Calculate shipping cost when province and city are selected
+   */
+  const calculateShipping = useCallback(async (province: string, city: string) => {
+    if (!province || !city || items.length === 0) {
+      setShippingInfo(null);
+      setShippingError(null);
+      setCanCheckout(true);
+      return;
+    }
+
+    setIsCalculatingShipping(true);
+    setShippingError(null);
+    setShippingInfo(null);
+
+    try {
+      const shippingItems = await getShippingItems();
+
+      if (!shippingItems) {
+        setShippingError("خطا در دریافت اطلاعات محصولات");
+        setCanCheckout(false);
+        return;
+      }
+
+      const response = await fetch("/api/shipping/calculate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          city,
+          province,
+          items: shippingItems,
+        }),
+      });
+
+      const result: ShippingApiResult = await response.json();
+
+      if (!result.ok) {
+        setShippingError(result.message || "خطا در محاسبه هزینه ارسال");
+        setCanCheckout(result.canCheckout !== false);
+        return;
+      }
+
+      if (result.method && result.title !== undefined && result.shippingCost !== undefined) {
+        setShippingInfo({
+          method: result.method,
+          title: result.title,
+          cost: result.shippingCost,
+        });
+      }
+
+      setCanCheckout(true);
+    } catch {
+      setShippingError("خطا در ارتباط با سرور برای محاسبه هزینه ارسال");
+      setCanCheckout(false);
+    } finally {
+      setIsCalculatingShipping(false);
+    }
+  }, [items, getShippingItems]);
+
+  /**
+   * Handle address field changes
+   * When province or city changes, recalculate shipping
+   */
+  const handleAddressChange = (field: keyof ShippingAddress, value: string) => {
+    setShippingAddress((prev) => {
+      const updated = { ...prev, [field]: value };
+
+      // When province or city changes, trigger shipping calculation
+      if (field === "province" || field === "city") {
+        const province = field === "province" ? value : updated.province;
+        const city = field === "city" ? value : updated.city;
+        // Use setTimeout to avoid React setState batching issues
+        setTimeout(() => calculateShipping(province, city), 0);
+      }
+
+      return updated;
+    });
+
+    // Clear error when user types
+    if (errors[field]) {
+      setErrors((prev) => ({ ...prev, [field]: "" }));
+    }
+  };
+
   const validateField = (field: keyof ShippingAddress, value: string): string => {
     if (!value.trim()) {
       const labels: Record<string, string> = {
@@ -79,14 +238,6 @@ export default function CheckoutContent() {
       return "کد پستی باید 10 رقم باشد";
     }
     return "";
-  };
-
-  const handleAddressChange = (field: keyof ShippingAddress, value: string) => {
-    setShippingAddress((prev) => ({ ...prev, [field]: value }));
-    // Clear error when user types
-    if (errors[field]) {
-      setErrors((prev) => ({ ...prev, [field]: "" }));
-    }
   };
 
   const validateForm = (): boolean => {
@@ -142,8 +293,17 @@ export default function CheckoutContent() {
     );
   }
 
+  // Calculate final total: items total + shipping cost
+  const itemsTotal = totalPrice();
+  const shippingCost = shippingInfo?.cost || 0;
+  const finalTotal = itemsTotal + shippingCost;
+
   const handleProceedToPayment = async () => {
     if (!validateForm()) return;
+    if (!shippingInfo) {
+      alert("لطفاً صبر کنید تا هزینه ارسال محاسبه شود");
+      return;
+    }
 
     setIsProcessing(true);
     try {
@@ -160,8 +320,9 @@ export default function CheckoutContent() {
             size: item.size,
             image: item.image,
           })),
-          totalAmount: totalPrice(),
+          totalAmount: finalTotal,
           shippingAddress,
+          shipping: shippingInfo,
         }),
       });
 
@@ -392,17 +553,62 @@ export default function CheckoutContent() {
                 <span>{items.reduce((sum, i) => sum + i.quantity, 0)} عدد</span>
               </div>
               <div className="flex justify-between text-gray-600">
-                <span>جمع کل</span>
-                <span>{formatPrice(totalPrice())}</span>
+                <span>جمع کالاها</span>
+                <span>{formatPrice(itemsTotal)}</span>
               </div>
+
+              {/* Shipping Info */}
+              <div className="flex justify-between text-gray-600">
+                <span>روش ارسال</span>
+                <span>
+                  {isCalculatingShipping ? (
+                    <span className="flex items-center gap-1 text-gray-400">
+                      <Loader2 className="h-3 w-3 animate-spin" />
+                      در حال محاسبه...
+                    </span>
+                  ) : shippingInfo ? (
+                    shippingInfo.title
+                  ) : shippingError ? (
+                    <span className="text-red-500">نامشخص</span>
+                  ) : (
+                    <span className="text-gray-400">-
+                    {shippingAddress.province && shippingAddress.city ? " ابتدا استان و شهر را وارد کنید" : ""}
+                    </span>
+                  )}
+                </span>
+              </div>
+
               <div className="flex justify-between text-gray-600">
                 <span>هزینه ارسال</span>
-                <span className="text-green-600">رایگان</span>
+                <span>
+                  {isCalculatingShipping ? (
+                    <Loader2 className="h-3 w-3 animate-spin" />
+                  ) : shippingInfo ? (
+                    <span className={shippingInfo.cost === 0 ? "text-green-600" : "text-gray-800"}>
+                      {shippingInfo.cost === 0 ? "رایگان" : formatPrice(shippingInfo.cost)}
+                    </span>
+                  ) : shippingError ? (
+                    <span className="text-red-500">خطا</span>
+                  ) : (
+                    <span className="text-gray-400">-</span>
+                  )}
+                </span>
               </div>
+
+              {/* Shipping error message */}
+              {shippingError && (
+                <div className="rounded-xl bg-red-50 border border-red-200 p-3 text-xs text-red-600">
+                  {shippingError}
+                  {!canCheckout && (
+                    <p className="mt-1">امکان پرداخت تا رفع مشکل وجود ندارد</p>
+                  )}
+                </div>
+              )}
+
               <div className="border-t border-pink-100 pt-3">
                 <div className="flex justify-between text-lg font-bold">
                   <span>مبلغ قابل پرداخت</span>
-                  <span className="text-pink-600">{formatPrice(totalPrice())}</span>
+                  <span className="text-pink-600">{formatPrice(finalTotal)}</span>
                 </div>
               </div>
             </div>
@@ -411,7 +617,7 @@ export default function CheckoutContent() {
               size="lg"
               className="mt-6 w-full"
               onClick={handleProceedToPayment}
-              disabled={isProcessing}
+              disabled={isProcessing || isCalculatingShipping || !canCheckout || !shippingInfo}
             >
               {isProcessing ? (
                 <>
@@ -441,7 +647,7 @@ export default function CheckoutContent() {
             <div className="flex items-center gap-3">
               <CreditCard className="h-5 w-5 text-pink-500" />
               <span className="text-sm text-gray-600">
-                پرداخت امن از طریق درگاه زرین‌پال
+                پرداخت امن از طریق درگاه زیبال
               </span>
             </div>
           </div>

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSessionUser } from "@/lib/auth/session";
 import { createOrder, updateOrderTrackId } from "@/lib/orders/store";
 import { requestPayment, ZibalApiError } from "@/lib/services/zibal";
-import type { ShippingAddress, OrderItem } from "@/lib/orders/types";
+import type { ShippingAddress, OrderItem, OrderShippingInfo } from "@/lib/orders/types";
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,10 +15,11 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { items, totalAmount, shippingAddress } = body as {
+    const { items, totalAmount, shippingAddress, shipping } = body as {
       items: OrderItem[];
       totalAmount: number;
       shippingAddress: ShippingAddress;
+      shipping: OrderShippingInfo;
     };
 
     // Validate required fields
@@ -64,6 +65,7 @@ export async function POST(request: NextRequest) {
       items,
       totalAmount,
       shippingAddress,
+      shipping,
     });
 
     // Request payment from Zibal

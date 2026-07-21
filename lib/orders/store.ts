@@ -31,7 +31,7 @@ export const getAllOrders = async (): Promise<Order[]> => {
   return orders.sort((a, b) => b.createdAt - a.createdAt);
 };
 
-export const createOrder = async (order: Omit<Order, "id" | "createdAt" | "status">): Promise<Order> => {
+export const createOrder = async (order: Omit<Order, "id" | "createdAt" | "status" | "shipping"> & { shipping: Order["shipping"] }): Promise<Order> => {
   const orders = await readOrders();
   const newOrder: Order = {
     ...order,

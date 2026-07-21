@@ -18,12 +18,19 @@ export interface OrderItem {
   image: string;
 }
 
+export interface OrderShippingInfo {
+  method: "courier" | "post";
+  title: string;
+  cost: number;
+}
+
 export interface Order {
   id: string;
   userId: string;
   items: OrderItem[];
   totalAmount: number;
   shippingAddress: ShippingAddress;
+  shipping: OrderShippingInfo;
   status: "pending" | "paid" | "failed" | "cancelled";
   trackId?: number;
   refNumber?: number;
