@@ -174,9 +174,25 @@ function maskToken(token: string): string {
  */
 function getHeaders(): Record<string, string> {
   const token = getTapinToken();
+
+  // Debug logging for token
+  const startsWithJwt = token.toLowerCase().startsWith("jwt ");
+  console.log("================ TAPIN AUTH DEBUG ================");
+  console.log("Raw Token Length:", token.length);
+  console.log("Starts With jwt:", startsWithJwt);
+  console.log("First 10:", token.slice(0, 10));
+  console.log("Last 10:", token.slice(-10));
+
+  // Auto-prepend "jwt " if missing
+  const finalToken = startsWithJwt ? token : `jwt ${token}`;
+
+  console.log("Authorization Sent:", finalToken.slice(0, 20) + "...");
+  console.log("Authorization Length:", finalToken.length);
+  console.log("==================================================");
+
   return {
     "Content-Type": "application/json",
-    Authorization: token, // Token sent directly, NOT "Bearer <token>"
+    Authorization: finalToken,
   };
 }
 
@@ -218,6 +234,13 @@ async function tapinPost<T extends Record<string, unknown>>(
   const headers = getHeaders();
 
   logRequest(endpoint, payload);
+
+  // Debug: log auth header details before fetch
+  console.log("========== TAPIN FETCH DEBUG ==========");
+  console.log("Authorization Header:", (headers.Authorization || "").slice(0, 20) + "...");
+  console.log("Authorization Length:", (headers.Authorization || "").length);
+  console.log("Endpoint:", endpoint);
+  console.log("========================================");
 
   let httpStatus: number;
   let responseData: Record<string, unknown>;
