@@ -246,6 +246,10 @@ async function tapinPost<T extends Record<string, unknown>>(
   let responseData: Record<string, unknown>;
 
   try {
+    console.log("========== FINAL HEADERS ==========");
+console.log(headers);
+console.log("Authorization RAW:", headers.Authorization);
+console.log("==================================");
     const response = await fetch(endpoint, {
       method: "POST",
       headers,
