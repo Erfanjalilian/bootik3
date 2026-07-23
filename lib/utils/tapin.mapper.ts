@@ -38,8 +38,7 @@ export function mapProductsToTapin(products: ProductToMap[]): TapinProduct[] {
 }
 
 /**
- * Map check price request payload - فقط فیلدهای مورد نیاز برای استعلام قیمت
- * بر اساس مستندات تاپین
+ * Map check price request payload - نسخه کامل با تمام فیلدهای مورد نیاز
  */
 export function mapCheckPriceRequest(params: {
   shopId: string;
@@ -49,8 +48,21 @@ export function mapCheckPriceRequest(params: {
 }): TapinCheckPriceRequest {
   return {
     shop_id: params.shopId,
+    address: "---",
     state_code: params.provinceCode,
     city_code: params.cityCode,
+    province_code: params.provinceCode,
+    first_name: "---",
+    last_name: "---",
+    mobile: "09123456789",
+    postal_code: "1234567890",
+    pay_type: "1",
+    order_type: "1",
+    package_weight: 1000,
+    box_id: "1",
+    packet_type: "1",
+    has_insurance: false,
+    products: params.products,
     send_type: "1",
     order_items: params.products.map((p) => ({
       name: p.title,

@@ -29,12 +29,25 @@ export interface TapinOrderItem {
 /**
  * Request payload for Tapin check-price API
  * POST https://api.tapin.ir/api/v2/public/order/post/check-price/
- * بر اساس مستندات رسمی تاپین
+ * بر اساس مستندات رسمی تاپین - شامل تمام فیلدهای اجباری
  */
 export interface TapinCheckPriceRequest {
   shop_id: string;
+  address: string;
   state_code: string;
   city_code: string;
+  province_code: string;
+  first_name: string;
+  last_name: string;
+  mobile: string;
+  postal_code: string;
+  pay_type: string;
+  order_type: string;
+  package_weight: number;
+  box_id: string;
+  packet_type: string;
+  has_insurance: boolean;
+  products: TapinProduct[];
   send_type: string;
   order_items: TapinOrderItem[];
 }
