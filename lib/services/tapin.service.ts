@@ -488,6 +488,12 @@ export async function calculateShippingCost(
   console.log("📥 INPUT DATA TO calculateShippingCost:");
   console.log(JSON.stringify(payload, null, 2));
 
+  // =============== لاگ FINAL PAYLOAD با Shop ID ===============
+  console.log("========== 🔍 FINAL PAYLOAD TO TAPIN ==========");
+  console.log("Payload:", JSON.stringify(payload, null, 2));
+  console.log("Shop ID being used:", getTapinShopId());
+  console.log("===============================================");
+
   const response = await tapinPost<TapinApiResponse>(
     ENDPOINTS.CHECK_PRICE,
     payload as unknown as Record<string, unknown>
@@ -565,6 +571,12 @@ export async function createShipment(
   // =============== لاگ دیتای ورودی به تابع ===============
   console.log("📥 INPUT DATA TO createShipment:");
   console.log(JSON.stringify(payload, null, 2));
+
+  // =============== لاگ FINAL PAYLOAD با Shop ID ===============
+  console.log("========== 🔍 FINAL PAYLOAD TO TAPIN ==========");
+  console.log("Payload:", JSON.stringify(payload, null, 2));
+  console.log("Shop ID being used:", getTapinShopId());
+  console.log("===============================================");
 
   const response = await tapinPost<TapinApiResponse>(
     ENDPOINTS.REGISTER,
