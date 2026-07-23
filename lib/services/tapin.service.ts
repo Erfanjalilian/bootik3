@@ -1,3 +1,5 @@
+// lib/services/tapin.service.ts
+
 // ============================================================================
 // Tapin Shipping API Service
 // Official Tapin API Integration
@@ -176,15 +178,14 @@ function getHeaders(): Record<string, string> {
   const token = getTapinToken();
 
   // Debug logging for token
-  const startsWithJwt = token.toLowerCase().startsWith("jwt ");
   console.log("================ TAPIN AUTH DEBUG ================");
   console.log("Raw Token Length:", token.length);
-  console.log("Starts With jwt:", startsWithJwt);
+  console.log("Starts With jwt:", token.toLowerCase().startsWith("jwt "));
   console.log("First 10:", token.slice(0, 10));
   console.log("Last 10:", token.slice(-10));
 
   // Auto-prepend "jwt " if missing
-  const finalToken = startsWithJwt ? token : `jwt ${token}`;
+  const finalToken = token.toLowerCase().startsWith("jwt ") ? token : `jwt ${token}`;
 
   console.log("Authorization Sent:", finalToken.slice(0, 20) + "...");
   console.log("Authorization Length:", finalToken.length);
@@ -197,30 +198,111 @@ function getHeaders(): Record<string, string> {
 }
 
 /**
- * Log Tapin API request details
+ * Log Tapin API request details - اضافه شده برای دیباگ
  */
 function logRequest(endpoint: string, payload: Record<string, unknown>): void {
   const token = process.env.TAPIN_TOKEN || "";
   const masked = maskToken(token);
-  console.log("========== TAPIN REQUEST ==========");
-  console.log("Endpoint:", endpoint);
-  console.log("Authorization:", masked);
-  console.log("Payload:", JSON.stringify(payload, null, 2));
-  console.log("===================================");
+  
+  console.log("========== 🔵 TAPIN REQUEST ==========");
+  console.log("📍 Endpoint:", endpoint);
+  console.log("🔑 Authorization:", masked);
+  
+  // =============== لاگ کامل دیتای ارسالی ===============
+  console.log("📦 COMPLETE PAYLOAD BEING SENT TO TAPIN:");
+  console.log(JSON.stringify(payload, null, 2));
+  
+  // لاگ جزئیات مهم
+  console.log("\n📌 PAYLOAD DETAILS:");
+  
+  // 1. Location data (برای check-price)
+  if ('state_code' in payload) {
+    console.log(`  🏛️  state_code: ${payload.state_code} (${typeof payload.state_code})`);
+  }
+  if ('city_code' in payload) {
+    console.log(`  🏙️  city_code: ${payload.city_code} (${typeof payload.city_code})`);
+  }
+  if ('send_type' in payload) {
+    console.log(`  📬  send_type: ${payload.send_type}`);
+  }
+  
+  // 2. Location object (برای register)
+  if ('location' in payload && payload.location && typeof payload.location === 'object') {
+    const location = payload.location as Record<string, unknown>;
+    console.log("  📍 location:");
+    for (const [key, value] of Object.entries(location)) {
+      console.log(`    ${key}: ${value} (${typeof value})`);
+    }
+  }
+  
+  // 3. Order items
+  if ('order_items' in payload && Array.isArray(payload.order_items)) {
+    console.log(`  📦 order_items: ${payload.order_items.length} items`);
+    payload.order_items.forEach((item: any, index: number) => {
+      console.log(`    Item ${index + 1}:`, JSON.stringify(item, null, 2));
+    });
+  }
+  
+  // 4. Customer info
+  if ('customer' in payload && payload.customer && typeof payload.customer === 'object') {
+    const customer = payload.customer as Record<string, unknown>;
+    console.log("  👤 customer:");
+    for (const [key, value] of Object.entries(customer)) {
+      console.log(`    ${key}: ${value} (${typeof value})`);
+    }
+  }
+  
+  // 5. Shop info
+  if ('shop' in payload && payload.shop && typeof payload.shop === 'object') {
+    const shop = payload.shop as Record<string, unknown>;
+    console.log("  🏪 shop:");
+    for (const [key, value] of Object.entries(shop)) {
+      console.log(`    ${key}: ${value} (${typeof value})`);
+    }
+  }
+  
+  // 6. سایر فیلدها
+  console.log("\n📋 OTHER FIELDS:");
+  for (const [key, value] of Object.entries(payload)) {
+    if (!['state_code', 'city_code', 'send_type', 'location', 'order_items', 'customer', 'shop'].includes(key)) {
+      console.log(`  ${key}: ${JSON.stringify(value)} (${typeof value})`);
+    }
+  }
+  
+  console.log("======================================");
 }
 
 /**
- * Log Tapin API response details
+ * Log Tapin API response details - اضافه شده برای دیباگ
  */
 function logResponse(endpoint: string, httpStatus: number, responseData: Record<string, unknown>): void {
-  console.log("========== TAPIN RESPONSE =========");
-  console.log("Endpoint:", endpoint);
-  console.log("HTTP Status:", httpStatus);
-  console.log("returns:", JSON.stringify(responseData.returns ?? null, null, 2));
-  console.log("status:", responseData.status);
-  console.log("message:", responseData.message ?? null);
-  console.log("Full Response:", JSON.stringify(responseData, null, 2));
-  console.log("===================================");
+  console.log("========== 🟢 TAPIN RESPONSE =========");
+  console.log("📍 Endpoint:", endpoint);
+  console.log("📊 HTTP Status:", httpStatus);
+  
+  // =============== لاگ کامل پاسخ دریافتی ===============
+  console.log("📦 COMPLETE RESPONSE FROM TAPIN:");
+  console.log(JSON.stringify(responseData, null, 2));
+  
+  // لاگ returns
+  if (responseData.returns) {
+    console.log("\n📊 returns:", JSON.stringify(responseData.returns, null, 2));
+  }
+  
+  // لاگ entries
+  if (responseData.entries) {
+    console.log("\n📦 entries:", JSON.stringify(responseData.entries, null, 2));
+  }
+  
+  // لاگ status و message
+  if (responseData.status !== undefined) {
+    console.log(`📊 status: ${responseData.status}`);
+  }
+  if (responseData.message) {
+    console.log(`📊 message: ${responseData.message}`);
+  }
+  
+  console.log("======================================");
 }
 
 /**
@@ -233,23 +315,25 @@ async function tapinPost<T extends Record<string, unknown>>(
   const token = getTapinToken();
   const headers = getHeaders();
 
+  // =============== لاگ درخواست ===============
   logRequest(endpoint, payload);
 
   // Debug: log auth header details before fetch
-  console.log("========== TAPIN FETCH DEBUG ==========");
+  console.log("========== 🔧 TAPIN FETCH DEBUG ==========");
   console.log("Authorization Header:", (headers.Authorization || "").slice(0, 20) + "...");
   console.log("Authorization Length:", (headers.Authorization || "").length);
   console.log("Endpoint:", endpoint);
-  console.log("========================================");
+  console.log("===========================================");
 
   let httpStatus: number;
   let responseData: Record<string, unknown>;
 
   try {
-    console.log("========== FINAL HEADERS ==========");
-console.log(headers);
-console.log("Authorization RAW:", headers.Authorization);
-console.log("==================================");
+    console.log("========== 📨 FINAL HEADERS ==========");
+    console.log(headers);
+    console.log("Authorization RAW:", headers.Authorization);
+    console.log("======================================");
+    
     const response = await fetch(endpoint, {
       method: "POST",
       headers,
@@ -270,6 +354,7 @@ console.log("==================================");
     );
   }
 
+  // =============== لاگ پاسخ ===============
   logResponse(endpoint, httpStatus, responseData);
 
   // Check for non-HTTP-200 status codes
@@ -277,12 +362,12 @@ console.log("==================================");
     const returns = responseData.returns as { status: number; message: string } | undefined;
     const tapinMessage = returns?.message || (responseData.message as string) || "خطا در ارتباط با سرویس تاپین";
 
-    console.error("========== TAPIN ERROR ==========");
+    console.error("========== ❌ TAPIN ERROR ==========");
     console.error("HTTP Status:", httpStatus);
     console.error("returns.status:", returns?.status ?? "N/A");
     console.error("returns.message:", returns?.message ?? "N/A");
     console.error("Full Response:", JSON.stringify(responseData, null, 2));
-    console.error("=================================");
+    console.error("=====================================");
 
     throw new TapinApiError(
       tapinMessage,
@@ -298,12 +383,12 @@ console.log("==================================");
   if (returns && returns.status !== 200) {
     const tapinMessage = returns.message || "خطا در سرویس تاپین";
 
-    console.error("========== TAPIN BUSINESS ERROR ==========");
+    console.error("========== ❌ TAPIN BUSINESS ERROR ==========");
     console.error("HTTP Status:", httpStatus);
     console.error("returns.status:", returns.status);
     console.error("returns.message:", returns.message);
     console.error("Full Response:", JSON.stringify(responseData, null, 2));
-    console.error("==========================================");
+    console.error("==============================================");
 
     throw new TapinApiError(
       tapinMessage,
@@ -328,7 +413,7 @@ console.log("==================================");
  * @returns Array of provinces with their codes and cities
  */
 export async function getProvinces(): Promise<TapinProvince[]> {
-  console.log("========== FETCHING TAPIN PROVINCES ==========");
+  console.log("========== 🌍 FETCHING TAPIN PROVINCES ==========");
 
   const response = await tapinPost<TapinProvinceTreeResponse>(
     ENDPOINTS.PROVINCES,
@@ -359,7 +444,7 @@ export async function getProvinces(): Promise<TapinProvince[]> {
  * @returns Array of cities with their codes
  */
 export async function getCities(stateCode: string): Promise<TapinCity[]> {
-  console.log(`========== FETCHING TAPIN CITIES FOR STATE: ${stateCode} ==========`);
+  console.log(`========== 🏙️ FETCHING TAPIN CITIES FOR STATE: ${stateCode} ==========`);
 
   const response = await tapinPost<TapinCityListResponse>(
     ENDPOINTS.CITIES,
@@ -397,7 +482,11 @@ export async function getCities(stateCode: string): Promise<TapinCity[]> {
 export async function calculateShippingCost(
   payload: TapinCheckPriceRequest
 ): Promise<ShippingCostResult> {
-  console.log("========== TAPIN CALCULATE SHIPPING COST ==========");
+  console.log("========== 💰 TAPIN CALCULATE SHIPPING COST ==========");
+  
+  // =============== لاگ دیتای ورودی به تابع ===============
+  console.log("📥 INPUT DATA TO calculateShippingCost:");
+  console.log(JSON.stringify(payload, null, 2));
 
   const response = await tapinPost<TapinApiResponse>(
     ENDPOINTS.CHECK_PRICE,
@@ -471,7 +560,11 @@ export async function calculateShippingCost(
 export async function createShipment(
   payload: TapinRegisterRequest
 ): Promise<ShipmentResult> {
-  console.log("========== TAPIN CREATE SHIPMENT ==========");
+  console.log("========== 📦 TAPIN CREATE SHIPMENT ==========");
+  
+  // =============== لاگ دیتای ورودی به تابع ===============
+  console.log("📥 INPUT DATA TO createShipment:");
+  console.log(JSON.stringify(payload, null, 2));
 
   const response = await tapinPost<TapinApiResponse>(
     ENDPOINTS.REGISTER,
