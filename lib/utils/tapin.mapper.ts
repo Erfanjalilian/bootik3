@@ -39,46 +39,28 @@ export function mapProductsToTapin(products: ProductToMap[]): TapinProduct[] {
 
 /**
  * Map check price request payload
- * اصلاح شده با فیلدهای کامل برای تاپین
+ * فقط فیلدهای مورد نیاز تاپین ارسال میشن
  */
 export function mapCheckPriceRequest(params: {
   shopId: string;
-  address: string;
   cityCode: string;
   provinceCode: string;
-  firstName: string;
-  lastName: string;
-  mobile: string;
-  postalCode: string;
-  payType: string;
-  orderType: string;
-  packageWeight: number;
-  boxId: string;
-  packetType: string;
-  hasInsurance: boolean;
   products: TapinProduct[];
 }): TapinCheckPriceRequest {
   return {
     shop_id: params.shopId,
-    address: params.address || "---",
     state_code: params.provinceCode,
     city_code: params.cityCode,
-    province_code: params.provinceCode,
-    first_name: params.firstName || "---",
-    last_name: params.lastName || "---",
-    mobile: params.mobile || "09123456789",
-    postal_code: params.postalCode || "0000000000",
-    pay_type: params.payType || "1",
-    order_type: params.orderType || "1",
-    package_weight: params.packageWeight || 0,
-    box_id: params.boxId || "1",
-    packet_type: params.packetType || "0",
-    has_insurance: params.hasInsurance || false,
-    products: params.products,
     send_type: "1",
-    order_items: params.products,  // برای backward compatibility
-  };
+    order_items: params.products.map((p) => ({
+      name: p.title,
+      weight: p.weight,
+      count: p.count,
+      product_type_code: "1",
+    })),
+  } as any;  // ← این خط رو اضافه کن
 }
+
 
 /**
  * Map register shipment request payload

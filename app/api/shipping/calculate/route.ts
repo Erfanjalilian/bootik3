@@ -191,51 +191,33 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const shopId = getTapinShopId();
     console.log("🏪 Shop ID retrieved:", shopId);
 
-    // Calculate total package weight
-    const packageWeight = products.reduce(
-      (sum, p) => sum + (p.weight || 200) * p.quantity,
-      0
-    );
-    console.log("📦 Total package weight:", packageWeight, "grams");
-
-    // Map products to Tapin format - اصلاح شده با productId عددی
+    // Map products to Tapin format
     const tapinProducts = mapProductsToTapin(
-  products.map((p) => ({
-    count: p.quantity,
-    discount: p.discount ?? 0,
-    price: p.price,
-    title: p.name,
-    weight: p.weight || 200,
-    productId: String(p.productId),  // ← تبدیل به string
-  }))
-);
+      products.map((p) => ({
+        count: p.quantity,
+        discount: p.discount ?? 0,
+        price: p.price,
+        title: p.name,
+        weight: p.weight || 200,
+        productId: String(p.productId),
+      }))
+    );
 
-    // Build the check-price payload
+    // =============== فقط فیلدهای مورد نیاز ===============
     const payload = mapCheckPriceRequest({
       shopId,
-      address: body.address || "---",
       cityCode,
       provinceCode,
-      firstName: body.firstName || "---",
-      lastName: body.lastName || "---",
-      mobile: body.phone || "09123456789",
-      postalCode: body.postalCode || "1234567890",  // ← کد پستی معتبر ۱۰ رقمی
-      payType: "1",
-      orderType: "1",
-      packageWeight,
-      boxId: "1",
-      packetType: "1",  // ← 1 به جای 0
-      hasInsurance: false,
       products: tapinProducts,
     });
 
-    // لاگ FINAL PAYLOAD با Shop ID
-    console.log("========== 🔍 FINAL PAYLOAD WITH SHOP_ID ==========");
+    // لاگ FINAL PAYLOAD
+    console.log("========== 🔍 FINAL PAYLOAD ==========");
     console.log("1️⃣ Shop ID:", shopId);
-    console.log("2️⃣ province_code:", payload.province_code);
-    console.log("3️⃣ city_code:", payload.city_code);
+    console.log("2️⃣ province_code:", provinceCode);
+    console.log("3️⃣ city_code:", cityCode);
     console.log("4️⃣ Full Payload:", JSON.stringify(payload, null, 2));
-    console.log("====================================================");
+    console.log("======================================");
 
     // Calculate shipping cost via Tapin
     console.log("🔄 Calling calculateShippingCost with payload...");
