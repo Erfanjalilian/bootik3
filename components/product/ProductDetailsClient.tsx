@@ -238,18 +238,25 @@ export default function ProductDetailsClient({
             </Button>
           </div>
 
+          {/* =============== بخش اصلاح شده مشخصات محصول =============== */}
           <div className="gradient-card rounded-3xl border border-pink-200/70 p-6">
             <h3 className="mb-4 font-semibold text-gray-800">مشخصات محصول</h3>
             <dl className="space-y-3">
-              {Object.entries(product.specifications).map(([key, value]) => (
-                <div
-                  key={key}
-                  className="flex justify-between border-b border-pink-50 pb-2 text-sm last:border-0"
-                >
-                  <dt className="text-gray-500">{key}</dt>
-                  <dd className="font-medium text-gray-800">{value}</dd>
-                </div>
-              ))}
+              {Object.entries(product.specifications).length > 0 ? (
+                Object.entries(product.specifications).map(([key, value]) => (
+                  <div
+                    key={key}
+                    className="flex justify-between border-b border-pink-50 pb-2 text-sm last:border-0"
+                  >
+                    <dt className="text-gray-500">{key}</dt>
+                    <dd className="font-medium text-gray-800">
+                      {typeof value === 'object' ? JSON.stringify(value) : value}
+                    </dd>
+                  </div>
+                ))
+              ) : (
+                <p className="text-gray-400 text-sm">هیچ مشخصاتی ثبت نشده است.</p>
+              )}
             </dl>
           </div>
         </div>
