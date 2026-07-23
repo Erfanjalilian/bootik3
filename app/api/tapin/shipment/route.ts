@@ -142,26 +142,26 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         price: item.price,
         title: item.name,
         weight: 200,
-        productId: Number(item.productId),  // ← تبدیل به عدد
+        productId: Number(item.productId),
       }))
     );
 
-    // Build the register payload
+    // =============== Build the register payload based on Tapin docs ===============
     const payload = mapRegisterRequest({
       registerType: "0",
-      shopId,
-      address: shippingAddress.address,
-      cityCode,
-      provinceCode,
-      firstName: shippingAddress.firstName,
-      lastName: shippingAddress.lastName,
-      mobile: shippingAddress.phone,
-      postalCode: shippingAddress.postalCode,
+      shopId: shopId,
+      address: shippingAddress.address || "---",
+      cityCode: cityCode,
+      provinceCode: provinceCode,
+      firstName: shippingAddress.firstName || "---",
+      lastName: shippingAddress.lastName || "---",
+      mobile: shippingAddress.phone || "09123456789",
+      postalCode: shippingAddress.postalCode || "1234567890",
       payType: "1",
       orderType: "1",
-      packageWeight: totalWeight,
+      packageWeight: totalWeight || 1000,
       boxId: "1",
-      packetType: "0",
+      packetType: "2",
       hasInsurance: false,
       products: tapinProducts,
     });
@@ -178,7 +178,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     await updateOrderTapinShipment(orderId, {
       tapinShipmentId: shipment.id,
       tapinBarcode: shipment.barcode,
-      tapinOrderId: shipment.orderId,
+      tapinOrderId: String(shipment.orderId),
       tapinSendPrice: shipment.sendPrice,
     });
 

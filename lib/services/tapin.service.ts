@@ -420,7 +420,6 @@ export async function getProvinces(): Promise<TapinProvince[]> {
     {}
   );
 
-  // The response may have entries as an array of provinces
   const entries = response.entries;
   if (!entries || !Array.isArray(entries)) {
     throw new TapinApiError(
@@ -484,11 +483,9 @@ export async function calculateShippingCost(
 ): Promise<ShippingCostResult> {
   console.log("========== 💰 TAPIN CALCULATE SHIPPING COST ==========");
   
-  // =============== لاگ دیتای ورودی به تابع ===============
   console.log("📥 INPUT DATA TO calculateShippingCost:");
   console.log(JSON.stringify(payload, null, 2));
 
-  // =============== لاگ FINAL PAYLOAD با Shop ID ===============
   console.log("========== 🔍 FINAL PAYLOAD TO TAPIN ==========");
   console.log("Payload:", JSON.stringify(payload, null, 2));
   console.log("Shop ID being used:", getTapinShopId());
@@ -499,7 +496,6 @@ export async function calculateShippingCost(
     payload as unknown as Record<string, unknown>
   );
 
-  // Extract entries - could be a single object or array
   const entries = response.entries;
   if (!entries) {
     throw new TapinApiError(
@@ -511,7 +507,6 @@ export async function calculateShippingCost(
     );
   }
 
-  // Handle array of entries or single entry
   const entry: TapinResponseEntry = Array.isArray(entries) ? entries[0] : entries;
 
   if (!entry) {
@@ -524,7 +519,6 @@ export async function calculateShippingCost(
     );
   }
 
-  // Read from total_price or send_price
   const totalPrice = typeof entry.total_price === "number" ? entry.total_price : 0;
   const sendPrice = typeof entry.send_price === "number" ? entry.send_price : 0;
 
@@ -568,11 +562,9 @@ export async function createShipment(
 ): Promise<ShipmentResult> {
   console.log("========== 📦 TAPIN CREATE SHIPMENT ==========");
   
-  // =============== لاگ دیتای ورودی به تابع ===============
   console.log("📥 INPUT DATA TO createShipment:");
   console.log(JSON.stringify(payload, null, 2));
 
-  // =============== لاگ FINAL PAYLOAD با Shop ID ===============
   console.log("========== 🔍 FINAL PAYLOAD TO TAPIN ==========");
   console.log("Payload:", JSON.stringify(payload, null, 2));
   console.log("Shop ID being used:", getTapinShopId());
@@ -583,7 +575,6 @@ export async function createShipment(
     payload as unknown as Record<string, unknown>
   );
 
-  // Extract entries
   const entries = response.entries;
   if (!entries) {
     throw new TapinApiError(
@@ -595,7 +586,6 @@ export async function createShipment(
     );
   }
 
-  // Handle array of entries or single entry
   const entry: TapinResponseEntry = Array.isArray(entries) ? entries[0] : entries;
 
   if (!entry) {
@@ -608,7 +598,6 @@ export async function createShipment(
     );
   }
 
-  // Validate required fields
   const id = entry.id;
   const barcode = entry.barcode;
   const orderId = entry.order_id;
