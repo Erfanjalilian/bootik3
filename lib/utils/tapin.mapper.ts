@@ -1,6 +1,5 @@
 // ============================================================================
 // Tapin Shipping API - Mapper Utilities
-// Handles conversion between Persian names and Tapin codes
 // ============================================================================
 
 import type {
@@ -11,9 +10,6 @@ import type {
   CityMapping,
 } from "@/lib/types/tapin.types";
 
-/**
- * Product info from cart/order that needs to be mapped to Tapin format
- */
 export interface ProductToMap {
   count: number;
   discount: number;
@@ -23,9 +19,6 @@ export interface ProductToMap {
   productId: number;
 }
 
-/**
- * Convert internal product format to Tapin product format
- */
 export function mapProductsToTapin(products: ProductToMap[]): TapinProduct[] {
   return products.map((p) => ({
     count: p.count,
@@ -37,9 +30,6 @@ export function mapProductsToTapin(products: ProductToMap[]): TapinProduct[] {
   }));
 }
 
-/**
- * Map check price request payload - نسخه کامل با تمام فیلدهای مورد نیاز
- */
 export function mapCheckPriceRequest(params: {
   shopId: string;
   cityCode: string;
@@ -64,6 +54,10 @@ export function mapCheckPriceRequest(params: {
     has_insurance: false,
     products: params.products,
     send_type: "1",
+    description: "---",
+    email: "test@example.com",
+    employee_code: "-1",
+    phone: "09123456789",
     order_items: params.products.map((p) => ({
       name: p.title,
       weight: p.weight,
@@ -74,9 +68,6 @@ export function mapCheckPriceRequest(params: {
   };
 }
 
-/**
- * Map register shipment request payload - بر اساس مستندات تاپین
- */
 export function mapRegisterRequest(params: {
   registerType: string;
   shopId: string;
@@ -115,10 +106,6 @@ export function mapRegisterRequest(params: {
   };
 }
 
-/**
- * Persian province name to Tapin province_code mapping
- * This should be populated from the Tapin province tree API at startup
- */
 let cachedProvinceMap: ProvinceMapping | null = null;
 let cachedCityMap: Record<string, CityMapping> = {};
 
@@ -138,36 +125,23 @@ export function getCachedCityMap(provinceCode: string): CityMapping | null {
   return cachedCityMap[provinceCode] ?? null;
 }
 
-/**
- * Look up a province code from a Persian province name
- */
 export function lookupProvinceCode(persianName: string): string | null {
   if (!cachedProvinceMap) return null;
-  // Try exact match
   if (cachedProvinceMap[persianName]) return cachedProvinceMap[persianName];
-  // Try trimmed match
   const trimmed = persianName.trim();
   if (cachedProvinceMap[trimmed]) return cachedProvinceMap[trimmed];
   return null;
 }
 
-/**
- * Look up a city code from a Persian city name, within a province
- */
 export function lookupCityCode(provinceCode: string, persianCityName: string): string | null {
   const provinceCities = cachedCityMap[provinceCode];
   if (!provinceCities) return null;
-  // Try exact match
   if (provinceCities[persianCityName]) return provinceCities[persianCityName];
-  // Try trimmed match
   const trimmed = persianCityName.trim();
   if (provinceCities[trimmed]) return provinceCities[trimmed];
   return null;
 }
 
-/**
- * Clear cached maps (useful for testing or refresh)
- */
 export function clearCachedMaps(): void {
   cachedProvinceMap = null;
   cachedCityMap = {};

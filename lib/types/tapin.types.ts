@@ -50,6 +50,10 @@ export interface TapinCheckPriceRequest {
   products: TapinProduct[];
   send_type: string;
   order_items: TapinOrderItem[];
+  description?: string;
+  email?: string;
+  employee_code?: string;
+  phone?: string;
 }
 
 /**
