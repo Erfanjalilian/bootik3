@@ -20,7 +20,7 @@ import {
   lookupCityCode,
 } from "@/lib/utils/tapin.mapper";
 import { mapProductsToTapin, mapCheckPriceRequest } from "@/lib/utils/tapin.mapper";
-import type { ProvinceMapping, CityMapping, TapinProvince } from "@/lib/types/tapin.types";
+import type { ProvinceMapping, CityMapping } from "@/lib/types/tapin.types";
 
 /**
  * Request body for shipping calculation
@@ -28,7 +28,6 @@ import type { ProvinceMapping, CityMapping, TapinProvince } from "@/lib/types/ta
 interface CalculateShippingRequest {
   city: string;
   province: string;
-  /** Array of products from the cart */
   products: {
     productId: string;
     name: string;
@@ -55,18 +54,15 @@ async function ensureCodesCached(provinceName: string, cityName: string): Promis
   let provinceCode = lookupProvinceCode(provinceName);
   
   if (!provinceCode) {
-    // Not cached, fetch provinces from Tapin
     console.log("Province cache empty, fetching from Tapin API...");
     const provinces = await getProvinces();
 
-    // Build province mapping and cache it
     const provinceMap: ProvinceMapping = {};
     for (const province of provinces) {
       provinceMap[province.state_name] = province.state_code;
     }
     setCachedProvinceMap(provinceMap);
 
-    // Also cache cities for each province
     for (const province of provinces) {
       const cityMap: CityMapping = {};
       for (const city of province.cities) {
@@ -75,7 +71,6 @@ async function ensureCodesCached(provinceName: string, cityName: string): Promis
       setCachedCityMap(province.state_code, cityMap);
     }
 
-    // Try lookup again
     provinceCode = lookupProvinceCode(provinceName);
   }
 
@@ -89,11 +84,9 @@ async function ensureCodesCached(provinceName: string, cityName: string): Promis
     );
   }
 
-  // Look up city code
   let cityCode = lookupCityCode(provinceCode, cityName);
 
   if (!cityCode) {
-    // Cities not cached for this province, fetch them
     console.log(`City cache empty for province ${provinceCode}, fetching from Tapin...`);
     const cities = await getCities(provinceCode);
 
@@ -103,7 +96,6 @@ async function ensureCodesCached(provinceName: string, cityName: string): Promis
     }
     setCachedCityMap(provinceCode, cityMap);
 
-    // Try lookup again
     cityCode = lookupCityCode(provinceCode, cityName);
   }
 
@@ -122,22 +114,6 @@ async function ensureCodesCached(provinceName: string, cityName: string): Promis
 
 /**
  * POST handler for shipping cost calculation
- *
- * Expects:
- * {
- *   city: string (Persian name),
- *   province: string (Persian name),
- *   products: Array<{ productId, name, price, quantity, weight, discount? }>,
- *   address?: string,
- *   firstName?: string,
- *   lastName?: string,
- *   phone?: string,
- *   postalCode?: string
- * }
- *
- * Returns:
- * - Success: { ok: true, method: "post", title: "...", shippingCost: number }
- * - On error: { ok: false, message: string, canCheckout: boolean }
  */
 export async function POST(request: NextRequest): Promise<NextResponse> {
   console.log("========== 🚀 SHIPPING CALCULATE ROUTE STARTED ==========");
@@ -150,70 +126,65 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       city,
       province,
       productsCount: products?.length || 0,
-      hasAddress: !!body.address,
-      hasPhone: !!body.phone,
     });
 
     // Validate required fields
     if (!city || !city.trim()) {
       return NextResponse.json(
-        {
-          ok: false,
-          message: "لطفاً شهر مقصد را وارد کنید",
-          canCheckout: false,
-        },
+        { ok: false, message: "لطفاً شهر مقصد را وارد کنید", canCheckout: false },
         { status: 400 }
       );
     }
 
     if (!province || !province.trim()) {
       return NextResponse.json(
-        {
-          ok: false,
-          message: "لطفاً استان مقصد را وارد کنید",
-          canCheckout: false,
-        },
+        { ok: false, message: "لطفاً استان مقصد را وارد کنید", canCheckout: false },
         { status: 400 }
       );
     }
 
     if (!products || products.length === 0) {
       return NextResponse.json(
-        {
-          ok: false,
-          message: "سبد خرید خالی است",
-          canCheckout: false,
-        },
+        { ok: false, message: "سبد خرید خالی است", canCheckout: false },
         { status: 400 }
       );
     }
 
-    // Resolve Persian province/city names to Tapin codes
+    // =============== تشخیص عددی بودن یا نبودن ===============
+    const isNumericProvince = /^\d+$/.test(province.trim());
+    const isNumericCity = /^\d+$/.test(city.trim());
+    
+    console.log("🔍 Detected types:", {
+      province: { value: province, isNumeric: isNumericProvince },
+      city: { value: city, isNumeric: isNumericCity },
+    });
+
     let provinceCode: string;
     let cityCode: string;
 
-    try {
-      const codes = await ensureCodesCached(province, city);
-      provinceCode = codes.provinceCode;
-      cityCode = codes.cityCode;
-    } catch (error) {
-      if (error instanceof TapinApiError) {
-        return NextResponse.json(
-          {
-            ok: false,
-            message: error.getPersianMessage(),
-            canCheckout: false,
-          },
-          { status: 404 }
-        );
+    if (isNumericProvince && isNumericCity) {
+      // اگر کد عددی بود، مستقیماً استفاده کن
+      provinceCode = province.trim();
+      cityCode = city.trim();
+      console.log("✅ Using numeric codes directly:", { provinceCode, cityCode });
+    } else {
+      // اگر نام بود، از کش استفاده کن
+      console.log("🔄 Resolving names to codes...");
+      try {
+        const codes = await ensureCodesCached(province, city);
+        provinceCode = codes.provinceCode;
+        cityCode = codes.cityCode;
+        console.log("✅ Resolved codes:", { provinceCode, cityCode });
+      } catch (error) {
+        if (error instanceof TapinApiError) {
+          return NextResponse.json(
+            { ok: false, message: error.getPersianMessage(), canCheckout: false },
+            { status: 404 }
+          );
+        }
+        throw error;
       }
-      throw error;
     }
-
-    console.log("✅ Resolved codes:", {
-      province: `${province} -> ${provinceCode}`,
-      city: `${city} -> ${cityCode}`,
-    });
 
     // Get shop ID
     console.log("🏪 Getting Shop ID from environment...");
@@ -238,7 +209,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         productId: p.productId,
       }))
     );
-    console.log("📦 Mapped products count:", tapinProducts.length);
 
     // Build the check-price payload
     const payload = mapCheckPriceRequest({
@@ -259,15 +229,12 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       products: tapinProducts,
     });
 
-    // =============== لاگ FINAL PAYLOAD با Shop ID ===============
+    // لاگ FINAL PAYLOAD با Shop ID
     console.log("========== 🔍 FINAL PAYLOAD WITH SHOP_ID ==========");
-    console.log("1️⃣ Shop ID from getTapinShopId():", shopId);
-    console.log("2️⃣ Shop ID type:", typeof shopId);
-    console.log("3️⃣ Full Payload:", JSON.stringify(payload, null, 2));
-    console.log("4️⃣ payload.shop_id:", payload.shop_id);
-    console.log("5️⃣ payload.shop_id type:", typeof payload.shop_id);
-    console.log("6️⃣ payload.city_code:", payload.city_code);
-    console.log("7️⃣ payload.province_code:", payload.province_code);
+    console.log("1️⃣ Shop ID:", shopId);
+    console.log("2️⃣ province_code:", payload.province_code);
+    console.log("3️⃣ city_code:", payload.city_code);
+    console.log("4️⃣ Full Payload:", JSON.stringify(payload, null, 2));
     console.log("====================================================");
 
     // Calculate shipping cost via Tapin
@@ -275,7 +242,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const result = await calculateShippingCost(payload);
     console.log("✅ calculateShippingCost result:", result);
 
-    // Use totalPrice as the shipping cost (total includes both send price and any additional fees)
     const shippingCost = result.totalPrice > 0 ? result.totalPrice : result.sendPrice;
     console.log("💰 Final shipping cost:", shippingCost);
 
@@ -288,7 +254,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       sendPrice: result.sendPrice,
     });
   } catch (error) {
-    // Handle Tapin-specific errors
     if (error instanceof TapinApiError) {
       console.error("[shipping/calculate] Tapin error:", {
         message: error.message,
@@ -299,24 +264,14 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       });
 
       return NextResponse.json(
-        {
-          ok: false,
-          message: error.getPersianMessage(),
-          canCheckout: false,
-        },
+        { ok: false, message: error.getPersianMessage(), canCheckout: false },
         { status: error.httpStatus === 503 ? 503 : 400 }
       );
     }
 
-    // Handle unexpected errors
     console.error("[shipping/calculate] Unexpected error:", error);
-
     return NextResponse.json(
-      {
-        ok: false,
-        message: "خطا در محاسبه هزینه ارسال. لطفاً بعداً تلاش کنید.",
-        canCheckout: false,
-      },
+      { ok: false, message: "خطا در محاسبه هزینه ارسال. لطفاً بعداً تلاش کنید.", canCheckout: false },
       { status: 500 }
     );
   }
