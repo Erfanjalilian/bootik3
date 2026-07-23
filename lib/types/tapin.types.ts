@@ -18,23 +18,28 @@ export interface TapinProduct {
 /**
  * Request payload for Tapin check-price API
  * POST https://api.tapin.ir/api/v2/public/order/post/check-price/
+ * اصلاح شده با فیلدهای درست برای تاپین
  */
 export interface TapinCheckPriceRequest {
   shop_id: string;
-  address: string;
+  state_code: string;        // ← اضافه شد
   city_code: string;
-  province_code: string;
-  first_name: string;
-  last_name: string;
-  mobile: string;
-  postal_code: string;
-  pay_type: string;
-  order_type: string;
-  package_weight: number;
-  box_id: string;
-  packet_type: string;
-  has_insurance: boolean;
-  products: TapinProduct[];
+  send_type: string;         // ← اضافه شد
+  order_items: TapinProduct[]; // ← اضافه شد (به جای products)
+  // فیلدهای زیر برای تاپین check-price نیازی نیستند، ولی اگر باشن اشکالی نداره
+  address?: string;
+  province_code?: string;
+  first_name?: string;
+  last_name?: string;
+  mobile?: string;
+  postal_code?: string;
+  pay_type?: string;
+  order_type?: string;
+  package_weight?: number;
+  box_id?: string;
+  packet_type?: string;
+  has_insurance?: boolean;
+  products?: TapinProduct[];  // برای backward compatibility
 }
 
 /**

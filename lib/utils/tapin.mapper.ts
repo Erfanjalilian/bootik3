@@ -39,6 +39,7 @@ export function mapProductsToTapin(products: ProductToMap[]): TapinProduct[] {
 
 /**
  * Map check price request payload
+ * اصلاح شده با فیلدهای درست برای تاپین
  */
 export function mapCheckPriceRequest(params: {
   shopId: string;
@@ -59,20 +60,11 @@ export function mapCheckPriceRequest(params: {
 }): TapinCheckPriceRequest {
   return {
     shop_id: params.shopId,
-    address: params.address,
+    state_code: params.provinceCode,        // ← اصلاح: state_code
     city_code: params.cityCode,
-    province_code: params.provinceCode,
-    first_name: params.firstName,
-    last_name: params.lastName,
-    mobile: params.mobile,
-    postal_code: params.postalCode,
-    pay_type: params.payType,
-    order_type: params.orderType,
-    package_weight: params.packageWeight,
-    box_id: params.boxId,
-    packet_type: params.packetType,
-    has_insurance: params.hasInsurance,
-    products: params.products,
+    send_type: "1",                         // ← اضافه شد: send_type
+    order_items: params.products,           // ← اصلاح: order_items به جای products
+    // فیلدهای اضافی که تاپین نیاز نداره رو حذف کردیم
   };
 }
 
