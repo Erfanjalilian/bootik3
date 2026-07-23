@@ -12,7 +12,7 @@ export interface TapinProduct {
   price: number;
   title: string;
   weight: number;
-  product_id: string;
+  product_id: number;
 }
 
 /**

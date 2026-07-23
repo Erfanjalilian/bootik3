@@ -20,7 +20,7 @@ export interface ProductToMap {
   price: number;
   title: string;
   weight: number;
-  productId: string;
+  productId: number;
 }
 
 /**
@@ -38,19 +38,42 @@ export function mapProductsToTapin(products: ProductToMap[]): TapinProduct[] {
 }
 
 /**
- * Map check price request payload
- * فقط فیلدهای مورد نیاز تاپین ارسال میشن
+ * Map check price request payload - نسخه کامل با تمام فیلدهای مورد نیاز تاپین
  */
 export function mapCheckPriceRequest(params: {
   shopId: string;
+  address: string;
   cityCode: string;
   provinceCode: string;
+  firstName: string;
+  lastName: string;
+  mobile: string;
+  postalCode: string;
+  payType: string;
+  orderType: string;
+  packageWeight: number;
+  boxId: string;
+  packetType: string;
+  hasInsurance: boolean;
   products: TapinProduct[];
 }): TapinCheckPriceRequest {
   return {
     shop_id: params.shopId,
+    address: params.address || "---",
     state_code: params.provinceCode,
     city_code: params.cityCode,
+    province_code: params.provinceCode,
+    first_name: params.firstName || "---",
+    last_name: params.lastName || "---",
+    mobile: params.mobile || "09123456789",
+    postal_code: params.postalCode || "1234567890",
+    pay_type: params.payType || "1",
+    order_type: params.orderType || "1",
+    package_weight: params.packageWeight || 1000,
+    box_id: params.boxId || "1",
+    packet_type: params.packetType || "1",
+    has_insurance: params.hasInsurance || false,
+    products: params.products,
     send_type: "1",
     order_items: params.products.map((p) => ({
       name: p.title,
@@ -58,9 +81,8 @@ export function mapCheckPriceRequest(params: {
       count: p.count,
       product_type_code: "1",
     })),
-  } as any;  // ← این خط رو اضافه کن
+  } as any; 
 }
-
 
 /**
  * Map register shipment request payload

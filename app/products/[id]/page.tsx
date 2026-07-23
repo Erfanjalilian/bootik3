@@ -10,7 +10,9 @@ import {
 
 export async function generateStaticParams() {
   const products = getProducts();
-  return products.map((p) => ({ id: p.id }));
+  return products.map((p) => ({ 
+    id: String(p.id)  // ← تبدیل به string
+  }));
 }
 
 export async function generateMetadata({

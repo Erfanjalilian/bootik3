@@ -191,7 +191,14 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const shopId = getTapinShopId();
     console.log("🏪 Shop ID retrieved:", shopId);
 
-    // Map products to Tapin format
+    // Calculate total package weight
+    const packageWeight = products.reduce(
+      (sum, p) => sum + (p.weight || 200) * p.quantity,
+      0
+    );
+    console.log("📦 Total package weight:", packageWeight, "grams");
+
+    // =============== Map products to Tapin format with numeric productId ===============
     const tapinProducts = mapProductsToTapin(
       products.map((p) => ({
         count: p.quantity,
@@ -199,15 +206,26 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         price: p.price,
         title: p.name,
         weight: p.weight || 200,
-        productId: String(p.productId),
+        productId: Number(p.productId), // ← تبدیل به عدد
       }))
     );
 
-    // =============== فقط فیلدهای مورد نیاز ===============
+    // =============== ارسال تمام فیلدهای مورد نیاز ===============
     const payload = mapCheckPriceRequest({
-      shopId,
-      cityCode,
-      provinceCode,
+      shopId: shopId,
+      address: body.address || "---",
+      cityCode: cityCode,
+      provinceCode: provinceCode,
+      firstName: body.firstName || "---",
+      lastName: body.lastName || "---",
+      mobile: body.phone || "09123456789",
+      postalCode: body.postalCode || "1234567890",
+      payType: "1",
+      orderType: "1",
+      packageWeight: packageWeight,
+      boxId: "1",
+      packetType: "1",
+      hasInsurance: false,
       products: tapinProducts,
     });
 

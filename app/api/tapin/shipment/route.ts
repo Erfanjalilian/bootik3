@@ -134,7 +134,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     // Calculate total package weight - use 200g per item as default
     const totalWeight = items.reduce((sum, item) => sum + 200 * item.quantity, 0);
 
-    // Map products to Tapin format
+    // =============== Map products to Tapin format with numeric productId ===============
     const tapinProducts = mapProductsToTapin(
       items.map((item) => ({
         count: item.quantity,
@@ -142,7 +142,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         price: item.price,
         title: item.name,
         weight: 200,
-        productId: item.productId,
+        productId: Number(item.productId),  // ← تبدیل به عدد
       }))
     );
 
@@ -165,6 +165,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       hasInsurance: false,
       products: tapinProducts,
     });
+
+    // لاگ payload برای دیباگ
+    console.log("========== 🔍 TAPIN REGISTER PAYLOAD ==========");
+    console.log("Payload:", JSON.stringify(payload, null, 2));
+    console.log("==============================================");
 
     // Create shipment via Tapin
     const shipment = await createShipment(payload);
