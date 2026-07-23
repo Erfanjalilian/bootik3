@@ -140,9 +140,19 @@ async function ensureCodesCached(provinceName: string, cityName: string): Promis
  * - On error: { ok: false, message: string, canCheckout: boolean }
  */
 export async function POST(request: NextRequest): Promise<NextResponse> {
+  console.log("========== 🚀 SHIPPING CALCULATE ROUTE STARTED ==========");
+  
   try {
     const body: CalculateShippingRequest = await request.json();
     const { city, province, products } = body;
+
+    console.log("📥 Request body received:", {
+      city,
+      province,
+      productsCount: products?.length || 0,
+      hasAddress: !!body.address,
+      hasPhone: !!body.phone,
+    });
 
     // Validate required fields
     if (!city || !city.trim()) {
@@ -200,19 +210,22 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       throw error;
     }
 
-    console.log("Resolved codes:", {
+    console.log("✅ Resolved codes:", {
       province: `${province} -> ${provinceCode}`,
       city: `${city} -> ${cityCode}`,
     });
 
     // Get shop ID
+    console.log("🏪 Getting Shop ID from environment...");
     const shopId = getTapinShopId();
+    console.log("🏪 Shop ID retrieved:", shopId);
 
     // Calculate total package weight
     const packageWeight = products.reduce(
       (sum, p) => sum + (p.weight || 200) * p.quantity,
       0
     );
+    console.log("📦 Total package weight:", packageWeight, "grams");
 
     // Map products to Tapin format
     const tapinProducts = mapProductsToTapin(
@@ -225,6 +238,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         productId: p.productId,
       }))
     );
+    console.log("📦 Mapped products count:", tapinProducts.length);
 
     // Build the check-price payload
     const payload = mapCheckPriceRequest({
@@ -245,11 +259,25 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       products: tapinProducts,
     });
 
+    // =============== لاگ FINAL PAYLOAD با Shop ID ===============
+    console.log("========== 🔍 FINAL PAYLOAD WITH SHOP_ID ==========");
+    console.log("1️⃣ Shop ID from getTapinShopId():", shopId);
+    console.log("2️⃣ Shop ID type:", typeof shopId);
+    console.log("3️⃣ Full Payload:", JSON.stringify(payload, null, 2));
+    console.log("4️⃣ payload.shop_id:", payload.shop_id);
+    console.log("5️⃣ payload.shop_id type:", typeof payload.shop_id);
+    console.log("6️⃣ payload.city_code:", payload.city_code);
+    console.log("7️⃣ payload.province_code:", payload.province_code);
+    console.log("====================================================");
+
     // Calculate shipping cost via Tapin
+    console.log("🔄 Calling calculateShippingCost with payload...");
     const result = await calculateShippingCost(payload);
+    console.log("✅ calculateShippingCost result:", result);
 
     // Use totalPrice as the shipping cost (total includes both send price and any additional fees)
     const shippingCost = result.totalPrice > 0 ? result.totalPrice : result.sendPrice;
+    console.log("💰 Final shipping cost:", shippingCost);
 
     return NextResponse.json({
       ok: true,
