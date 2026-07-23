@@ -15,7 +15,8 @@ export function getProducts(): Product[] {
 }
 
 export function getProductById(id: string): Product | undefined {
-  return getProducts().find((p) => p.id === id);
+  // اصلاح: تبدیل id به string برای مقایسه
+  return getProducts().find((p) => String(p.id) === id);
 }
 
 export function getCategories(): Category[] {
