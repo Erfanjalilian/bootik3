@@ -198,17 +198,17 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     );
     console.log("📦 Total package weight:", packageWeight, "grams");
 
-    // Map products to Tapin format
+    // Map products to Tapin format - اصلاح شده با productId عددی
     const tapinProducts = mapProductsToTapin(
-      products.map((p) => ({
-        count: p.quantity,
-        discount: p.discount ?? 0,
-        price: p.price,
-        title: p.name,
-        weight: p.weight || 200,
-        productId: p.productId,
-      }))
-    );
+  products.map((p) => ({
+    count: p.quantity,
+    discount: p.discount ?? 0,
+    price: p.price,
+    title: p.name,
+    weight: p.weight || 200,
+    productId: String(p.productId),  // ← تبدیل به string
+  }))
+);
 
     // Build the check-price payload
     const payload = mapCheckPriceRequest({
@@ -219,12 +219,12 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       firstName: body.firstName || "---",
       lastName: body.lastName || "---",
       mobile: body.phone || "09123456789",
-      postalCode: body.postalCode || "0000000000",
+      postalCode: body.postalCode || "1234567890",  // ← کد پستی معتبر ۱۰ رقمی
       payType: "1",
       orderType: "1",
       packageWeight,
       boxId: "1",
-      packetType: "0",
+      packetType: "1",  // ← 1 به جای 0
       hasInsurance: false,
       products: tapinProducts,
     });
