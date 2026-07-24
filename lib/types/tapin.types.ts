@@ -43,6 +43,7 @@ export interface TapinCheckPriceRequest {
   postal_code: string;
   pay_type: string;
   order_type: string;
+  pre_paid_price?: number;
   package_weight: number;
   box_id: string;
   packet_type: string;
