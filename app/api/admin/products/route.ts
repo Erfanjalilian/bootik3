@@ -197,7 +197,7 @@ export async function PUT(request: Request) {
 
     revalidatePath("/shop");
     revalidatePath("/");
-    revalidatePath("/products");
+    revalidatePath("/products/[id]", "page");
     revalidatePath("/api/admin/products");
 
     return NextResponse.json(updatedProduct);

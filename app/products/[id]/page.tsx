@@ -8,6 +8,8 @@ import {
   getRelatedProducts,
 } from "@/lib/data";
 
+export const dynamic = 'force-dynamic';
+
 export async function generateStaticParams() {
   const products = getProducts();
   return products.map((p) => ({ 
