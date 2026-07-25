@@ -383,7 +383,7 @@ export async function verifyPayment(
   }
 
   return {
-    trackId: verifiedResponse.trackId,
+    trackId: verifiedResponse.trackId || trackId,
     refNumber: verifiedResponse.refNumber,
     cardNumber: verifiedResponse.cardNumber,
     amount: verifiedResponse.amount,

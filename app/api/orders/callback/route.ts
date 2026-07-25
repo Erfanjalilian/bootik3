@@ -89,8 +89,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
     // Redirect to success page with transaction details
     const successUrl = new URL(SUCCESS_PATH, process.env.APP_URL!);
-    successUrl.searchParams.set("trackId", transaction.trackId.toString());
-    successUrl.searchParams.set("refNumber", transaction.refNumber.toString());
+    successUrl.searchParams.set("trackId", String(transaction.trackId));
+    successUrl.searchParams.set("refNumber", String(transaction.refNumber));
     successUrl.searchParams.set("status", "success");
 
     return NextResponse.redirect(successUrl);
