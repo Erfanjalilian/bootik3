@@ -140,10 +140,6 @@ export default function CartContent() {
               <span>جمع کل</span>
               <span>{formatPrice(totalPrice())}</span>
             </div>
-            <div className="flex justify-between text-gray-600">
-              <span>هزینه ارسال</span>
-              <span className="text-green-600">رایگان</span>
-            </div>
             <div className="border-t border-pink-100 pt-3">
               <div className="flex justify-between text-lg font-bold">
                 <span>مبلغ قابل پرداخت</span>

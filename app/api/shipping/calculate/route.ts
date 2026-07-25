@@ -230,7 +230,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json({
       ok: true,
       method: "post" as const,
-      title: "پست پیشتاز",
+      title: "ارسال با تیباکس",
       shippingCost,
       totalPrice: result.totalPrice,
       sendPrice: result.sendPrice,

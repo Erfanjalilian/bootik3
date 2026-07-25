@@ -305,10 +305,10 @@ export default function CheckoutContent() {
     );
   }
 
-  // Calculate final total: items total + shipping cost
+  // Calculate final total: items total only (shipping is paid at delivery as پس کرایه)
   const itemsTotal = totalPrice();
   const shippingCost = shippingInfo?.cost || 0;
-  const finalTotal = itemsTotal + shippingCost;
+  const finalTotal = itemsTotal;
 
   const handleProceedToPayment = async () => {
     if (!validateForm()) return;
@@ -596,9 +596,7 @@ export default function CheckoutContent() {
                   {isCalculatingShipping ? (
                     <Loader2 className="h-3 w-3 animate-spin" />
                   ) : shippingInfo ? (
-                    <span className={shippingInfo.cost === 0 ? "text-green-600" : "text-gray-800"}>
-                      {shippingInfo.cost === 0 ? "رایگان" : formatPrice(shippingInfo.cost)}
-                    </span>
+                    <span className="text-amber-600 font-medium">پس کرایه</span>
                   ) : shippingError ? (
                     <span className="text-red-500">خطا</span>
                   ) : (
