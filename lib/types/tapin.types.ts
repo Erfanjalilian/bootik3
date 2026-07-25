@@ -1,11 +1,11 @@
 // ============================================================================
-// Tapin Shipping API - TypeScript Types
-// Based on official Tapin API documentation
+// Tapin Shipping API - TypeScript Type Definitions
 // ============================================================================
 
-/**
- * Product item in a Tapin request
- */
+// ---------------------------------------------------------------------------
+// Product Types
+// ---------------------------------------------------------------------------
+
 export interface TapinProduct {
   count: number;
   discount: number;
@@ -15,22 +15,37 @@ export interface TapinProduct {
   product_id: number;
 }
 
-/**
- * Order item for check-price API (different from TapinProduct)
- */
-export interface TapinOrderItem {
-  name: string;
-  weight: number;
-  count: number;
-  product_type_code: string;
-  product_id?: number;
+// ---------------------------------------------------------------------------
+// Location Mapping Types
+// ---------------------------------------------------------------------------
+
+export interface ProvinceMapping {
+  [persianName: string]: string; // province code
 }
 
-/**
- * Request payload for Tapin check-price API
- * POST https://api.tapin.ir/api/v2/public/order/post/check-price/
- * بر اساس مستندات رسمی تاپین - شامل تمام فیلدهای اجباری
- */
+export interface CityMapping {
+  [persianCityName: string]: string; // city code
+}
+
+// ---------------------------------------------------------------------------
+// Province / City Types (from Tapin API)
+// ---------------------------------------------------------------------------
+
+export interface TapinCity {
+  city_code: string;
+  city_name: string;
+}
+
+export interface TapinProvince {
+  state_code: string;
+  state_name: string;
+  cities: TapinCity[];
+}
+
+// ---------------------------------------------------------------------------
+// Request Types
+// ---------------------------------------------------------------------------
+
 export interface TapinCheckPriceRequest {
   shop_id: string;
   address: string;
@@ -43,25 +58,26 @@ export interface TapinCheckPriceRequest {
   postal_code: string;
   pay_type: string;
   order_type: string;
-  pre_paid_price?: number;
+  pre_paid_price: number;
   package_weight: number;
   box_id: string;
   packet_type: string;
   has_insurance: boolean;
   products: TapinProduct[];
   send_type: string;
-  order_items: TapinOrderItem[];
-  description?: string;
-  email?: string;
-  employee_code?: string;
-  phone?: string;
+  description: string;
+  email: string;
+  employee_code: string;
+  phone: string;
+  order_items: Array<{
+    name: string;
+    weight: number;
+    count: number;
+    product_type_code: string;
+    product_id: number;
+  }>;
 }
 
-/**
- * Request payload for Tapin register shipment API
- * POST https://api.tapin.ir/api/v2/public/order/post/register/
- * بر اساس مستندات رسمی تاپین
- */
 export interface TapinRegisterRequest {
   register_type: string;
   shop_id: string;
@@ -79,136 +95,64 @@ export interface TapinRegisterRequest {
   packet_type: string;
   has_insurance: boolean;
   products: TapinProduct[];
-  description?: string;
-  email?: string;
-  employee_code?: string;
-  phone?: string;
-  pre_paid_price?: number;
-  presenter_code?: number;
-  manual_id?: string;
-  content_type?: number;
-  kiosk_id?: number;
-  duration?: number;
-  parcel_turning?: boolean;
 }
 
-/**
- * Response entry from Tapin API
- */
+// ---------------------------------------------------------------------------
+// Response Types
+// ---------------------------------------------------------------------------
+
 export interface TapinResponseEntry {
-  id?: string;
-  barcode?: string;
-  order_id?: number;
-  send_price?: number;
-  total_price?: number;
-  status?: number;
-  first_name?: string;
-  last_name?: string;
-  state_code?: string;
-  city_code?: string;
-  send_price_tax?: number;
-  insurance_price?: number;
-  insurance_tax?: number;
-  created_at?: string;
-  total_send_price_discount?: number;
-  product_price?: number;
-  pre_paid_price?: number;
-  final_pay_price?: number;
-  [key: string]: unknown;
+  id: string;
+  barcode: string;
+  order_id: string;
+  send_price: number;
+  total_price: number;
+  result: boolean;
+  status: string;
+  delivery_date: string;
 }
 
-/**
- * Standard response wrapper from Tapin API
- */
 export interface TapinApiResponse {
-  status: boolean;
-  message?: string;
-  entries?: TapinResponseEntry | TapinResponseEntry[];
-  returns?: {
+  returns: {
     status: number;
     message: string;
-    [key: string]: unknown;
   };
+  entries: TapinResponseEntry[] | TapinResponseEntry;
+  message?: string;
+  status?: number;
   [key: string]: unknown;
 }
 
-/**
- * Response from province tree API
- * POST https://api.tapin.ir/api/v2/public/state/tree/
- */
-export interface TapinProvince {
-  state_code: string;
-  state_name: string;
-  cities: TapinCity[];
-}
-
-/**
- * Response from city list API
- * POST https://api.tapin.ir/api/v2/public/city/list/
- */
-export interface TapinCity {
-  city_code: string;
-  city_name: string;
-}
-
-/**
- * Province tree response
- */
 export interface TapinProvinceTreeResponse {
-  status: boolean;
-  message?: string;
-  entries?: TapinProvince[];
-  returns?: {
+  returns: {
     status: number;
     message: string;
-    [key: string]: unknown;
   };
+  entries: TapinProvince[];
   [key: string]: unknown;
 }
 
-/**
- * City list response
- */
 export interface TapinCityListResponse {
-  status: boolean;
-  message?: string;
-  entries?: TapinCity[];
-  returns?: {
+  returns: {
     status: number;
     message: string;
-    [key: string]: unknown;
   };
+  entries: TapinCity[];
   [key: string]: unknown;
 }
 
-/**
- * Result of a shipping cost calculation
- */
+// ---------------------------------------------------------------------------
+// Result Types
+// ---------------------------------------------------------------------------
+
 export interface ShippingCostResult {
   totalPrice: number;
   sendPrice: number;
 }
 
-/**
- * Result of a shipment creation
- */
 export interface ShipmentResult {
   id: string;
   barcode: string;
-  orderId: number;
+  orderId: string;
   sendPrice: number;
-}
-
-/**
- * Cached province mapping: Persian name -> province_code
- */
-export interface ProvinceMapping {
-  [persianName: string]: string;
-}
-
-/**
- * Cached city mapping: Persian name -> city_code
- */
-export interface CityMapping {
-  [persianName: string]: string;
 }
