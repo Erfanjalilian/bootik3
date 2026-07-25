@@ -15,11 +15,12 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { items, totalAmount, shippingAddress, shipping } = body as {
+    const { items, totalAmount, shippingAddress, shipping, paymentMethod } = body as {
       items: OrderItem[];
       totalAmount: number;
       shippingAddress: ShippingAddress;
       shipping: OrderShippingInfo;
+      paymentMethod?: "online" | "cod";
     };
 
     // Validate required fields
@@ -68,7 +69,16 @@ export async function POST(request: NextRequest) {
       shipping,
     });
 
-    // Request payment from Zibal
+    // Cash on delivery - no payment gateway needed
+    if (paymentMethod === "cod") {
+      return NextResponse.json({
+        ok: true,
+        orderId: order.id,
+        paymentMethod: "cod",
+      });
+    }
+
+    // Online payment - request payment from Zibal
     try {
       const { trackId, gatewayUrl } = await requestPayment(
         totalAmount,

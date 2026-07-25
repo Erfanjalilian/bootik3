@@ -2,12 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ShoppingBag, ArrowRight, Loader2, CreditCard, User, MapPin, Phone } from "lucide-react";
+import { ShoppingBag, ArrowRight, Loader2, CreditCard, User, MapPin, Phone, Banknote, Package } from "lucide-react";
 import Button from "@/components/ui/Button";
 import ProductImage from "@/components/ui/ProductImage";
 import { formatPrice } from "@/lib/utils";
 import { useCartStore } from "@/lib/store/cart-store";
 import type { ShippingAddress, OrderShippingInfo } from "@/lib/orders/types";
+
+type PaymentMethod = "online" | "cod";
 
 const PROVINCES = [
   "آذربایجان شرقی", "آذربایجان غربی", "اردبیل", "اصفهان", "البرز",
@@ -37,10 +39,12 @@ export default function CheckoutContent() {
   const [shippingAddress, setShippingAddress] = useState<ShippingAddress>(initialAddress);
   const [errors, setErrors] = useState<Partial<Record<keyof ShippingAddress, string>>>({});
 
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("online");
+
   // Shipping is always "ارسال با تیباکس" (پس کرایه) - no API call needed
   const shippingInfo: OrderShippingInfo = {
     method: "post",
-    title: "ارسال با تیباکس",
+    title: "ارسال با تیباکس (پس کرایه)",
     cost: 0,
   };
 
@@ -179,6 +183,7 @@ export default function CheckoutContent() {
           totalAmount: finalTotal,
           shippingAddress,
           shipping: shippingInfo,
+          paymentMethod,
         }),
       });
 
@@ -189,6 +194,15 @@ export default function CheckoutContent() {
         return;
       }
 
+      // Cash on delivery — no redirect, just success
+      if (paymentMethod === "cod") {
+        clearCart();
+        alert("سفارش شما با موفقیت ثبت شد. مبلغ سفارش هنگام تحویل دریافت خواهد شد.");
+        router.push("/dashboard");
+        return;
+      }
+
+      // Online payment — redirect to gateway
       if (data.gatewayUrl) {
         clearCart();
         window.location.href = data.gatewayUrl;
@@ -430,7 +444,12 @@ export default function CheckoutContent() {
               {isProcessing ? (
                 <>
                   <Loader2 className="h-5 w-5 animate-spin" />
-                  در حال اتصال به درگاه...
+                  در حال ثبت سفارش...
+                </>
+              ) : paymentMethod === "cod" ? (
+                <>
+                  ثبت سفارش
+                  <ArrowRight className="h-5 w-5" />
                 </>
               ) : (
                 <>
@@ -450,13 +469,67 @@ export default function CheckoutContent() {
             </Button>
           </div>
 
-          {/* Payment methods info */}
+          {/* Shipping method info */}
           <div className="rounded-3xl border border-pink-200/70 bg-pink-50/90 p-4 shadow-sm">
             <div className="flex items-center gap-3">
-              <CreditCard className="h-5 w-5 text-pink-500" />
-              <span className="text-sm text-gray-600">
-                پرداخت امن از طریق درگاه زیبال
-              </span>
+              <Package className="h-5 w-5 text-pink-500" />
+              <div>
+                <p className="text-sm font-medium text-gray-800">ارسال با تیباکس</p>
+                <p className="text-xs text-gray-500">هزینه ارسال هنگام تحویل (پس کرایه)</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Payment methods selector */}
+          <div className="rounded-3xl border border-pink-200/70 bg-white p-6 shadow-sm">
+            <h3 className="mb-4 flex items-center gap-2 text-sm font-bold text-gray-800">
+              <CreditCard className="h-4 w-4 text-pink-500" />
+              روش پرداخت
+            </h3>
+            <div className="space-y-3">
+              <label
+                className={`flex cursor-pointer items-center gap-3 rounded-xl border p-4 transition-all ${
+                  paymentMethod === "online"
+                    ? "border-pink-400 bg-pink-50 shadow-sm"
+                    : "border-gray-200 hover:border-pink-200"
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  value="online"
+                  checked={paymentMethod === "online"}
+                  onChange={() => setPaymentMethod("online")}
+                  className="h-4 w-4 accent-pink-500"
+                />
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-gray-800">پرداخت آنلاین (درگاه زیبال)</p>
+                  <p className="text-xs text-gray-500">پرداخت امن از طریق درگاه بانکی</p>
+                </div>
+                <CreditCard className="h-5 w-5 text-pink-400" />
+              </label>
+
+              <label
+                className={`flex cursor-pointer items-center gap-3 rounded-xl border p-4 transition-all ${
+                  paymentMethod === "cod"
+                    ? "border-pink-400 bg-pink-50 shadow-sm"
+                    : "border-gray-200 hover:border-pink-200"
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  value="cod"
+                  checked={paymentMethod === "cod"}
+                  onChange={() => setPaymentMethod("cod")}
+                  className="h-4 w-4 accent-pink-500"
+                />
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-gray-800">پرداخت در محل (نقدی)</p>
+                  <p className="text-xs text-gray-500">پرداخت هنگام تحویل سفارش</p>
+                </div>
+                <Banknote className="h-5 w-5 text-green-500" />
+              </label>
             </div>
           </div>
         </div>
