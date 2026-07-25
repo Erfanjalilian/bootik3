@@ -73,8 +73,13 @@ export default function CheckoutContent() {
   const [shippingAddress, setShippingAddress] = useState<ShippingAddress>(initialAddress);
   const [errors, setErrors] = useState<Partial<Record<keyof ShippingAddress, string>>>({});
 
-  // Shipping state
-  const [shippingInfo, setShippingInfo] = useState<OrderShippingInfo | null>(null);
+  // Shipping state – default to "ارسال با تیباکس" (پس کرایه)
+  const defaultShippingInfo: OrderShippingInfo = {
+    method: "post",
+    title: "ارسال با تیباکس",
+    cost: 0,
+  };
+  const [shippingInfo, setShippingInfo] = useState<OrderShippingInfo>(defaultShippingInfo);
   const [isCalculatingShipping, setIsCalculatingShipping] = useState(false);
   const [shippingError, setShippingError] = useState<string | null>(null);
   const [canCheckout, setCanCheckout] = useState(true);
@@ -151,7 +156,7 @@ export default function CheckoutContent() {
    */
   const calculateShipping = useCallback(async (province: string, city: string) => {
     if (!province || !city || items.length === 0) {
-      setShippingInfo(null);
+      setShippingInfo(defaultShippingInfo);
       setShippingError(null);
       setCanCheckout(true);
       return;
@@ -159,7 +164,7 @@ export default function CheckoutContent() {
 
     setIsCalculatingShipping(true);
     setShippingError(null);
-    setShippingInfo(null);
+    setShippingInfo(defaultShippingInfo);
 
     try {
       const shippingProducts = await getShippingProducts();
@@ -307,15 +312,10 @@ export default function CheckoutContent() {
 
   // Calculate final total: items total only (shipping is paid at delivery as پس کرایه)
   const itemsTotal = totalPrice();
-  const shippingCost = shippingInfo?.cost || 0;
   const finalTotal = itemsTotal;
 
   const handleProceedToPayment = async () => {
     if (!validateForm()) return;
-    if (!shippingInfo) {
-      alert("لطفاً صبر کنید تا هزینه ارسال محاسبه شود");
-      return;
-    }
 
     setIsProcessing(true);
     try {
@@ -578,14 +578,10 @@ export default function CheckoutContent() {
                       <Loader2 className="h-3 w-3 animate-spin" />
                       در حال محاسبه...
                     </span>
-                  ) : shippingInfo ? (
-                    shippingInfo.title
                   ) : shippingError ? (
                     <span className="text-red-500">نامشخص</span>
                   ) : (
-                    <span className="text-gray-400">-
-                    {shippingAddress.province && shippingAddress.city ? " ابتدا استان و شهر را وارد کنید" : ""}
-                    </span>
+                    <span>{shippingInfo.title}</span>
                   )}
                 </span>
               </div>
@@ -595,12 +591,10 @@ export default function CheckoutContent() {
                 <span>
                   {isCalculatingShipping ? (
                     <Loader2 className="h-3 w-3 animate-spin" />
-                  ) : shippingInfo ? (
-                    <span className="text-amber-600 font-medium">پس کرایه</span>
                   ) : shippingError ? (
                     <span className="text-red-500">خطا</span>
                   ) : (
-                    <span className="text-gray-400">-</span>
+                    <span className="text-amber-600 font-medium">پس کرایه</span>
                   )}
                 </span>
               </div>
@@ -627,7 +621,7 @@ export default function CheckoutContent() {
               size="lg"
               className="mt-6 w-full"
               onClick={handleProceedToPayment}
-              disabled={isProcessing || isCalculatingShipping || !canCheckout || !shippingInfo}
+              disabled={isProcessing || isCalculatingShipping || !canCheckout}
             >
               {isProcessing ? (
                 <>
