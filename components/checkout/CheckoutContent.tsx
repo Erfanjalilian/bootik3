@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ShoppingBag, ArrowRight, Loader2, CreditCard, User, MapPin, Phone } from "lucide-react";
 import Button from "@/components/ui/Button";
@@ -8,30 +8,6 @@ import ProductImage from "@/components/ui/ProductImage";
 import { formatPrice } from "@/lib/utils";
 import { useCartStore } from "@/lib/store/cart-store";
 import type { ShippingAddress, OrderShippingInfo } from "@/lib/orders/types";
-
-/**
- * Product data sent for shipping calculation
- */
-interface ShippingProduct {
-  productId: string;
-  name: string;
-  price: number;
-  quantity: number;
-  weight: number;
-  discount: number;
-}
-
-/**
- * Shipping calculation result from the API
- */
-interface ShippingApiResult {
-  ok: boolean;
-  method?: "courier" | "post";
-  title?: string;
-  shippingCost?: number;
-  message?: string;
-  canCheckout?: boolean;
-}
 
 const PROVINCES = [
   "آذربایجان شرقی", "آذربایجان غربی", "اردبیل", "اصفهان", "البرز",
@@ -52,18 +28,6 @@ const initialAddress: ShippingAddress = {
   postalCode: "",
 };
 
-/**
- * Get product IDs from cart items to look up their dimensions
- */
-function getProductIdsMap(items: { productId: string; quantity: number }[]): Record<string, number> {
-  const map: Record<string, number> = {};
-  for (const item of items) {
-    const key = item.productId;
-    map[key] = (map[key] || 0) + item.quantity;
-  }
-  return map;
-}
-
 export default function CheckoutContent() {
   const router = useRouter();
   const { items, totalPrice, clearCart } = useCartStore();
@@ -73,16 +37,12 @@ export default function CheckoutContent() {
   const [shippingAddress, setShippingAddress] = useState<ShippingAddress>(initialAddress);
   const [errors, setErrors] = useState<Partial<Record<keyof ShippingAddress, string>>>({});
 
-  // Shipping state – default to "ارسال با تیباکس" (پس کرایه)
-  const defaultShippingInfo: OrderShippingInfo = {
+  // Shipping is always "ارسال با تیباکس" (پس کرایه) - no API call needed
+  const shippingInfo: OrderShippingInfo = {
     method: "post",
     title: "ارسال با تیباکس",
     cost: 0,
   };
-  const [shippingInfo, setShippingInfo] = useState<OrderShippingInfo>(defaultShippingInfo);
-  const [isCalculatingShipping, setIsCalculatingShipping] = useState(false);
-  const [shippingError, setShippingError] = useState<string | null>(null);
-  const [canCheckout, setCanCheckout] = useState(true);
 
   useEffect(() => {
     fetch("/api/auth/me")
@@ -107,127 +67,11 @@ export default function CheckoutContent() {
   }, [router]);
 
   /**
-   * Build products array for shipping calculation
-   */
-  const getShippingProducts = useCallback(async (): Promise<ShippingProduct[] | null> => {
-    try {
-      // Get unique product IDs and their quantities from cart
-      const productQuantityMap = getProductIdsMap(items);
-      const productIds = Object.keys(productQuantityMap);
-
-      if (productIds.length === 0) return null;
-
-      // Fetch product data to get weight
-      const response = await fetch("/api/products/list", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ids: productIds }),
-      });
-
-      if (!response.ok) return null;
-
-      const data = await response.json();
-      if (!data.ok || !data.products) return null;
-
-      // Map products to shipping product format
-      const shippingProducts: ShippingProduct[] = [];
-      for (const product of data.products) {
-        const quantity = productQuantityMap[product.id];
-        if (!quantity) continue;
-
-        shippingProducts.push({
-          productId: product.id,
-          name: product.name || "محصول",
-          price: product.price || 0,
-          quantity,
-          weight: product.weight || 200, // default 200g if not specified
-          discount: product.discount || 0,
-        });
-      }
-
-      return shippingProducts;
-    } catch {
-      return null;
-    }
-  }, [items]);
-
-  /**
-   * Calculate shipping cost when province and city are selected
-   */
-  const calculateShipping = useCallback(async (province: string, city: string) => {
-    if (!province || !city || items.length === 0) {
-      setShippingInfo(defaultShippingInfo);
-      setShippingError(null);
-      setCanCheckout(true);
-      return;
-    }
-
-    setIsCalculatingShipping(true);
-    setShippingError(null);
-    setShippingInfo(defaultShippingInfo);
-
-    try {
-      const shippingProducts = await getShippingProducts();
-
-      if (!shippingProducts) {
-        setShippingError("خطا در دریافت اطلاعات محصولات");
-        setCanCheckout(false);
-        return;
-      }
-
-      const response = await fetch("/api/shipping/calculate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          city,
-          province,
-          products: shippingProducts,
-        }),
-      });
-
-      const result: ShippingApiResult = await response.json();
-
-      if (!result.ok) {
-        setShippingError(result.message || "خطا در محاسبه هزینه ارسال");
-        setCanCheckout(result.canCheckout !== false);
-        return;
-      }
-
-      if (result.method && result.title !== undefined && result.shippingCost !== undefined) {
-        setShippingInfo({
-          method: result.method,
-          title: result.title,
-          cost: result.shippingCost,
-        });
-      }
-
-      setCanCheckout(true);
-    } catch {
-      setShippingError("خطا در ارتباط با سرور برای محاسبه هزینه ارسال");
-      setCanCheckout(false);
-    } finally {
-      setIsCalculatingShipping(false);
-    }
-  }, [items, getShippingProducts]);
-
-  /**
    * Handle address field changes
-   * When province or city changes, recalculate shipping
+   * Shipping is always تیباکس (پس کرایه) - no API call needed
    */
   const handleAddressChange = (field: keyof ShippingAddress, value: string) => {
-    setShippingAddress((prev) => {
-      const updated = { ...prev, [field]: value };
-
-      // When province or city changes, trigger shipping calculation
-      if (field === "province" || field === "city") {
-        const province = field === "province" ? value : updated.province;
-        const city = field === "city" ? value : updated.city;
-        // Use setTimeout to avoid React setState batching issues
-        setTimeout(() => calculateShipping(province, city), 0);
-      }
-
-      return updated;
-    });
+    setShippingAddress((prev) => ({ ...prev, [field]: value }));
 
     // Clear error when user types
     if (errors[field]) {
@@ -573,41 +417,14 @@ export default function CheckoutContent() {
               <div className="flex justify-between text-gray-600">
                 <span>روش ارسال</span>
                 <span>
-                  {isCalculatingShipping ? (
-                    <span className="flex items-center gap-1 text-gray-400">
-                      <Loader2 className="h-3 w-3 animate-spin" />
-                      در حال محاسبه...
-                    </span>
-                  ) : shippingError ? (
-                    <span className="text-red-500">نامشخص</span>
-                  ) : (
-                    <span>{shippingInfo.title}</span>
-                  )}
+                  {shippingInfo.title}
                 </span>
               </div>
 
               <div className="flex justify-between text-gray-600">
                 <span>هزینه ارسال</span>
-                <span>
-                  {isCalculatingShipping ? (
-                    <Loader2 className="h-3 w-3 animate-spin" />
-                  ) : shippingError ? (
-                    <span className="text-red-500">خطا</span>
-                  ) : (
-                    <span className="text-amber-600 font-medium">پس کرایه</span>
-                  )}
-                </span>
+                <span className="text-amber-600 font-medium">پس کرایه</span>
               </div>
-
-              {/* Shipping error message */}
-              {shippingError && (
-                <div className="rounded-xl bg-red-50 border border-red-200 p-3 text-xs text-red-600">
-                  {shippingError}
-                  {!canCheckout && (
-                    <p className="mt-1">امکان پرداخت تا رفع مشکل وجود ندارد</p>
-                  )}
-                </div>
-              )}
 
               <div className="border-t border-pink-100 pt-3">
                 <div className="flex justify-between text-lg font-bold">
@@ -621,7 +438,7 @@ export default function CheckoutContent() {
               size="lg"
               className="mt-6 w-full"
               onClick={handleProceedToPayment}
-              disabled={isProcessing || isCalculatingShipping || !canCheckout}
+              disabled={isProcessing}
             >
               {isProcessing ? (
                 <>
