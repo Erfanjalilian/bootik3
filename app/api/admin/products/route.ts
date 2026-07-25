@@ -157,7 +157,7 @@ export async function PUT(request: Request) {
     }
 
     const products = await readProducts();
-    const index = products.findIndex((p) => p.id === id);
+    const index = products.findIndex((p) => String(p.id) === id);
 
     if (index === -1) {
       return NextResponse.json(
@@ -223,7 +223,7 @@ export async function DELETE(request: Request) {
     }
 
     const products = await readProducts();
-    const filteredProducts = products.filter((p) => p.id !== id);
+    const filteredProducts = products.filter((p) => String(p.id) !== id);
 
     if (filteredProducts.length === products.length) {
       return NextResponse.json(
