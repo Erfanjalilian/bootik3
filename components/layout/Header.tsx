@@ -44,7 +44,7 @@ export default function Header() {
               <Sparkles className="h-5 w-5 text-white" />
             </div>
             <div>
-              <span className="text-xl font-bold gradient-text">رز مد</span>
+              <span className="text-xl font-bold gradient-text">یاردیم شاپ</span>
               <p className="text-[10px] text-gray-400">زیبایی در هر لباس</p>
             </div>
           </Link>
