@@ -97,19 +97,19 @@ export default function SizeColorManager({
         </div>
 
         {/* Add Custom Size */}
-        <div className="flex gap-2 mb-4">
+        <div className="flex flex-col sm:flex-row gap-2 mb-4">
           <input
             type="text"
             value={newSize}
             onChange={(e) => setNewSize(e.target.value)}
             placeholder="سایز جدید (مثال: L+)"
             onKeyPress={(e) => e.key === 'Enter' && handleAddSize()}
-            className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-auto"
           />
           <button
             type="button"
             onClick={handleAddSize}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition flex items-center gap-2"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition flex items-center justify-center gap-2 w-full sm:w-auto"
           >
             <Plus size={18} />
             افزودن
@@ -178,25 +178,25 @@ export default function SizeColorManager({
         </div>
 
         {/* Add Custom Color */}
-        <div className="flex gap-2 mb-4">
+        <div className="flex flex-col sm:flex-row gap-2 mb-4">
           <input
             type="text"
             value={newColorName}
             onChange={(e) => setNewColorName(e.target.value)}
             placeholder="نام رنگ (مثال: آبی روشن)"
-            className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-auto"
           />
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 w-full sm:w-auto">
             <input
               type="color"
               value={newColorHex}
               onChange={(e) => setNewColorHex(e.target.value)}
-              className="w-12 h-10 rounded-lg cursor-pointer border border-gray-300"
+              className="w-12 h-10 rounded-lg cursor-pointer border border-gray-300 shrink-0"
             />
             <button
               type="button"
               onClick={handleAddColor}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition flex items-center gap-2"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition flex items-center justify-center gap-2 flex-1 sm:flex-none"
             >
               <Plus size={18} />
               افزودن
@@ -212,19 +212,19 @@ export default function SizeColorManager({
             colorArray.map((color, index) => (
               <div
                 key={index}
-                className="flex items-center gap-3 bg-gray-50 border border-gray-200 rounded-lg p-3"
+                className="flex items-center gap-3 bg-gray-50 border border-gray-200 rounded-lg p-3 w-full sm:w-auto"
               >
                 <div
-                  className="w-8 h-8 rounded border-2 border-gray-300"
+                  className="w-8 h-8 rounded border-2 border-gray-300 shrink-0"
                   style={{ backgroundColor: color.hex }}
                   title={color.hex}
                 />
                 <span className="text-gray-700 font-semibold min-w-20">{color.name}</span>
-                <span className="text-gray-500 text-sm font-mono">{color.hex}</span>
+                <span className="text-gray-500 text-sm font-mono" dir="ltr">{color.hex}</span>
                 <button
                   type="button"
                   onClick={() => handleRemoveColor(index)}
-                  className="text-red-600 hover:text-red-800 ml-auto"
+                  className="text-red-600 hover:text-red-800 mr-auto sm:mr-0"
                 >
                   <Trash2 size={16} />
                 </button>

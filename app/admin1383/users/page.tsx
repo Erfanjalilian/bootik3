@@ -40,7 +40,7 @@ export default function UsersManagement() {
         )}
 
         <div className="bg-white rounded-lg shadow overflow-x-auto">
-          <table className="w-full">
+          <table className="w-full min-w-[500px]">
             <thead className="bg-gray-100">
               <tr>
                 <th className="px-4 py-3 text-right">شناسه</th>
@@ -52,8 +52,8 @@ export default function UsersManagement() {
             <tbody>
               {users.map((user) => (
                 <tr key={user.id} className="border-b hover:bg-gray-50">
-                  <td className="px-4 py-3 font-mono text-sm">{user.id}</td>
-                  <td className="px-4 py-3">{user.phone}</td>
+                  <td className="px-4 py-3 font-mono text-sm" dir="ltr">{user.id}</td>
+                  <td className="px-4 py-3" dir="ltr">{user.phone}</td>
                   <td className="px-4 py-3">
                     {new Date(user.createdAt).toLocaleDateString('fa-IR')}
                   </td>

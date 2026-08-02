@@ -110,7 +110,7 @@ export default function SettingsManagement() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow p-6 space-y-6">
+        <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow p-4 sm:p-6 space-y-6">
           {/* Site Information */}
           <div>
             <h3 className="text-lg font-bold text-gray-800 mb-4">اطلاعات سایت</h3>
@@ -245,7 +245,7 @@ export default function SettingsManagement() {
           <div className="border-t pt-6">
             <button
               type="submit"
-              className="bg-green-600 hover:bg-green-700 text-white font-bold px-6 py-2 rounded-lg transition"
+              className="bg-green-600 hover:bg-green-700 text-white font-bold px-6 py-2 rounded-lg transition w-full sm:w-auto"
             >
               ذخیره تغییرات
             </button>

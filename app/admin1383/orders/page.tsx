@@ -161,12 +161,12 @@ export default function OrdersManagement() {
                 className="w-full pr-10 pl-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
-            <div className="relative">
+            <div className="relative w-full sm:w-auto">
               <Filter size={18} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" />
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="pr-10 pl-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white min-w-[160px]"
+                className="w-full sm:w-auto pr-10 pl-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white sm:min-w-[160px]"
               >
                 <option value="all">همه وضعیت‌ها</option>
                 {STATUS_OPTIONS.map((opt) => (
@@ -288,7 +288,7 @@ export default function OrdersManagement() {
         {selectedOrder && (
           <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
             <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-              <div className="flex items-center justify-between p-6 border-b">
+              <div className="flex items-center justify-between p-4 sm:p-6 border-b">
                 <h2 className="text-xl font-bold text-gray-800">
                   جزئیات سفارش {formatId(selectedOrder.id)}
                 </h2>
@@ -300,9 +300,9 @@ export default function OrdersManagement() {
                 </button>
               </div>
 
-              <div className="p-6 space-y-6">
+              <div className="p-4 sm:p-6 space-y-6">
                 {/* Order Info */}
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <p className="text-sm text-gray-500">شناسه سفارش</p>
                     <p className="font-mono text-sm">{selectedOrder.id}</p>
@@ -340,7 +340,7 @@ export default function OrdersManagement() {
                 {/* Customer Info */}
                 <div>
                   <h3 className="font-bold text-gray-800 mb-3">اطلاعات مشتری</h3>
-                  <div className="grid grid-cols-2 gap-4 bg-gray-50 p-4 rounded-lg">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-gray-50 p-4 rounded-lg">
                     <div>
                       <p className="text-sm text-gray-500">نام</p>
                       <p className="text-sm font-semibold">
@@ -402,8 +402,8 @@ export default function OrdersManagement() {
 
                 {/* Total */}
                 <div className="border-t pt-4 flex justify-between items-center">
-                  <span className="text-lg font-bold text-gray-800">مبلغ کل:</span>
-                  <span className="text-xl font-bold text-blue-600">
+                  <span className="text-base sm:text-lg font-bold text-gray-800">مبلغ کل:</span>
+                  <span className="text-base sm:text-xl font-bold text-blue-600">
                     {formatPrice(selectedOrder.totalAmount)} تومان
                   </span>
                 </div>

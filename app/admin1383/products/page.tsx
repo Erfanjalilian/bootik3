@@ -258,7 +258,7 @@ export default function ProductsManagement() {
         </button>
 
         {showForm && (
-          <div className="bg-white rounded-lg shadow p-6 space-y-4">
+          <div className="bg-white rounded-lg shadow p-4 sm:p-6 space-y-4">
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
@@ -467,17 +467,17 @@ export default function ProductsManagement() {
                 </label>
               </div>
 
-              <div className="flex gap-2">
+              <div className="flex flex-col sm:flex-row gap-2">
                 <button
                   type="submit"
-                  className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg transition"
+                  className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg transition w-full sm:w-auto"
                 >
                   {editingId ? 'ذخیره تغییرات' : 'ایجاد محصول'}
                 </button>
                 <button
                   type="button"
                   onClick={() => setShowForm(false)}
-                  className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-lg transition"
+                  className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-lg transition w-full sm:w-auto"
                 >
                   انصراف
                 </button>
@@ -487,7 +487,7 @@ export default function ProductsManagement() {
         )}
 
         <div className="bg-white rounded-lg shadow overflow-x-auto">
-          <table className="w-full">
+          <table className="w-full min-w-[600px]">
             <thead className="bg-gray-100">
               <tr>
                 <th className="px-4 py-3 text-right">نام</th>
@@ -506,19 +506,21 @@ export default function ProductsManagement() {
                   <td className="px-4 py-3">
                     {categories.find((c) => c.id === product.categoryId)?.name || '-'}
                   </td>
-                  <td className="px-4 py-3 flex gap-2">
-                    <button
-                      onClick={() => handleEditClick(product)}
-                      className="p-2 bg-blue-500 hover:bg-blue-600 text-white rounded transition"
-                    >
-                      <Edit size={18} />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(product.id)}
-                      className="p-2 bg-red-500 hover:bg-red-600 text-white rounded transition"
-                    >
-                      <Trash2 size={18} />
-                    </button>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => handleEditClick(product)}
+                        className="p-2 bg-blue-500 hover:bg-blue-600 text-white rounded transition"
+                      >
+                        <Edit size={18} />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(product.id)}
+                        className="p-2 bg-red-500 hover:bg-red-600 text-white rounded transition"
+                      >
+                        <Trash2 size={18} />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
