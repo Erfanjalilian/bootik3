@@ -15,6 +15,28 @@ interface ProductImageProps {
   height?: number;
 }
 
+/**
+ * Resolve image URL:
+ * - Absolute URLs (https://...) remain as-is (backward compatible with old remote images like i.postimg.cc)
+ * - /uploads/ paths are served directly by Nginx from /root/uploads (not in Next.js public folder)
+ * - Other relative paths (e.g. /images/...) are served from the Next.js public folder
+ */
+function resolveImageUrl(src: string): string {
+  // Already absolute - return as-is
+  if (/^https?:\/\//.test(src)) return src;
+
+  // /uploads/ paths are served by Nginx directly from /root/uploads
+  if (src.startsWith("/uploads/")) {
+    if (typeof window !== "undefined") {
+      return `${window.location.origin}${src}`;
+    }
+    return src;
+  }
+
+  // Other relative paths are served from Next.js public folder
+  return src;
+}
+
 export default function ProductImage({
   src,
   alt,
@@ -27,6 +49,9 @@ export default function ProductImage({
 }: ProductImageProps) {
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
+
+  const resolvedSrc = resolveImageUrl(src);
+  const isUploads = src.startsWith("/uploads/");
 
   if (error) {
     return (
@@ -41,10 +66,40 @@ export default function ProductImage({
     );
   }
 
+  // For /uploads/ paths, use a regular img tag:
+  // - These are already optimized WebP images
+  // - They are served directly by Nginx from /root/uploads (not through Next.js)
+  // - This avoids Next.js Image optimizer involvement entirely
+  if (isUploads && !error) {
+    if (fill) {
+      return (
+        <img
+          src={resolvedSrc}
+          alt={alt}
+          className={`object-cover ${loading ? "blur-sm" : "blur-0"} transition-all w-full h-full ${className}`}
+          onError={() => setError(true)}
+          onLoad={() => setLoading(false)}
+        />
+      );
+    }
+
+    return (
+      <img
+        src={resolvedSrc}
+        alt={alt}
+        width={width || 300}
+        height={height || 300}
+        className={`${loading ? "blur-sm" : "blur-0"} transition-all ${className}`}
+        onError={() => setError(true)}
+        onLoad={() => setLoading(false)}
+      />
+    );
+  }
+
   if (fill) {
     return (
       <Image
-        src={src}
+        src={resolvedSrc}
         alt={alt}
         fill
         priority={priority}
@@ -58,7 +113,7 @@ export default function ProductImage({
 
   return (
     <Image
-      src={src}
+      src={resolvedSrc}
       alt={alt}
       width={width || 300}
       height={height || 300}

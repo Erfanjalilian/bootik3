@@ -64,9 +64,16 @@ const nextConfig: NextConfig = {
         hostname: "*.githubusercontent.com",
       },
       {
-        protocol:"https",
-        hostname:"i.postimg.cc"
-
+        protocol: "https",
+        hostname: "i.postimg.cc",
+      },
+      {
+        protocol: "https",
+        hostname: "yardimshop.ir",
+      },
+      {
+        protocol: "https",
+        hostname: "*.yardimshop.ir",
       },
     ],
   },
