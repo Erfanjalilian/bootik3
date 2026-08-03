@@ -438,11 +438,19 @@ export default function ProductsManagement() {
                   accept="image/*"
                   multiple
                   onChange={handleFileUpload}
-                  className="hidden"
+                  className="sr-only"
                   id="product-images-upload"
                 />
                 <label
                   htmlFor="product-images-upload"
+                  onClick={(e) => {
+                    // On mobile browsers, specifically iOS Safari, a label associated
+                    // with a display:none file input does NOT open the file picker.
+                    // We prevent default label forwarding and click the input directly
+                    // within the user gesture for maximum mobile compatibility.
+                    e.preventDefault();
+                    fileInputRef.current?.click();
+                  }}
                   className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg border-2 border-dashed transition cursor-pointer ${
                     uploading
                       ? 'border-gray-300 bg-gray-50 text-gray-400'
