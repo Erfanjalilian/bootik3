@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { AdminLayout } from '@/components/admin/AdminLayout';
-import { Plus, Edit, Trash2, X, AlertCircle } from 'lucide-react';
+import { Plus, Edit, Trash2, X, AlertCircle, ImagePlus, Loader2 } from 'lucide-react';
 import SizeColorManager from '@/components/admin/SizeColorManager';
 import type { Product, Category, Brand, ProductColor } from '@/lib/types';
 
@@ -16,7 +16,7 @@ interface ProductForm {
   brandId: string;
   brandName: string;
   categoryId: string;
-  images: string;
+  images: string[];
   colors: ProductColor[];
   sizes: string[];
   specifications: string;
@@ -40,7 +40,7 @@ const createEmptyFormData = (): ProductForm => ({
   brandId: '',
   brandName: '',
   categoryId: '',
-  images: '',
+  images: [],
   colors: [],
   sizes: [],
   specifications: '',
@@ -107,6 +107,8 @@ export default function ProductsManagement() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState<ProductForm>(createEmptyFormData());
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     fetchData();
@@ -145,7 +147,7 @@ export default function ProductsManagement() {
       brandId: product.brandId,
       brandName: matchedBrand?.name ?? '',
       categoryId: product.categoryId,
-      images: product.images.join('\n'),
+      images: Array.isArray(product.images) ? [...product.images] : [],
       colors: product.colors,
       sizes: product.sizes,
       specifications: formatSpecifications(product.specifications),
@@ -163,14 +165,58 @@ export default function ProductsManagement() {
     setShowForm(true);
   };
 
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    setUploading(true);
+    try {
+      const uploadedUrls: string[] = [];
+
+      for (const file of Array.from(files)) {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const response = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.error || 'Failed to upload image');
+        }
+
+        const data = await response.json();
+        uploadedUrls.push(data.url);
+      }
+
+      setFormData((prev) => ({
+        ...prev,
+        images: [...prev.images, ...uploadedUrls],
+      }));
+      setMessage({ type: 'success', text: 'عکس‌ها با موفقیت آپلود شدند' });
+    } catch (error) {
+      console.error('Error uploading images:', error);
+      setMessage({ type: 'error', text: 'خطا در آپلود عکس' });
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
+  const handleRemoveImage = (index: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      images: prev.images.filter((_, i) => i !== index),
+    }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const imageArray = formData.images
-        .split('\n')
-        .map((img) => img.trim())
-        .filter((img) => img.length > 0);
-
       const payload = {
         id: editingId || undefined,
         name: formData.name.trim(),
@@ -183,7 +229,7 @@ export default function ProductsManagement() {
         brandId: formData.brandId,
         brandName: formData.brandName.trim() || undefined,
         categoryId: formData.categoryId,
-        images: imageArray,
+        images: formData.images,
         sizes: Array.isArray(formData.sizes) ? formData.sizes : [],
         colors: Array.isArray(formData.colors) ? formData.colors : [],
         specifications: parseSpecifications(formData.specifications),
@@ -365,13 +411,59 @@ export default function ProductsManagement() {
               </div>
 
               <div>
-                <label className="block text-gray-700 font-semibold mb-2">لینک‌های عکس (هر خط یک لینک)</label>
-                <textarea
-                  value={formData.images}
-                  onChange={(e) => setFormData({ ...formData, images: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm h-20"
-                  placeholder="https://example.com/image1.jpg&#10;https://example.com/image2.jpg"
+                <label className="block text-gray-700 font-semibold mb-2">عکس‌های محصول</label>
+                <div className="flex flex-wrap gap-3 mb-3">
+                  {formData.images.map((image, index) => (
+                    <div key={index} className="relative group">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={image}
+                        alt={`Product image ${index + 1}`}
+                        className="w-24 h-24 object-cover rounded-lg border border-gray-200"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveImage(index)}
+                        className="absolute -top-2 -right-2 p-1 bg-red-500 hover:bg-red-600 text-white rounded-full shadow transition"
+                        title="حذف عکس"
+                      >
+                        <X size={14} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handleFileUpload}
+                  className="hidden"
+                  id="product-images-upload"
                 />
+                <label
+                  htmlFor="product-images-upload"
+                  className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg border-2 border-dashed transition cursor-pointer ${
+                    uploading
+                      ? 'border-gray-300 bg-gray-50 text-gray-400'
+                      : 'border-blue-400 bg-blue-50 text-blue-600 hover:bg-blue-100'
+                  }`}
+                >
+                  {uploading ? (
+                    <>
+                      <Loader2 size={20} className="animate-spin" />
+                      در حال آپلود...
+                    </>
+                  ) : (
+                    <>
+                      <ImagePlus size={20} />
+                      انتخاب عکس
+                    </>
+                  )}
+                </label>
+                <p className="mt-2 text-sm text-gray-500">
+                  می‌توانید چند عکس را همزمان انتخاب کنید. فرمت‌های مجاز: JPG، PNG، GIF، WebP، SVG (حداکثر ۵ مگابایت)
+                </p>
               </div>
 
               <div className="border-t pt-6">
