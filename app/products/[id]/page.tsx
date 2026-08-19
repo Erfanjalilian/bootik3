@@ -57,7 +57,9 @@ function getProductMetadata(product: NonNullable<Awaited<ReturnType<typeof getPr
   const safeStock = Number.isFinite(product.stock) ? product.stock : 0;
 
   const rawImageUrl = Array.isArray(product.images)
-    ? product.images.find((img) => typeof img === "string" && img.trim().length > 0) ?? ""
+    ? typeof product.images[0] === "string"
+      ? product.images[0].trim()
+      : ""
     : "";
 
   const isValidHttpUrl = (value: string) => {
