@@ -8,6 +8,9 @@ import "./globals.css";
 const settings = getSettings();
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ?? "https://yardimshop.ir"
+  ),
   title: {
     default: settings.siteName,
     template: `%s | ${settings.siteName}`,

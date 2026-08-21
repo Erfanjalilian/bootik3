@@ -56,23 +56,11 @@ function getProductMetadata(product: NonNullable<Awaited<ReturnType<typeof getPr
   const safePrice = Number.isFinite(product.price) ? product.price : 0;
   const safeStock = Number.isFinite(product.stock) ? product.stock : 0;
 
-  const rawImageUrl = Array.isArray(product.images)
+  const imageUrl = Array.isArray(product.images)
     ? typeof product.images[0] === "string"
       ? product.images[0].trim()
       : ""
     : "";
-
-  const isValidHttpUrl = (value: string) => {
-    if (!value) return false;
-    try {
-      const parsed = new URL(value);
-      return parsed.protocol === "http:" || parsed.protocol === "https:";
-    } catch {
-      return false;
-    }
-  };
-
-  const imageUrl = isValidHttpUrl(rawImageUrl) ? rawImageUrl : "";
   const guaranteeValue = getProductGuaranteeValue(product);
 
   const productMeta: Record<string, string> = {
