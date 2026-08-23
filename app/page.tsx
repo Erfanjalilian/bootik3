@@ -1,7 +1,8 @@
 import { getProducts, getBanners } from "@/lib/data";
 import { BannerSection } from "@/components/home/BannerSection";
 import ProductSection from "@/components/home/ProductSection";
-import { Sparkles, Truck, Shield, Headphones } from "lucide-react";
+import Button from "@/components/ui/Button";
+import { Sparkles, Truck, Shield, Headphones, ShoppingBag } from "lucide-react";
 
 export default function Home() {
   const products = getProducts();
@@ -39,6 +40,13 @@ export default function Home() {
   return (
     <>
       <BannerSection initialHeroBanners={heroBanners} initialAdBanners={adBanners} />
+
+      <div className="flex justify-center px-4 pt-8">
+        <Button href="/shop" size="lg">
+          <ShoppingBag className="h-5 w-5" />
+          برای مشاهده محصولات کلیک کنید
+        </Button>
+      </div>
 
       <section className="mx-auto max-w-7xl px-4 py-10 lg:px-8">
         <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
