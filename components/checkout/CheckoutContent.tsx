@@ -2,14 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ShoppingBag, ArrowRight, Loader2, CreditCard, User, MapPin, Phone, Banknote, Package } from "lucide-react";
+import { ShoppingBag, ArrowRight, Loader2, CreditCard, User, MapPin, Phone, Package } from "lucide-react";
 import Button from "@/components/ui/Button";
 import ProductImage from "@/components/ui/ProductImage";
 import { formatPrice } from "@/lib/utils";
 import { useCartStore } from "@/lib/store/cart-store";
 import type { ShippingAddress, OrderShippingInfo } from "@/lib/orders/types";
-
-type PaymentMethod = "online" | "cod";
 
 const PROVINCES = [
   "آذربایجان شرقی", "آذربایجان غربی", "اردبیل", "اصفهان", "البرز",
@@ -38,8 +36,6 @@ export default function CheckoutContent() {
   const [isLoadingUser, setIsLoadingUser] = useState(true);
   const [shippingAddress, setShippingAddress] = useState<ShippingAddress>(initialAddress);
   const [errors, setErrors] = useState<Partial<Record<keyof ShippingAddress, string>>>({});
-
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("online");
 
   const shippingCost = 160000;
   const shippingInfo: OrderShippingInfo = {
@@ -182,7 +178,7 @@ export default function CheckoutContent() {
           totalAmount: finalTotal,
           shippingAddress,
           shipping: shippingInfo,
-          paymentMethod,
+          paymentMethod: "online",
         }),
       });
 
@@ -190,14 +186,6 @@ export default function CheckoutContent() {
 
       if (!response.ok) {
         alert(data.message || "خطا در ثبت سفارش");
-        return;
-      }
-
-      // Cash on delivery — no redirect, just success
-      if (paymentMethod === "cod") {
-        clearCart();
-        alert("سفارش شما با موفقیت ثبت شد. مبلغ سفارش هنگام تحویل دریافت خواهد شد.");
-        router.push("/dashboard");
         return;
       }
 
@@ -449,11 +437,6 @@ export default function CheckoutContent() {
                   <Loader2 className="h-5 w-5 animate-spin" />
                   در حال ثبت سفارش...
                 </>
-              ) : paymentMethod === "cod" ? (
-                <>
-                  ثبت سفارش
-                  <ArrowRight className="h-5 w-5" />
-                </>
               ) : (
                 <>
                   پرداخت
@@ -491,18 +474,14 @@ export default function CheckoutContent() {
             </h3>
             <div className="space-y-3">
               <label
-                className={`flex cursor-pointer items-center gap-3 rounded-xl border p-4 transition-all ${
-                  paymentMethod === "online"
-                    ? "border-pink-400 bg-pink-50 shadow-sm"
-                    : "border-gray-200 hover:border-pink-200"
-                }`}
+                className="flex items-center gap-3 rounded-xl border border-pink-400 bg-pink-50 p-4 shadow-sm"
               >
                 <input
                   type="radio"
                   name="paymentMethod"
                   value="online"
-                  checked={paymentMethod === "online"}
-                  onChange={() => setPaymentMethod("online")}
+                  checked
+                  readOnly
                   className="h-4 w-4 accent-pink-500"
                 />
                 <div className="flex-1">
@@ -510,28 +489,6 @@ export default function CheckoutContent() {
                   <p className="text-xs text-gray-500">پرداخت امن از طریق درگاه بانکی</p>
                 </div>
                 <CreditCard className="h-5 w-5 text-pink-400" />
-              </label>
-
-              <label
-                className={`flex cursor-pointer items-center gap-3 rounded-xl border p-4 transition-all ${
-                  paymentMethod === "cod"
-                    ? "border-pink-400 bg-pink-50 shadow-sm"
-                    : "border-gray-200 hover:border-pink-200"
-                }`}
-              >
-                <input
-                  type="radio"
-                  name="paymentMethod"
-                  value="cod"
-                  checked={paymentMethod === "cod"}
-                  onChange={() => setPaymentMethod("cod")}
-                  className="h-4 w-4 accent-pink-500"
-                />
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-gray-800">پرداخت در محل (نقدی)</p>
-                  <p className="text-xs text-gray-500">پرداخت هنگام تحویل سفارش</p>
-                </div>
-                <Banknote className="h-5 w-5 text-green-500" />
               </label>
             </div>
           </div>
