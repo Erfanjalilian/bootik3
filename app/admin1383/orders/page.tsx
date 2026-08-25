@@ -404,7 +404,7 @@ export default function OrdersManagement() {
                 <div className="border-t pt-4 flex justify-between items-center">
                   <span className="text-base sm:text-lg font-bold text-gray-800">مبلغ کل:</span>
                   <span className="text-base sm:text-xl font-bold text-blue-600">
-                    {formatPrice(selectedOrder.totalAmount)} تومان
+                            {formatPrice(selectedOrder.totalAmount)} تومان
                   </span>
                 </div>
 

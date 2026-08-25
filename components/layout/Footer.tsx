@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Camera, Send, MessageCircle, MapPin, Phone } from "lucide-react";
+import { Camera, MapPin, Phone } from "lucide-react";
 import { getSettings } from "@/lib/data";
 
 export default function Footer() {
@@ -86,25 +86,6 @@ export default function Footer() {
                 <Camera className="h-5 w-5" />
               </a>
 
-              <a
-                href={settings.social.telegram}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-400 to-blue-500 text-white shadow-lg transition-transform hover:scale-105"
-                aria-label="تلگرام"
-              >
-                <Send className="h-5 w-5" />
-              </a>
-
-              <a
-                href={settings.social.whatsapp}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-green-400 to-green-500 text-white shadow-lg transition-transform hover:scale-105"
-                aria-label="واتساپ"
-              >
-                <MessageCircle className="h-5 w-5" />
-              </a>
             </div>
 
             {/* لوگوی اینماد */}

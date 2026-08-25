@@ -9,6 +9,8 @@ import Button from "@/components/ui/Button";
 import { formatPrice } from "@/lib/utils";
 import { useCartStore } from "@/lib/store/cart-store";
 
+const SHIPPING_COST = 160000;
+
 export default function CartContent() {
   const router = useRouter();
   const { items, updateQuantity, removeItem, totalPrice, clearCart } =
@@ -140,10 +142,16 @@ export default function CartContent() {
               <span>جمع کل</span>
               <span>{formatPrice(totalPrice())}</span>
             </div>
+            <div className="flex justify-between text-gray-600">
+              <span>ارسال با پست</span>
+              <span>{formatPrice(SHIPPING_COST)}</span>
+            </div>
             <div className="border-t border-pink-100 pt-3">
               <div className="flex justify-between text-lg font-bold">
                 <span>مبلغ قابل پرداخت</span>
-                <span className="text-pink-600">{formatPrice(totalPrice())}</span>
+                <span className="text-pink-600">
+                  {formatPrice(totalPrice() + SHIPPING_COST)}
+                </span>
               </div>
             </div>
           </div>

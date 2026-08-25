@@ -1,7 +1,6 @@
 // ============================================================================
 // Shipping Cost Calculation API Route
-// All shipments are done with تیباکس (postpaid/cash on delivery)
-// No need to call Tapin API for shipping cost calculation
+// Postal shipping has a fixed fee and does not require an external API.
 // ============================================================================
 
 import { NextRequest, NextResponse } from "next/server";
@@ -30,12 +29,10 @@ interface CalculateShippingRequest {
 /**
  * POST handler for shipping cost calculation
  *
- * All shipments are done via تیباکس as postpaid (پس کرایه).
- * Shipping cost is always 0 (paid at delivery).
- * No Tapin API calls needed.
+ * Postal shipping uses a fixed fee of 160,000 tomans.
  */
 export async function POST(request: NextRequest): Promise<NextResponse> {
-  console.log("========== 🚚 SHIPPING CALCULATE (تیباکس - پس کرایه) ==========");
+  console.log("========== 🚚 SHIPPING CALCULATE (پست) ==========");
   
   try {
     const body: CalculateShippingRequest = await request.json();
@@ -69,15 +66,14 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       );
     }
 
-    // All shipments are done with تیباکس as postpaid (پس کرایه)
-    // Shipping cost is 0 - customer pays at delivery
-    console.log("✅ Shipping method: تیباکس (پس کرایه) - cost: 0");
+    const shippingCost = 160000;
+    console.log(`✅ Shipping method: پست - cost: ${shippingCost}`);
 
     return NextResponse.json({
       ok: true,
       method: "post" as const,
-      title: "ارسال با تیباکس",
-      shippingCost: 0,
+      title: "ارسال با پست",
+      shippingCost,
     });
   } catch (error) {
     console.error("[shipping/calculate] Unexpected error:", error);

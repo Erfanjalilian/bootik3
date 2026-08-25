@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
     // Online payment - request payment from Zibal
     try {
       const { trackId, gatewayUrl } = await requestPayment(
-        totalAmount,
+        totalAmount * 10,
         order.id,
         {
           description: `سفارش ${order.id.slice(0, 8)}`,

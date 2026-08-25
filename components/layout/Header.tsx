@@ -45,7 +45,6 @@ export default function Header() {
             </div>
             <div>
               <span className="text-xl font-bold gradient-text">یاردیم شاپ</span>
-              <p className="text-[10px] text-gray-400">زیبایی در هر لباس</p>
             </div>
           </Link>
 

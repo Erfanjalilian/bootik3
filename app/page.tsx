@@ -2,7 +2,7 @@ import { getProducts, getBanners } from "@/lib/data";
 import { BannerSection } from "@/components/home/BannerSection";
 import ProductSection from "@/components/home/ProductSection";
 import Button from "@/components/ui/Button";
-import { Sparkles, Truck, Shield, Headphones, ShoppingBag } from "lucide-react";
+import { Sparkles, Shield, Headphones, ShoppingBag } from "lucide-react";
 
 export default function Home() {
   const products = getProducts();
@@ -15,11 +15,6 @@ export default function Home() {
   const onSale = products.filter((p) => p.isOnSale).slice(0, 4);
 
   const features = [
-    {
-      icon: Truck,
-      title: "ارسال سریع",
-      desc: "ارسال رایگان برای سفارش‌های بالای ۵۰۰ هزار تومان",
-    },
     {
       icon: Shield,
       title: "ضمانت اصالت",

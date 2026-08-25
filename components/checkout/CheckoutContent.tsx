@@ -41,11 +41,11 @@ export default function CheckoutContent() {
 
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("online");
 
-  // Shipping is always "ارسال با تیباکس" (پس کرایه) - no API call needed
+  const shippingCost = 160000;
   const shippingInfo: OrderShippingInfo = {
     method: "post",
-    title: "ارسال با تیباکس (پس کرایه)",
-    cost: 0,
+    title: "ارسال با پست",
+    cost: shippingCost,
   };
 
   useEffect(() => {
@@ -72,7 +72,7 @@ export default function CheckoutContent() {
 
   /**
    * Handle address field changes
-   * Shipping is always تیباکس (پس کرایه) - no API call needed
+  * Shipping is a fixed postal fee and does not require an API call.
    */
   const handleAddressChange = (field: keyof ShippingAddress, value: string) => {
     setShippingAddress((prev) => ({ ...prev, [field]: value }));
@@ -158,9 +158,8 @@ export default function CheckoutContent() {
     );
   }
 
-  // Calculate final total: items total only (shipping is paid at delivery as پس کرایه)
   const itemsTotal = totalPrice();
-  const finalTotal = itemsTotal;
+  const finalTotal = itemsTotal + shippingInfo.cost;
 
   const handleProceedToPayment = async () => {
     if (!validateForm()) return;
@@ -426,6 +425,10 @@ export default function CheckoutContent() {
                 <span>جمع کالاها</span>
                 <span>{formatPrice(itemsTotal)}</span>
               </div>
+              <div className="flex justify-between text-gray-600">
+                <span>هزینه ارسال با پست</span>
+                <span>{formatPrice(shippingInfo.cost)}</span>
+              </div>
 
               <div className="border-t border-pink-100 pt-3">
                 <div className="flex justify-between text-lg font-bold">
@@ -474,8 +477,8 @@ export default function CheckoutContent() {
             <div className="flex items-center gap-3">
               <Package className="h-5 w-5 text-pink-500" />
               <div>
-                <p className="text-sm font-medium text-gray-800">ارسال با تیباکس</p>
-                <p className="text-xs text-gray-500">هزینه ارسال هنگام تحویل (پس کرایه)</p>
+                <p className="text-sm font-medium text-gray-800">ارسال با پست</p>
+                <p className="text-xs text-gray-500">هزینه ارسال: {formatPrice(shippingInfo.cost)}</p>
               </div>
             </div>
           </div>
