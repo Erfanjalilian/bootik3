@@ -36,11 +36,39 @@ export async function GET() {
 export async function PUT(request: Request) {
   try {
     const body = await request.json();
-    const settings = await readSettings();
+    const currentSettings = await readSettings();
+    const defaults = getSettings();
+
+    const mergedAbout = {
+      ...defaults.about,
+      ...(currentSettings.about ?? {}),
+      ...(body.about ?? {}),
+      enabled: {
+        ...defaults.about.enabled,
+        ...(currentSettings.about?.enabled ?? {}),
+        ...(body.about?.enabled ?? {}),
+      },
+      values: body.about?.values ?? currentSettings.about?.values ?? defaults.about.values,
+      stats: body.about?.stats ?? currentSettings.about?.stats ?? defaults.about.stats,
+    };
+
+    const mergedContact = {
+      ...defaults.contact,
+      ...(currentSettings.contact ?? {}),
+      ...(body.contact ?? {}),
+      enabled: {
+        ...defaults.contact.enabled,
+        ...(currentSettings.contact?.enabled ?? {}),
+        ...(body.contact?.enabled ?? {}),
+      },
+    };
 
     const updatedSettings: SiteSettings = {
-      ...settings,
+      ...defaults,
+      ...currentSettings,
       ...body,
+      about: mergedAbout,
+      contact: mergedContact,
     };
 
     await writeSettings(updatedSettings);

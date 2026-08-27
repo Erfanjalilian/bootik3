@@ -59,10 +59,6 @@ export default function Footer() {
                 <Phone className="h-4 w-4 text-pink-400" />
                 {settings.phone}
               </li>
-              <li className="flex items-center gap-2">
-                <Phone className="h-4 w-4 text-blue-400" />
-                {settings.landline}
-              </li>
               <li className="flex items-start gap-2">
                 <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-pink-400" />
                 {settings.address}

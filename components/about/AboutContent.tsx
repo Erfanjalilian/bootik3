@@ -1,7 +1,7 @@
 
 "use client";
 
-import { Heart, Sparkles } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import type { SiteSettings } from "@/lib/types";
 
 interface AboutContentProps {
@@ -44,22 +44,6 @@ export default function AboutContent({ settings }: AboutContentProps) {
           </div>)}
         </div>}
 
-        {about.enabled.stats && <div className="mt-20 grid gap-8 md:grid-cols-3">
-          {about.stats.map((stat) => (
-            <div
-              key={stat.label}
-              className="gradient-card rounded-3xl border border-pink-200/70 p-8 text-center"
-            >
-              <p className="text-4xl font-bold gradient-text">
-                {stat.value}
-              </p>
-
-              <p className="mt-2 text-sm text-gray-500">
-                {stat.label}
-              </p>
-            </div>
-          ))}
-        </div>}
       </section>
     </div>
   );

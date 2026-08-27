@@ -18,6 +18,26 @@ interface Props {
   page: 'about' | 'contact';
 }
 
+const defaultAboutEnabled = {
+  title: true,
+  subtitle: true,
+  story: true,
+  mission: true,
+  vision: true,
+  values: true,
+  stats: true,
+};
+
+const defaultContactEnabled = {
+  title: true,
+  description: true,
+  phone: true,
+  landline: true,
+  email: true,
+  address: true,
+  workingHours: true,
+};
+
 export default function PageContentManager({ page }: Props) {
   const [settings, setSettings] = useState<SiteSettings | null>(null);
   const [values, setValues] = useState<Record<string, string>>({});
@@ -25,29 +45,73 @@ export default function PageContentManager({ page }: Props) {
   const [message, setMessage] = useState('');
 
   useEffect(() => {
-    fetch('/api/admin/settings').then((response) => response.json()).then((data: SiteSettings) => {
-      setSettings(data);
-      if (page === 'about') {
-        setValues({ title: data.about.title, subtitle: data.about.subtitle, story: data.about.story, mission: data.about.mission, vision: data.about.vision });
-        setEnabled(data.about.enabled);
-      } else {
-        setValues({ title: data.contact.title, description: data.contact.description, workingHours: data.contact.workingHours });
-        setEnabled(data.contact.enabled);
-      }
-    }).catch(() => setMessage('خطا در دریافت محتوا'));
+    fetch('/api/admin/settings')
+      .then((response) => response.json())
+      .then((data: SiteSettings) => {
+        const safeData = {
+          ...data,
+          about: {
+            title: data.about?.title ?? '',
+            subtitle: data.about?.subtitle ?? '',
+            story: data.about?.story ?? '',
+            mission: data.about?.mission ?? '',
+            vision: data.about?.vision ?? '',
+            enabled: { ...defaultAboutEnabled, ...(data.about?.enabled ?? {}) },
+            values: data.about?.values ?? [],
+            stats: data.about?.stats ?? [],
+          },
+          contact: {
+            title: data.contact?.title ?? 'تماس با ما',
+            description: data.contact?.description ?? '',
+            workingHours: data.contact?.workingHours ?? '',
+            enabled: { ...defaultContactEnabled, ...(data.contact?.enabled ?? {}) },
+          },
+        } as SiteSettings;
+
+        setSettings(safeData);
+
+        if (page === 'about') {
+          setValues({
+            title: safeData.about.title,
+            subtitle: safeData.about.subtitle,
+            story: safeData.about.story,
+            mission: safeData.about.mission,
+            vision: safeData.about.vision,
+          });
+          setEnabled({ ...defaultAboutEnabled, ...(safeData.about.enabled ?? {}) });
+        } else {
+          setValues({
+            title: safeData.contact.title,
+            description: safeData.contact.description,
+            workingHours: safeData.contact.workingHours,
+          });
+          setEnabled({ ...defaultContactEnabled, ...(safeData.contact.enabled ?? {}) });
+        }
+      })
+      .catch(() => setMessage('خطا در دریافت محتوا'));
   }, [page]);
 
   const save = async (event: React.FormEvent) => {
     event.preventDefault();
     if (!settings) return;
-    const updated = {
+
+    const normalizedSettings = {
       ...settings,
-      [page]: { ...settings[page], ...values, enabled },
-    };
+      [page]: {
+        ...settings[page],
+        ...values,
+        enabled: {
+          ...((page === 'about' ? defaultAboutEnabled : defaultContactEnabled)),
+          ...settings[page].enabled,
+          ...enabled,
+        },
+      },
+    } as SiteSettings;
+
     const response = await fetch('/api/admin/settings', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(updated),
+      body: JSON.stringify(normalizedSettings),
     });
     setMessage(response.ok ? 'تغییرات ذخیره شد' : 'خطا در ذخیره تغییرات');
   };

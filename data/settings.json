@@ -4,7 +4,7 @@
   "logoUrl": "",
   "phone": "09233937903",
   "landline": "۰۲۱-۸۸۷۷۶۶۵۵",
-  "address": "تهران، خیابان ولیعصر، بالاتر از میدان ونک، پلاک ۱۲۳۴، طبقه ۳",
+  "address": "مازندران، ساری",
   "email": "www.erfanjaliliyan83@gmail.com",
   "about": {
     "title": "داستان ما",
@@ -21,7 +21,7 @@
       "mission": true,
       "vision": true,
       "values": true,
-      "stats": true
+      "stats": false
     },
     "values": [
       {

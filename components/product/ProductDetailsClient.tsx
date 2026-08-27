@@ -32,12 +32,17 @@ export default function ProductDetailsClient({
 }: ProductDetailsClientProps) {
   const [selectedImage, setSelectedImage] = useState(0);
   const [selectedColor, setSelectedColor] = useState(product.colors[0]?.name ?? "");
-  const [selectedSize, setSelectedSize] = useState(product.sizes[0] ?? "");
+  const [selectedSize, setSelectedSize] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
   const addItem = useCartStore((s) => s.addItem);
 
   const handleAddToCart = () => {
+    if (product.sizes.length > 0 && !selectedSize) {
+      alert("ابتدا سایز مورد نظر خود را انتخاب کنید.");
+      return;
+    }
+
     addItem({
       productId: product.id,
       name: product.name,
@@ -182,6 +187,11 @@ export default function ProductDetailsClient({
                   </button>
                 ))}
               </div>
+              {!selectedSize && (
+                <p className="mt-2 text-xs text-amber-600">
+                  لطفاً سایز موردنظر خود را انتخاب کنید.
+                </p>
+              )}
             </div>
           )}
 
