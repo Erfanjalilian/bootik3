@@ -1,7 +1,6 @@
 
 "use client";
 
-import { Sparkles } from "lucide-react";
 import type { SiteSettings } from "@/lib/types";
 
 interface AboutContentProps {
@@ -18,16 +17,12 @@ export default function AboutContent({ settings }: AboutContentProps) {
 
       <section className="relative mx-auto max-w-7xl px-4 py-20 lg:px-8">
         <div className="text-center">
-          {about.enabled.subtitle && <span className="inline-flex items-center gap-2 rounded-full bg-pink-50 px-4 py-1.5 text-sm font-medium text-pink-600">
-            <Sparkles className="h-4 w-4" />{about.subtitle}
-          </span>}
-
-          {about.enabled.title && <h1 className="mt-6 text-4xl font-bold gradient-text md:text-5xl">{about.title}</h1>}
+          {about.enabled.title && <h1 className="text-4xl font-bold gradient-text md:text-5xl">{about.title}</h1>}
         </div>
 
         {about.enabled.story && <div className="mx-auto mt-14 max-w-3xl text-center">
           <p className="text-lg leading-loose text-gray-600">
-            {about.story}
+            همه‌چیز از بهمن ۱۴۰۳ شروع شد؛ با عشق، ذوق و یه عالمه ترس. شروع کردم و قدم‌به‌قدم یاد گرفتم، تجربه کردم و بزرگ‌ترش کردم. شاید مسیر همیشه آسون نبود، ولی هر سفارشی که ثبت شد و هر اعتمادی که بهم کردید، باعث شد ادامه بدم🧚🏼‍♀️️ ممنونم که کنارمونید و بخشی از این مسیر قشنگ هستید🫂🤍
           </p>
         </div>}
 
