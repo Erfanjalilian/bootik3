@@ -90,6 +90,8 @@ export function AdminLayout({ children, currentPage = 'dashboard' }: AdminLayout
     { href: '/admin1383/users', label: 'کاربران', icon: Users },
     { href: '/admin1383/orders', label: 'سفارشات', icon: ShoppingCart },
     { href: '/admin1383/settings', label: 'تنظیمات', icon: Settings },
+    { href: '/admin1383/about', label: 'درباره ما', icon: Settings },
+    { href: '/admin1383/contact', label: 'تماس با ما', icon: Settings },
   ];
 
   const isActive = (href: string) =>
@@ -201,6 +203,8 @@ export function AdminLayout({ children, currentPage = 'dashboard' }: AdminLayout
               {currentPage === 'users' && 'مدیریت کاربران'}
               {currentPage === 'orders' && 'مدیریت سفارشات'}
               {currentPage === 'settings' && 'تنظیمات سایت'}
+              {currentPage === 'about' && 'مدیریت درباره ما'}
+              {currentPage === 'contact' && 'مدیریت تماس با ما'}
             </h1>
           </div>
           <div className="text-gray-600 text-xs sm:text-sm shrink-0">

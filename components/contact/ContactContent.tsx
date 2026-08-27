@@ -29,9 +29,15 @@ export default function ContactContent({ settings }: ContactContentProps) {
       color: "from-pink-300 to-blue-300",
     },
     {
+      icon: Phone,
+      title: "آدرس",
+      value: settings.address,
+      color: "from-green-300 to-teal-400",
+    },
+    {
       icon: Clock,
       title: "ساعات کاری",
-      value: "شنبه تا پنج‌شنبه — ۹ صبح تا ۹ شب",
+      value: settings.contact.workingHours,
       color: "from-blue-300 to-indigo-400",
     },
   ];
@@ -43,18 +49,15 @@ export default function ContactContent({ settings }: ContactContentProps) {
 
       <div className="mx-auto max-w-7xl px-4 py-16 lg:px-8">
         <div className="mb-14 text-center">
-          <h1 className="text-3xl font-bold gradient-text md:text-4xl">
-            تماس با ما
-          </h1>
+          {settings.contact.enabled.title && <h1 className="text-3xl font-bold gradient-text md:text-4xl">{settings.contact.title}</h1>}
 
-          <p className="mx-auto mt-4 max-w-lg text-gray-500">
-            ما همیشه آماده پاسخگویی به سوالات شما هستیم. از راه‌های زیر با ما
-            در ارتباط باشید.
-          </p>
+          {settings.contact.enabled.description && <p className="mx-auto mt-4 max-w-lg text-gray-500">{settings.contact.description}</p>}
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {contactItems.map((item) => (
+          {contactItems.filter((item) => settings.contact.enabled[
+            item.title === "موبایل" ? "phone" : item.title === "تلفن ثابت" ? "landline" : item.title === "ایمیل" ? "email" : item.title === "آدرس" ? "address" : "workingHours"
+          ]).map((item) => (
             <div
               key={item.title}
               className="gradient-card rounded-3xl border border-pink-200/70 p-8"

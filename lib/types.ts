@@ -53,6 +53,7 @@ export interface Banner {
 export interface SiteSettings {
   siteName: string;
   tagline: string;
+  logoUrl: string;
   phone: string;
   landline: string;
   address: string;
@@ -61,8 +62,33 @@ export interface SiteSettings {
     title: string;
     subtitle: string;
     story: string;
+    mission: string;
+    vision: string;
+    enabled: {
+      title: boolean;
+      subtitle: boolean;
+      story: boolean;
+      mission: boolean;
+      vision: boolean;
+      values: boolean;
+      stats: boolean;
+    };
     values: { title: string; description: string; icon: string }[];
     stats: { label: string; value: string }[];
+  };
+  contact: {
+    title: string;
+    description: string;
+    workingHours: string;
+    enabled: {
+      title: boolean;
+      description: boolean;
+      phone: boolean;
+      landline: boolean;
+      email: boolean;
+      address: boolean;
+      workingHours: boolean;
+    };
   };
   social: {
     instagram: string;

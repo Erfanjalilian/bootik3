@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { AdminLayout } from '@/components/admin/AdminLayout';
 import { AlertCircle } from 'lucide-react';
 import type { SiteSettings } from '@/lib/types';
+import LogoUploader from '@/components/admin/LogoUploader';
 
 export default function SettingsManagement() {
   const [loading, setLoading] = useState(true);
@@ -60,6 +61,7 @@ export default function SettingsManagement() {
     e.preventDefault();
     try {
       const updatedSettings: SiteSettings = {
+        ...settings!,
         siteName: formData.siteName,
         tagline: formData.tagline,
         phone: formData.phone,
@@ -67,11 +69,10 @@ export default function SettingsManagement() {
         address: formData.address,
         email: formData.email,
         about: {
+          ...settings!.about,
           title: formData.aboutTitle,
           subtitle: formData.aboutSubtitle,
           story: formData.aboutStory,
-          values: settings?.about.values || [],
-          stats: settings?.about.stats || [],
         },
         social: {
           instagram: formData.instagramUrl,
@@ -171,6 +172,8 @@ export default function SettingsManagement() {
               </div>
             </div>
           </div>
+
+          <LogoUploader currentLogo={settings!.logoUrl} />
 
           {/* About Page Settings */}
           <div className="border-t pt-6">

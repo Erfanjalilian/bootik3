@@ -131,6 +131,18 @@ export default function AdminDashboard() {
           </div>
 
           <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+            <h3 className="text-lg font-bold text-gray-800 mb-4">صفحه درباره ما</h3>
+            <p className="text-gray-600 mb-4">ویرایش و حذف بخش‌های صفحه درباره ما</p>
+            <a href="/admin1383/about" className="inline-block bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded-lg transition">مدیریت درباره ما</a>
+          </div>
+
+          <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+            <h3 className="text-lg font-bold text-gray-800 mb-4">صفحه تماس با ما</h3>
+            <p className="text-gray-600 mb-4">ویرایش و حذف بخش‌های صفحه تماس با ما</p>
+            <a href="/admin1383/contact" className="inline-block bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-lg transition">مدیریت تماس با ما</a>
+          </div>
+
+          <div className="bg-white rounded-lg shadow p-4 sm:p-6">
             <h3 className="text-lg font-bold text-gray-800 mb-4">مدیریت بنرها</h3>
             <p className="text-gray-600 mb-4">ویرایش بنرهای صفحه اصلی سایت</p>
             <a href="/admin1383/banners" className="inline-block bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition">
