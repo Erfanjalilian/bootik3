@@ -30,7 +30,7 @@ export default function RootLayout({
     <html lang="fa" dir="rtl" className="h-full antialiased">
       <body className="min-h-full flex flex-col font-[sans-serif]">
         <AuthProvider>
-          <Header logoUrl={settings.logoUrl} />
+          <Header />
           <main className="flex-1">{children}</main>
           <Footer />
         </AuthProvider>
