@@ -2,6 +2,8 @@ import { promises as fs } from "fs";
 import path from "path";
 import { NextResponse } from "next/server";
 
+export const dynamic = "force-dynamic";
+
 const LOGO_ROOT = path.resolve(process.env.UPLOAD_DIR || "/root/uploads", "logos");
 const SAFE_FILENAME = /^[A-Za-z0-9][A-Za-z0-9._-]*\.(?:jpg|jpeg|png|webp|gif)$/i;
 const CONTENT_TYPES: Record<string, string> = {
@@ -32,7 +34,7 @@ export async function GET(
     return new NextResponse(file, {
       headers: {
         "Content-Type": CONTENT_TYPES[extension],
-        "Cache-Control": "public, max-age=31536000, immutable",
+        "Cache-Control": "no-store, max-age=0",
         "X-Content-Type-Options": "nosniff",
       },
     });

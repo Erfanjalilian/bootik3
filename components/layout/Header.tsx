@@ -32,7 +32,7 @@ export default function Header({ logoUrl }: { logoUrl?: string }) {
   const { user, logout } = useAuth();
 
   useEffect(() => {
-    fetch("/api/settings", { cache: "no-store" })
+    fetch(`/api/settings?refresh=${Date.now()}`, { cache: "no-store" })
       .then((response) => response.json())
       .then((settings: { logoUrl?: string }) => setCurrentLogoUrl(settings.logoUrl || ""))
       .catch(() => undefined);
@@ -48,7 +48,7 @@ export default function Header({ logoUrl }: { logoUrl?: string }) {
       <div className="glass border-b border-pink-200/50">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 lg:px-8">
           <Link href="/" className="group flex items-center gap-2">
-            {currentLogoUrl ? <img src={currentLogoUrl} alt="لوگو" className="h-10 w-10 rounded-2xl object-contain" /> : <div className="flex h-10 w-10 items-center justify-center rounded-2xl gradient-primary shadow-lg shadow-pink-200/50"><Sparkles className="h-5 w-5 text-white" /></div>}
+            {currentLogoUrl ? <img src={`${currentLogoUrl}${currentLogoUrl.includes("?") ? "&" : "?"}v=${encodeURIComponent(currentLogoUrl)}`} alt="لوگو" className="h-10 w-10 rounded-2xl object-contain" onError={() => setCurrentLogoUrl("")} /> : <div className="flex h-10 w-10 items-center justify-center rounded-2xl gradient-primary shadow-lg shadow-pink-200/50"><Sparkles className="h-5 w-5 text-white" /></div>}
             <div>
               <span className="text-xl font-bold gradient-text">یاردیم شاپ</span>
             </div>

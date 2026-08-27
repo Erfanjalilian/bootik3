@@ -1,6 +1,8 @@
 import ContactContent from "@/components/contact/ContactContent";
 import { getSettings } from "@/lib/data";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "تماس با ما",
 };
