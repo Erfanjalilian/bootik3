@@ -89,8 +89,6 @@ export default function OrdersManagement() {
   };
 
   // Calculate stats
-  const totalOrders = orders.length;
-  const pendingOrders = orders.filter((o) => o.status === 'pending').length;
   const paidOrders = orders.filter((o) => o.status === 'paid').length;
   const failedOrders = orders.filter((o) => o.status === 'failed').length;
   const totalRevenue = orders
@@ -113,8 +111,6 @@ export default function OrdersManagement() {
   });
 
   const statCards = [
-    { title: 'کل سفارشات', value: totalOrders, color: 'bg-blue-500' },
-    { title: 'در انتظار پرداخت', value: pendingOrders, color: 'bg-yellow-500' },
     { title: 'پرداخت شده', value: paidOrders, color: 'bg-green-500' },
     { title: 'ناموفق / لغو شده', value: failedOrders + orders.filter((o) => o.status === 'cancelled').length, color: 'bg-red-500' },
     { title: 'درآمد کل', value: formatPrice(totalRevenue) + ' تومان', color: 'bg-purple-500' },
@@ -132,7 +128,7 @@ export default function OrdersManagement() {
     <AdminLayout currentPage="orders">
       <div className="space-y-6">
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {statCards.map((card) => (
             <div key={card.title} className="bg-white rounded-lg shadow p-4">
               <div className="flex items-center gap-3">
