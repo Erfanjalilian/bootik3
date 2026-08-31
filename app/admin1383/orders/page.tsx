@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { AdminLayout } from '@/components/admin/AdminLayout';
-import { ShoppingCart, Eye, X, ChevronDown, ChevronUp, Search, Filter } from 'lucide-react';
+import { ShoppingCart, Eye, X, ChevronDown, ChevronUp, Search, Filter, Copy, Check } from 'lucide-react';
 import type { Order } from '@/lib/orders/types';
 
 const STATUS_MAP: Record<string, { label: string; color: string }> = {
@@ -38,6 +38,17 @@ function formatId(id: string): string {
   return id.slice(0, 8) + '...';
 }
 
+function buildOrderCopyText(order: Order): string {
+  const orderItems = order.items
+    .map(
+      (item) =>
+        `- ${item.name} | رنگ: ${item.color} | سایز: ${item.size} | تعداد: ${item.quantity} | قیمت: ${formatPrice(item.price)} تومان`
+    )
+    .join('\n');
+
+  return `شناسه سفارش: ${order.id}\nکد پیگیری: ${order.trackId || '-'}\nشماره مرجع: ${order.refNumber || '-'}\nتاریخ ثبت: ${formatDate(order.createdAt)}\nتاریخ پرداخت: ${order.paidAt ? formatDate(order.paidAt) : '-'}\nوضعیت: ${STATUS_MAP[order.status]?.label || order.status}\nمشتری: ${order.shippingAddress.firstName} ${order.shippingAddress.lastName}\nتلفن: ${order.shippingAddress.phone}\nآدرس: ${order.shippingAddress.province}، ${order.shippingAddress.city}، ${order.shippingAddress.address}\nکد پستی: ${order.shippingAddress.postalCode}\n\nاقلام:\n${orderItems}\n\nمبلغ کل: ${formatPrice(order.totalAmount)} تومان`;
+}
+
 export default function OrdersManagement() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
@@ -45,23 +56,24 @@ export default function OrdersManagement() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [expandedRow, setExpandedRow] = useState<string | null>(null);
+  const [copiedOrderId, setCopiedOrderId] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchOrders();
-  }, []);
+    const fetchOrders = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch('/api/admin/orders');
+        const data = await res.json();
+        setOrders(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error('Error fetching orders:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const fetchOrders = async () => {
-    try {
-      setLoading(true);
-      const res = await fetch('/api/admin/orders');
-      const data = await res.json();
-      setOrders(Array.isArray(data) ? data : []);
-    } catch (error) {
-      console.error('Error fetching orders:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    void fetchOrders();
+  }, []);
 
   const handleStatusChange = async (id: string, newStatus: string) => {
     try {
@@ -85,6 +97,33 @@ export default function OrdersManagement() {
     } catch (error) {
       console.error('Error updating order:', error);
       alert('خطا در تغییر وضعیت');
+    }
+  };
+
+  const handleCopyOrder = async (order: Order) => {
+    const text = buildOrderCopyText(order);
+
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedOrderId(order.id);
+      window.setTimeout(() => setCopiedOrderId((current) => (current === order.id ? null : current)), 1500);
+    } catch (error) {
+      console.error('Copy failed:', error);
+      try {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.left = '-9999px';
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        setCopiedOrderId(order.id);
+        window.setTimeout(() => setCopiedOrderId((current) => (current === order.id ? null : current)), 1500);
+      } catch (fallbackError) {
+        console.error('Fallback copy failed:', fallbackError);
+        alert('کپی جزئیات سفارش انجام نشد');
+      }
     }
   };
 
@@ -234,6 +273,14 @@ export default function OrdersManagement() {
                               <Eye size={16} />
                             </button>
                             <button
+                              onClick={() => handleCopyOrder(order)}
+                              className="flex items-center gap-1 px-2 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded transition text-xs font-medium"
+                              title="کپی جزئیات سفارش"
+                            >
+                              {copiedOrderId === order.id ? <Check size={14} /> : <Copy size={14} />}
+                              <span>{copiedOrderId === order.id ? 'کپی شد' : 'کپی'}</span>
+                            </button>
+                            <button
                               onClick={() =>
                                 setExpandedRow(expandedRow === order.id ? null : order.id)
                               }
@@ -284,16 +331,25 @@ export default function OrdersManagement() {
         {selectedOrder && (
           <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
             <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-              <div className="flex items-center justify-between p-4 sm:p-6 border-b">
+              <div className="flex items-center justify-between p-4 sm:p-6 border-b gap-3">
                 <h2 className="text-xl font-bold text-gray-800">
                   جزئیات سفارش {formatId(selectedOrder.id)}
                 </h2>
-                <button
-                  onClick={() => setSelectedOrder(null)}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition"
-                >
-                  <X size={20} />
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => handleCopyOrder(selectedOrder)}
+                    className="inline-flex items-center gap-2 px-3 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition text-sm font-medium"
+                  >
+                    {copiedOrderId === selectedOrder.id ? <Check size={16} /> : <Copy size={16} />}
+                    {copiedOrderId === selectedOrder.id ? 'کپی شد' : 'کپی جزئیات'}
+                  </button>
+                  <button
+                    onClick={() => setSelectedOrder(null)}
+                    className="p-2 hover:bg-gray-100 rounded-lg transition"
+                  >
+                    <X size={20} />
+                  </button>
+                </div>
               </div>
 
               <div className="p-4 sm:p-6 space-y-6">
