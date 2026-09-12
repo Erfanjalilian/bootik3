@@ -1,0 +1,2 @@
+❌ Failed to send Telegram notification for order e244374d-05da-4b0c-8483-ff92d5d0c221: Bad Request: inline keyboard button URL 'http://localhost:3000/admin1383/orders' is invalid: Wrong HTTP URL
+[dev/test-order] ❌ Telegram notification failed for test order e244374d-05da-4b0c-8483-ff92d5d0c221: Bad Request: inline keyboard button URL 'http://localhost:3000/admin1383/orders' is invalid: Wrong HTTP URL

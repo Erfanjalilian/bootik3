@@ -56,8 +56,6 @@ export default function CheckoutContent() {
       .then((data) => {
         if (data?.ok) {
           setUser(data.user);
-          // Pre-fill phone from user profile
-          setShippingAddress((prev) => ({ ...prev, phone: data.user.phone }));
         }
       })
       .catch(() => {

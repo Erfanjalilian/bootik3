@@ -5,6 +5,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { verifyPayment, ZibalApiError } from "@/lib/services/zibal";
+import { sendOrderNotification } from "@/lib/telegram";
 
 /**
  * Success page URL (relative to APP_URL)
@@ -83,6 +84,18 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         refNumber: transaction.refNumber,
       });
       console.log(`Order ${order.id} updated to paid status`);
+
+      // Send Telegram notification for new paid order
+      // This runs in background and should not affect payment flow
+      try {
+        await sendOrderNotification(order);
+      } catch (telegramError) {
+        // Log error but don't let it affect the payment success
+        // Error is already logged in sendOrderNotification function
+        console.warn(
+          `Telegram notification failed for order ${order.id}, but order payment is complete`
+        );
+      }
     } else {
       console.warn(`No order found for trackId ${trackId}`);
     }

@@ -1,0 +1,18 @@
+▲ Next.js 16.2.9 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://172.18.0.1:3000
+- Environments: .env.local
+✓ Ready in 6.9s
+
+[dev/test-order] Test order e244374d-05da-4b0c-8483-ff92d5d0c221 marked as paid (mocked payment)
+[dev/test-order] ✅ Test order e244374d-05da-4b0c-8483-ff92d5d0c221 ready (totalAmount=810000, telegram=false)
+ POST /api/dev/test-order 200 in 1917ms (next.js: 1077ms, application-code: 840ms)
+[dev/test-order] Test order 34bd2227-5e3a-461e-b612-58c7b59eca8b marked as paid (mocked payment)
+✅ Telegram notification sent for order 34bd2227-5e3a-461e-b612-58c7b59eca8b
+[dev/test-order] ✅ Test order 34bd2227-5e3a-461e-b612-58c7b59eca8b ready (totalAmount=810000, telegram=true)
+ POST /api/dev/test-order 200 in 734ms (next.js: 30ms, application-code: 704ms)
+[dev/test-order] Test order 71c5331c-46c6-4971-9b89-85848bd03022 marked as paid (mocked payment)
+✅ Telegram notification sent for order 71c5331c-46c6-4971-9b89-85848bd03022
+[dev/test-order] ✅ Test order 71c5331c-46c6-4971-9b89-85848bd03022 ready (totalAmount=810000, telegram=true)
+ GET /api/dev/test-order 200 in 748ms (next.js: 6ms, application-code: 742ms)
+[?25h
