@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSessionUser } from "@/lib/auth/session";
 import { createOrder, updateOrderTrackId } from "@/lib/orders/store";
 import { requestPayment, ZibalApiError } from "@/lib/services/zibal";
+import { getProducts } from "@/lib/data";
 import type { ShippingAddress, OrderItem, OrderShippingInfo } from "@/lib/orders/types";
 
 export async function POST(request: NextRequest) {
@@ -29,6 +30,18 @@ export async function POST(request: NextRequest) {
         { ok: false, message: "سبد خرید خالی است" },
         { status: 400 }
       );
+    }
+
+    const products = getProducts();
+    for (const item of items) {
+      const product = products.find((candidate) => String(candidate.id) === String(item.productId));
+
+      if (!product || product.stock <= 0 || item.quantity > product.stock) {
+        return NextResponse.json(
+          { ok: false, message: `محصول «${product?.name ?? item.name}» موجود نیست` },
+          { status: 409 }
+        );
+      }
     }
 
     if (!shippingAddress) {

@@ -105,4 +105,5 @@ export interface CartItem {
   color: string;
   size: string;
   quantity: number;
+  stock?: number;
 }

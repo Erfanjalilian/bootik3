@@ -38,6 +38,8 @@ export default function ProductDetailsClient({
   const addItem = useCartStore((s) => s.addItem);
 
   const handleAddToCart = () => {
+    if (product.stock <= 0) return;
+
     if (product.sizes.length > 0 && !selectedSize) {
       alert("ابتدا سایز مورد نظر خود را انتخاب کنید.");
       return;
@@ -51,6 +53,7 @@ export default function ProductDetailsClient({
       color: selectedColor,
       size: selectedSize,
       quantity,
+      stock: product.stock,
     });
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
@@ -230,8 +233,11 @@ export default function ProductDetailsClient({
               onClick={handleAddToCart}
               size="lg"
               className="flex-1"
+              disabled={product.stock <= 0}
             >
-              {added ? (
+              {product.stock <= 0 ? (
+                "ناموجود"
+              ) : added ? (
                 <>
                   <Check className="h-5 w-5" />
                   افزوده شد!

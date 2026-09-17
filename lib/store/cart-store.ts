@@ -29,6 +29,8 @@ export const useCartStore = create<CartStore>()(
       items: [],
 
       addItem: (item) => {
+        if (item.stock !== undefined && item.stock <= 0) return;
+
         const quantity = item.quantity ?? 1;
         set((state) => {
           const existing = state.items.find(
@@ -38,18 +40,37 @@ export const useCartStore = create<CartStore>()(
               i.size === item.size
           );
           if (existing) {
+            const nextQuantity = existing.quantity + quantity;
+            const maxQuantity = item.stock ?? existing.stock;
+
             return {
               items: state.items.map((i) =>
                 i.productId === item.productId &&
                 i.color === item.color &&
                 i.size === item.size
-                  ? { ...i, quantity: i.quantity + quantity }
+                  ? {
+                      ...i,
+                      quantity:
+                        maxQuantity !== undefined
+                          ? Math.min(maxQuantity, nextQuantity)
+                          : nextQuantity,
+                      stock: item.stock ?? i.stock,
+                    }
                   : i
               ),
             };
           }
           return {
-            items: [...state.items, { ...item, quantity }],
+            items: [
+              ...state.items,
+              {
+                ...item,
+                quantity:
+                  item.stock !== undefined
+                    ? Math.min(item.stock, quantity)
+                    : quantity,
+              },
+            ],
           };
         });
       },
@@ -75,7 +96,11 @@ export const useCartStore = create<CartStore>()(
         set((state) => ({
           items: state.items.map((i) =>
             i.productId === productId && i.color === color && i.size === size
-              ? { ...i, quantity }
+              ? {
+                  ...i,
+                  quantity:
+                    i.stock !== undefined ? Math.min(i.stock, quantity) : quantity,
+                }
               : i
           ),
         }));
