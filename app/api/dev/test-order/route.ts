@@ -111,10 +111,15 @@ async function createAndNotifyTestOrder(): Promise<{
   //    for a real PAID order (status -> "paid", trackId + refNumber saved)
   const mockTrackId = Math.floor(1000000000 + Math.random() * 9000000000);
   const mockRefNumber = Math.floor(100000 + Math.random() * 900000);
-  const paidOrder = await updateOrderStatus(order.id, "paid", {
-    trackId: mockTrackId,
-    refNumber: mockRefNumber,
-  });
+  const paidOrder = await updateOrderStatus(
+    order.id,
+    "paid",
+    {
+      trackId: mockTrackId,
+      refNumber: mockRefNumber,
+    },
+    { deductStock: false }
+  );
   if (!paidOrder) {
     throw new Error("Failed to mark test order as paid");
   }

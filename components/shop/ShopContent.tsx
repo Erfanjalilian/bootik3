@@ -169,6 +169,11 @@ export default function ShopContent({
                       <h3 className="text-lg font-semibold text-gray-800 group-hover:text-pink-600">
                         {product.name}
                       </h3>
+                      {product.stock <= 0 && (
+                        <p className="mt-1 text-sm font-semibold text-red-600">
+                          ناموجود
+                        </p>
+                      )}
                       <p className="mt-1 line-clamp-2 text-sm text-gray-500">
                         {product.description}
                       </p>

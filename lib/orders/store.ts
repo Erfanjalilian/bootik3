@@ -1,6 +1,8 @@
 import { promises as fs } from "fs";
 import path from "path";
 import crypto from "crypto";
+import { revalidatePath } from "next/cache";
+import { decrementProductStock } from "@/lib/data";
 import type { Order } from "./types";
 
 const DATA_DIR = path.join(process.cwd(), "data");
@@ -54,14 +56,46 @@ export const getOrderByTrackId = async (trackId: number): Promise<Order | null> 
   return orders.find((o) => o.trackId === trackId) ?? null;
 };
 
+const applyStockDeduction = (order: Order): boolean => {
+  if (order.stockDeducted) return true;
+  if (!decrementProductStock(order.items)) return false;
+
+  order.stockDeducted = true;
+  revalidatePath("/products/[id]", "page");
+  revalidatePath("/shop");
+  revalidatePath("/");
+  return true;
+};
+
+export const deductOrderStock = async (id: string): Promise<Order | null> => {
+  const orders = await readOrders();
+  const order = orders.find((candidate) => candidate.id === id);
+  if (!order || !applyStockDeduction(order)) return null;
+
+  await writeOrders(orders);
+  return order;
+};
+
 export const updateOrderStatus = async (
   id: string,
   status: Order["status"],
-  paymentInfo?: { trackId: number; refNumber: number }
+  paymentInfo?: { trackId: number; refNumber: number },
+  options: { deductStock?: boolean } = {}
 ): Promise<Order | null> => {
   const orders = await readOrders();
   const index = orders.findIndex((o) => o.id === id);
   if (index === -1) return null;
+
+  if (
+    status === "paid" &&
+    orders[index].status !== "paid" &&
+    !orders[index].stockDeducted &&
+    options.deductStock !== false
+  ) {
+    if (!applyStockDeduction(orders[index])) {
+      throw new Error("INSUFFICIENT_STOCK");
+    }
+  }
 
   orders[index] = {
     ...orders[index],

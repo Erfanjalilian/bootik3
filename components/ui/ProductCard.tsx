@@ -31,7 +31,6 @@ export default function ProductCard({ product }: ProductCardProps) {
                 جدید
               </span>
             )}
-
             <div className="absolute bottom-3 left-3 right-3 hidden opacity-0 group-hover:opacity-100 sm:block">
               <span className="flex items-center justify-center gap-2 rounded-2xl bg-pink-50/95 py-2.5 text-sm font-medium text-pink-600 backdrop-blur-sm">
                 <ShoppingBag className="h-4 w-4" />
@@ -44,6 +43,9 @@ export default function ProductCard({ product }: ProductCardProps) {
             <h3 className="mb-2 line-clamp-1 text-base font-semibold text-gray-800 group-hover:text-pink-600">
               {product.name}
             </h3>
+            {product.stock <= 0 && (
+              <p className="mb-2 text-sm font-semibold text-red-600">ناموجود</p>
+            )}
             <div className="mb-2 flex items-center gap-1">
               <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
               <span className="text-xs text-gray-500">{product.rating}</span>

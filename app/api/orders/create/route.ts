@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSessionUser } from "@/lib/auth/session";
-import { createOrder, updateOrderTrackId } from "@/lib/orders/store";
+import { createOrder, deductOrderStock, updateOrderTrackId, updateOrderStatus } from "@/lib/orders/store";
 import { requestPayment, ZibalApiError } from "@/lib/services/zibal";
 import { getProducts } from "@/lib/data";
 import type { ShippingAddress, OrderItem, OrderShippingInfo } from "@/lib/orders/types";
@@ -84,6 +84,15 @@ export async function POST(request: NextRequest) {
 
     // Cash on delivery - no payment gateway needed
     if (paymentMethod === "cod") {
+      const stockDeductedOrder = await deductOrderStock(order.id);
+      if (!stockDeductedOrder) {
+        await updateOrderStatus(order.id, "failed");
+        return NextResponse.json(
+          { ok: false, message: "موجودی محصول برای ثبت سفارش کافی نیست" },
+          { status: 409 }
+        );
+      }
+
       return NextResponse.json({
         ok: true,
         orderId: order.id,

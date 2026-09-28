@@ -32,6 +32,7 @@ export interface Order {
   shippingAddress: ShippingAddress;
   shipping: OrderShippingInfo;
   status: "pending" | "paid" | "failed" | "cancelled";
+  stockDeducted?: boolean;
   trackId?: number;
   refNumber?: number;
   createdAt: number;

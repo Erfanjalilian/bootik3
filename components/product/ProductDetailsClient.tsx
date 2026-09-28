@@ -224,7 +224,9 @@ export default function ProductDetailsClient({
               </button>
             </div>
             <p className="mt-2 text-xs text-gray-400">
-              {product.stock} عدد موجود در انبار
+              {product.stock > 0
+                ? `${product.stock} عدد موجود در انبار`
+                : "این محصول ناموجود است"}
             </p>
           </div>
 

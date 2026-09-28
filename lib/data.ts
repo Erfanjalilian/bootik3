@@ -19,6 +19,32 @@ export function getProductById(id: string): Product | undefined {
   return getProducts().find((p) => String(p.id) === id);
 }
 
+export function decrementProductStock(
+  items: { productId: string; quantity: number }[]
+): boolean {
+  const products = getProducts();
+  const quantities = new Map<string, number>();
+
+  for (const item of items) {
+    if (!Number.isInteger(item.quantity) || item.quantity <= 0) return false;
+    const productId = String(item.productId);
+    quantities.set(productId, (quantities.get(productId) ?? 0) + item.quantity);
+  }
+
+  for (const [productId, quantity] of quantities) {
+    const product = products.find((candidate) => String(candidate.id) === productId);
+    if (!product || product.stock < quantity) return false;
+    product.stock -= quantity;
+  }
+
+  fs.writeFileSync(
+    path.join(dataDir, "products.json"),
+    JSON.stringify(products, null, 2),
+    "utf-8"
+  );
+  return true;
+}
+
 export function getCategories(): Category[] {
   return readJson<Category[]>("categories.json");
 }
