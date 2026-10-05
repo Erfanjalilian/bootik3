@@ -29,7 +29,7 @@ interface CalculateShippingRequest {
 /**
  * POST handler for shipping cost calculation
  *
- * Postal shipping uses a fixed fee of 160,000 tomans.
+ * Postal shipping uses a fixed fee of 180,000 tomans.
  */
 export async function POST(request: NextRequest): Promise<NextResponse> {
   console.log("========== 🚚 SHIPPING CALCULATE (پست) ==========");
@@ -66,7 +66,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       );
     }
 
-    const shippingCost = 160000;
+    const shippingCost = 180000;
     console.log(`✅ Shipping method: پست - cost: ${shippingCost}`);
 
     return NextResponse.json({

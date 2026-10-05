@@ -42,7 +42,7 @@ const TEST_ADDRESS: ShippingAddress = {
 const TEST_SHIPPING: OrderShippingInfo = {
   method: "post",
   title: "ارسال با پست",
-  cost: 160000,
+  cost: 180000,
 };
 
 // ---------------------------------------------------------------------------

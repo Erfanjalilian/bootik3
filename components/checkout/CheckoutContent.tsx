@@ -37,7 +37,7 @@ export default function CheckoutContent() {
   const [shippingAddress, setShippingAddress] = useState<ShippingAddress>(initialAddress);
   const [errors, setErrors] = useState<Partial<Record<keyof ShippingAddress, string>>>({});
 
-  const shippingCost = 160000;
+  const shippingCost = 180000;
   const shippingInfo: OrderShippingInfo = {
     method: "post",
     title: "ارسال با پست",

@@ -9,7 +9,7 @@ import Button from "@/components/ui/Button";
 import { formatPrice } from "@/lib/utils";
 import { useCartStore } from "@/lib/store/cart-store";
 
-const SHIPPING_COST = 160000;
+const SHIPPING_COST = 180000;
 
 export default function CartContent() {
   const router = useRouter();
